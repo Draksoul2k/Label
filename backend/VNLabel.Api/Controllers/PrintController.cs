@@ -73,6 +73,15 @@ public class PrintController : ControllerBase
 
         var isWatermark = await CheckWatermarkRequired(orgId.Value);
         var compiledLabels = await BuildCompiledLabels(orgId.Value, template, request.Items);
+
+        if (await IsFreePlan(orgId.Value) && compiledLabels.Count > 20)
+        {
+            return BadRequest(new { 
+                message = "Tài khoản Free chỉ được in tối đa 20 tem mỗi lần.", 
+                detail = "Gói Miễn phí chỉ được in tối đa 20 tem mỗi lượt in. Vui lòng nâng cấp lên gói Pro hoặc Business để in không giới hạn!" 
+            });
+        }
+
         var settings = request.PrinterSettings ?? ParsePrinterSettings(template.PrintSettingsJson);
 
         var zpl = _printService.GenerateZpl(template, compiledLabels, settings, request.Dpi, isWatermark);
@@ -95,6 +104,15 @@ public class PrintController : ControllerBase
 
         var isWatermark = await CheckWatermarkRequired(orgId.Value);
         var compiledLabels = await BuildCompiledLabels(orgId.Value, template, request.Items);
+
+        if (await IsFreePlan(orgId.Value) && compiledLabels.Count > 20)
+        {
+            return BadRequest(new { 
+                message = "Tài khoản Free chỉ được in tối đa 20 tem mỗi lần.", 
+                detail = "Gói Miễn phí chỉ được in tối đa 20 tem mỗi lượt in. Vui lòng nâng cấp lên gói Pro hoặc Business để in không giới hạn!" 
+            });
+        }
+
         var settings = request.PrinterSettings ?? ParsePrinterSettings(template.PrintSettingsJson);
 
         var html = _printService.GenerateHtmlPrint(template, compiledLabels, settings, isWatermark);
@@ -115,6 +133,15 @@ public class PrintController : ControllerBase
 
         var isWatermark = await CheckWatermarkRequired(orgId.Value);
         var compiledLabels = await BuildCompiledLabels(orgId.Value, template, request.Items);
+
+        if (await IsFreePlan(orgId.Value) && compiledLabels.Count > 20)
+        {
+            return BadRequest(new { 
+                message = "Tài khoản Free chỉ được in tối đa 20 tem mỗi lần.", 
+                detail = "Gói Miễn phí chỉ được in tối đa 20 tem mỗi lượt in. Vui lòng nâng cấp lên gói Pro hoặc Business để in không giới hạn!" 
+            });
+        }
+
         var settings = request.PrinterSettings ?? ParsePrinterSettings(template.PrintSettingsJson);
 
         var pdfBytes = _printService.GeneratePdf(template, compiledLabels, settings, isWatermark);
@@ -179,14 +206,22 @@ public class PrintController : ControllerBase
         return result;
     }
 
-    private async Task<bool> CheckWatermarkRequired(Guid orgId)
+    private async Task<bool> IsFreePlan(Guid orgId)
     {
+        if (_tenantService.IsSystemAdmin) return false;
         var sub = await _context.Subscriptions
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(s => s.OrgId == orgId && s.Status == Core.Enums.SubscriptionStatus.Active);
 
-        var planKey = sub?.Plan ?? "free";
+        if (sub == null) return true;
+        if (sub.EndDate < DateTime.UtcNow) return true;
+        var planKey = (sub.Plan ?? "free").ToLowerInvariant();
         return planKey == "free";
+    }
+
+    private async Task<bool> CheckWatermarkRequired(Guid orgId)
+    {
+        return await IsFreePlan(orgId);
     }
 
     private static PrinterSettings ParsePrinterSettings(string json)

@@ -153,12 +153,17 @@ public class SubscriptionsController : ControllerBase
         }
 
         var pKey = (sub.Plan ?? "free").ToLowerInvariant();
+        if (sub.EndDate < DateTime.UtcNow && pKey != "free")
+        {
+            pKey = "free";
+        }
+
         var pName = pKey switch
         {
             "business" => "Business",
             "pro" => "Pro",
             "basic" => "Basic",
-            _ => sub.PlanName ?? "Free"
+            _ => "Free"
         };
 
         var daysRemaining = (int)Math.Max(0, (sub.EndDate - DateTime.UtcNow).TotalDays);

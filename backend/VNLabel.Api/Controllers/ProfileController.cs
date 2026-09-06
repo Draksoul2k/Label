@@ -38,13 +38,13 @@ public class ProfileController : ControllerBase
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(s => s.OrgId == user.OrgId && s.Status == Core.Enums.SubscriptionStatus.Active);
 
-        var planKey = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() switch
+        var planKey = user.IsSystemAdmin ? "Business" : ((sub != null && sub.EndDate >= DateTime.UtcNow) ? (sub.Plan?.ToLower() switch
         {
             "business" => "Business",
             "pro" => "Pro",
             "basic" => "Basic",
-            _ => sub?.PlanName ?? "Free"
-        });
+            _ => sub.PlanName ?? "Free"
+        }) : "Free");
 
         return Ok(new ProfileDto
         {

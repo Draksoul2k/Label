@@ -62,15 +62,15 @@ public class AuthController : ControllerBase
         {
             Id = Guid.NewGuid(),
             OrgId = org.Id,
-            Plan = "free",
-            PlanName = "Free",
+            Plan = "pro",
+            PlanName = "Pro",
             BillingCycle = BillingCycle.Monthly,
             Term = "month",
-            TermName = "1 tháng",
+            TermName = "30 ngày dùng thử Pro",
             StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddYears(10),
+            EndDate = DateTime.UtcNow.AddDays(30),
             Status = SubscriptionStatus.Active,
-            AutoRenew = true,
+            AutoRenew = false,
             Amount = 0
         };
 
@@ -97,7 +97,7 @@ public class AuthController : ControllerBase
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role.ToString(),
-                Plan = "Free",
+                Plan = "Pro",
                 OrgId = org.Id,
                 OrgName = org.Name,
                 IsSystemAdmin = false,
@@ -135,11 +135,18 @@ public class AuthController : ControllerBase
         }
         else if (sub != null)
         {
-            var p = (sub.Plan ?? "").ToLowerInvariant();
-            if (p == "business") planName = "Business";
-            else if (p == "pro") planName = "Pro";
-            else if (p == "basic") planName = "Basic";
-            else planName = sub.PlanName ?? "Free";
+            if (sub.EndDate < DateTime.UtcNow && (sub.Plan ?? "").ToLowerInvariant() != "free")
+            {
+                planName = "Free";
+            }
+            else
+            {
+                var p = (sub.Plan ?? "").ToLowerInvariant();
+                if (p == "business") planName = "Business";
+                else if (p == "pro") planName = "Pro";
+                else if (p == "basic") planName = "Basic";
+                else planName = sub.PlanName ?? "Free";
+            }
         }
 
         var refreshToken = _jwtService.GenerateRefreshToken();
@@ -208,7 +215,7 @@ public class AuthController : ControllerBase
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role.ToString(),
-                Plan = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() == "business" ? "Business" : (sub?.Plan?.ToLower() == "pro" ? "Pro" : (sub?.PlanName ?? "Free"))),
+                Plan = user.IsSystemAdmin ? "Business" : ((sub != null && sub.EndDate >= DateTime.UtcNow && sub.Plan?.ToLower() == "business") ? "Business" : ((sub != null && sub.EndDate >= DateTime.UtcNow && sub.Plan?.ToLower() == "pro") ? "Pro" : (sub != null && sub.EndDate >= DateTime.UtcNow && sub.Plan?.ToLower() == "basic") ? "Basic" : "Free")),
                 OrgId = user.OrgId,
                 OrgName = user.Organization?.Name ?? "Tổ chức",
                 IsSystemAdmin = user.IsSystemAdmin,
