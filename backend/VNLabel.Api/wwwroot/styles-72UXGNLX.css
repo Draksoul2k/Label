@@ -81,7 +81,7 @@
   color: transparent !important;
   font-size: 0 !important;
 }
-.nav-public .logo .vnlabel-logo {
+.nav-public .logo .hacode-logo {
   display: none !important;
 }
 
@@ -95,7 +95,7 @@
   color: transparent !important;
   font-size: 0 !important;
 }
-.site-footer .footer-inner .logo .vnlabel-logo {
+.site-footer .footer-inner .logo .hacode-logo {
   display: none !important;
 }
 
@@ -144,7 +144,7 @@
   box-shadow: 0 0 0 3px rgba(17, 108, 191, 0.18) !important;
 }
 
-/* Hide VNLabel header in auth cards and style description */
+/* Hide auth logo text and style description */
 .auth-logo h1 {
   display: none !important;
 }

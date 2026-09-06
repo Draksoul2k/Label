@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "VNLabel API",
+    "title": "HACODE API",
     "description": "Vietnamese Barcode Management & Label Design API",
     "version": "v1"
   },

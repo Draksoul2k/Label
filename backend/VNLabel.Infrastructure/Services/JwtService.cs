@@ -21,8 +21,8 @@ public class JwtService : IJwtService
     public (string token, DateTime expiresAt) GenerateAccessToken(User user)
     {
         var secretKey = _configuration["JwtSettings:SecretKey"] ?? "VNLabelSuperSecretKeyForJwtAuthenticationMustBeAtLeast32BytesLong!";
-        var issuer = _configuration["JwtSettings:Issuer"] ?? "VNLabel";
-        var audience = _configuration["JwtSettings:Audience"] ?? "VNLabelApp";
+        var issuer = _configuration["JwtSettings:Issuer"] ?? "HACODE";
+        var audience = _configuration["JwtSettings:Audience"] ?? "HACODEApp";
         var expirationMinutes = int.TryParse(_configuration["JwtSettings:AccessTokenExpirationMinutes"], out var exp) ? exp : 1440;
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));

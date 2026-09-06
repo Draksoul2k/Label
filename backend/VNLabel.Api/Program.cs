@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "VNLabel API",
+        Title = "HACODE API",
         Version = "v1",
         Description = "API Quản lý mã vạch & thiết kế nhãn in VNLabel"
     });
@@ -139,7 +139,7 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "VNLabel API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HACODE API v1");
     c.RoutePrefix = "swagger";
 });
 
