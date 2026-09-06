@@ -27,18 +27,27 @@ import{a as rt,b as at}from"./chunk-Y7XKB47K.js";import{a as be,b as _e,d as it}
 
       let rollWidthRec = totalWidthMm <= 58 ? '58mm' : (totalWidthMm <= 80 ? '75mm - 80mm' : (totalWidthMm <= 104 ? '104mm - 108mm' : (Math.ceil(totalWidthMm + 4) + 'mm')));
 
+      const isFlush = gap <= 0;
       let labelsHtml = '';
       for (let i = 1; i <= cols; i++) {
-        labelsHtml += `<div style="flex:1; min-height:46px; background:#ffffff; border:1.5px solid #116cbf; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2px 4px; box-shadow:0 1px 3px rgba(17,108,191,0.12);">`
+        let rad = '4px';
+        let bRight = '';
+        if (isFlush && cols > 1) {
+          if (i === 1) {
+            rad = '4px 0 0 4px';
+            bRight = 'border-right: 1px dashed #93c5fd;';
+          } else if (i === cols) {
+            rad = '0 4px 4px 0';
+            bRight = '';
+          } else {
+            rad = '0';
+            bRight = 'border-right: 1px dashed #93c5fd;';
+          }
+        }
+        labelsHtml += `<div style="flex:1; min-height:46px; background:#ffffff; border:1.5px solid #116cbf; ${bRight} border-radius:${rad}; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2px 4px; box-shadow:0 1px 2px rgba(17,108,191,0.08);">`
           + `<div style="font-size:11px; font-weight:700; color:#116cbf;">Tem ${i}</div>`
           + `<div style="font-size:9px; color:#64748b; margin-top:2px;">${w}×${h}mm</div>`
           + `</div>`;
-        if (i < cols) {
-          labelsHtml += `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 3px; font-size:9px; color:#d97706; font-weight:700; white-space:nowrap;">`
-            + `<span style="border-top:1px dashed #d97706; width:12px; margin-bottom:2px;"></span>`
-            + `${gap}mm`
-            + `</div>`;
-        }
       }
 
       host.innerHTML = `<div style="background:#f0f7ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px; margin:8px 0 10px; font-family:inherit;">`
@@ -58,9 +67,9 @@ import{a as rt,b as at}from"./chunk-Y7XKB47K.js";import{a as be,b as _e,d as it}
         + `<div style="background:#e2e8f0; border-radius:8px; padding:7px 8px; margin-bottom:8px; border:1px solid #cbd5e1;">`
         + `<div style="font-size:9.5px; font-weight:600; color:#475569; margin-bottom:5px; display:flex; justify-content:space-between;">`
         + `<span>Mô phỏng cuộn thực tế:</span>`
-        + `<span style="color:#0f172a; font-weight:700;">${cols > 1 ? `(${w}mm × ${cols}) + ${((cols - 1) * gap)}mm = ${totalWidthMm}mm` : `${w}mm`}</span>`
+        + `<span style="color:#0f172a; font-weight:700;">${cols > 1 ? (isFlush ? `(${w}mm × ${cols}) = ${totalWidthMm}mm` : `(${w}mm × ${cols}) + ${((cols - 1) * gap)}mm = ${totalWidthMm}mm`) : `${w}mm`}</span>`
         + `</div>`
-        + `<div style="display:flex; align-items:stretch; gap:3px; background:#f8fafc; padding:5px; border-radius:6px; border:1px dashed #94a3b8;">`
+        + `<div style="display:flex; align-items:stretch; gap:${gap <= 0 ? '0px' : '6px'}; background:#f8fafc; padding:5px; border-radius:6px; border:1px dashed #94a3b8;">`
         + labelsHtml
         + `</div>`
         + `</div>`
