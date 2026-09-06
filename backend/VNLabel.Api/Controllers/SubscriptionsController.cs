@@ -116,6 +116,25 @@ public class SubscriptionsController : ControllerBase
         var orgId = _tenantService.CurrentOrgId;
         if (orgId == null) return Unauthorized();
 
+        if (_tenantService.IsSystemAdmin)
+        {
+            return Ok(new CurrentSubscriptionDto
+            {
+                Id = Guid.Empty,
+                Plan = "business",
+                PlanName = "Business",
+                BillingCycle = "Yearly",
+                Term = "lifetime",
+                TermName = "Trọn đời",
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddYears(100),
+                Status = "Active",
+                AutoRenew = true,
+                Amount = 0,
+                DaysRemaining = 36500
+            });
+        }
+
         var sub = await _context.Subscriptions
             .Where(s => s.OrgId == orgId && s.Status == SubscriptionStatus.Active)
             .OrderByDescending(s => s.StartDate)
@@ -133,13 +152,22 @@ public class SubscriptionsController : ControllerBase
             });
         }
 
+        var pKey = (sub.Plan ?? "free").ToLowerInvariant();
+        var pName = pKey switch
+        {
+            "business" => "Business",
+            "pro" => "Pro",
+            "basic" => "Basic",
+            _ => sub.PlanName ?? "Free"
+        };
+
         var daysRemaining = (int)Math.Max(0, (sub.EndDate - DateTime.UtcNow).TotalDays);
 
         return Ok(new CurrentSubscriptionDto
         {
             Id = sub.Id,
-            Plan = sub.Plan,
-            PlanName = sub.PlanName,
+            Plan = pKey,
+            PlanName = pName,
             BillingCycle = sub.BillingCycle.ToString(),
             Term = sub.Term,
             TermName = sub.TermName,

@@ -191,16 +191,16 @@ public static class DbInitializer
             {
                 Id = Guid.NewGuid(),
                 OrgId = org.Id,
-                Plan = "free",
-                PlanName = "Free",
-                BillingCycle = BillingCycle.Monthly,
-                Term = "month",
-                TermName = "1 tháng",
+                Plan = "pro",
+                PlanName = "Pro",
+                BillingCycle = BillingCycle.Yearly,
+                Term = "year",
+                TermName = "1 năm",
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddYears(10),
+                EndDate = DateTime.UtcNow.AddYears(1),
                 Status = SubscriptionStatus.Active,
                 AutoRenew = true,
-                Amount = 0
+                Amount = 699000
             };
 
             // Admin account
@@ -281,6 +281,49 @@ public static class DbInitializer
                     Status = SubscriptionStatus.Active,
                     AutoRenew = true,
                     Amount = 1990000
+                });
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // 6. Ensure test@gmail.com (Nguyễn Xuân Nam) has active Pro subscription
+        var existingTestUser = await context.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => u.Email == "test@gmail.com");
+
+        if (existingTestUser != null)
+        {
+            var testSub = await context.Subscriptions
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(s => s.OrgId == existingTestUser.OrgId);
+
+            if (testSub != null)
+            {
+                testSub.Plan = "pro";
+                testSub.PlanName = "Pro";
+                testSub.BillingCycle = BillingCycle.Yearly;
+                testSub.Term = "year";
+                testSub.TermName = "1 năm";
+                testSub.EndDate = DateTime.UtcNow.AddYears(1);
+                testSub.Status = SubscriptionStatus.Active;
+            }
+            else
+            {
+                await context.Subscriptions.AddAsync(new Subscription
+                {
+                    Id = Guid.NewGuid(),
+                    OrgId = existingTestUser.OrgId,
+                    Plan = "pro",
+                    PlanName = "Pro",
+                    BillingCycle = BillingCycle.Yearly,
+                    Term = "year",
+                    TermName = "1 năm",
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddYears(1),
+                    Status = SubscriptionStatus.Active,
+                    AutoRenew = true,
+                    Amount = 699000
                 });
             }
 

@@ -26,6 +26,7 @@ public class ApiKeysController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetApiKeys()
     {
+        if (!_tenantService.IsSystemAdmin) return Forbid();
         var orgId = _tenantService.CurrentOrgId;
         if (orgId == null) return Unauthorized();
 
@@ -50,6 +51,7 @@ public class ApiKeysController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateApiKey([FromBody] CreateApiKeyRequest request)
     {
+        if (!_tenantService.IsSystemAdmin) return Forbid();
         var orgId = _tenantService.CurrentOrgId;
         if (orgId == null) return Unauthorized();
 
@@ -96,6 +98,7 @@ public class ApiKeysController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteApiKey(Guid id)
     {
+        if (!_tenantService.IsSystemAdmin) return Forbid();
         var orgId = _tenantService.CurrentOrgId;
         if (orgId == null) return Unauthorized();
 

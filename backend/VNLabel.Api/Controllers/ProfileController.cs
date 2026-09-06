@@ -38,6 +38,14 @@ public class ProfileController : ControllerBase
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(s => s.OrgId == user.OrgId && s.Status == Core.Enums.SubscriptionStatus.Active);
 
+        var planKey = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() switch
+        {
+            "business" => "Business",
+            "pro" => "Pro",
+            "basic" => "Basic",
+            _ => sub?.PlanName ?? "Free"
+        });
+
         return Ok(new ProfileDto
         {
             Id = user.Id,
@@ -47,7 +55,7 @@ public class ProfileController : ControllerBase
             Company = user.Organization?.Name ?? "",
             LogoUrl = user.Organization?.LogoUrl,
             Role = user.Role.ToString(),
-            Plan = sub?.PlanName ?? "Free",
+            Plan = planKey,
             EmailVerified = user.IsEmailVerified
         });
     }
