@@ -49,13 +49,13 @@ public class SaveSystemTemplateRequest
 {
     public Guid? Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Category { get; set; } = "general";
+    public string? Category { get; set; } = "general";
     public double WidthMm { get; set; } = 40;
     public double HeightMm { get; set; } = 30;
-    public string Shape { get; set; } = "rect";
-    public string Background { get; set; } = "#ffffff";
-    public string ElementsJson { get; set; } = "[]";
-    public string PrintSettingsJson { get; set; } = "{}";
+    public string? Shape { get; set; } = "rect";
+    public string? Background { get; set; } = "#ffffff";
+    public string? ElementsJson { get; set; } = "[]";
+    public string? PrintSettingsJson { get; set; } = "{}";
     public string? DataSourceJson { get; set; }
     public string? ThumbnailUrl { get; set; }
     public string? Description { get; set; }

@@ -64,7 +64,15 @@ public class AdminTemplatesController : ControllerBase
         if (!IsAdmin) return Forbid();
 
         if (string.IsNullOrWhiteSpace(request.Name))
-            return BadRequest(new { message = "Tên mẫu tem không được để trống" });
+            return BadRequest(new { message = "Tên mẫu tem không được để trống", detail = "Tên mẫu tem không được để trống" });
+
+        var category = string.IsNullOrWhiteSpace(request.Category) ? "general" : request.Category.Trim();
+        var shape = string.IsNullOrWhiteSpace(request.Shape) ? "rect" : request.Shape.Trim();
+        var background = string.IsNullOrWhiteSpace(request.Background) ? "#ffffff" : request.Background.Trim();
+        var elementsJson = string.IsNullOrWhiteSpace(request.ElementsJson) ? "[]" : request.ElementsJson;
+        var printSettingsJson = string.IsNullOrWhiteSpace(request.PrintSettingsJson) ? "{}" : request.PrintSettingsJson;
+        var widthMm = request.WidthMm > 0 ? request.WidthMm : 40;
+        var heightMm = request.HeightMm > 0 ? request.HeightMm : 30;
 
         LabelTemplate? tpl = null;
         if (request.Id.HasValue && request.Id != Guid.Empty)
@@ -72,53 +80,60 @@ public class AdminTemplatesController : ControllerBase
             tpl = await _context.LabelTemplates.IgnoreQueryFilters().FirstOrDefaultAsync(t => t.Id == request.Id.Value && t.IsSystem);
         }
 
-        if (tpl != null)
+        try
         {
-            tpl.Name = request.Name.Trim();
-            tpl.Category = request.Category;
-            tpl.WidthMm = request.WidthMm;
-            tpl.HeightMm = request.HeightMm;
-            tpl.Shape = request.Shape;
-            tpl.Background = request.Background;
-            tpl.ElementsJson = request.ElementsJson;
-            tpl.PrintSettingsJson = request.PrintSettingsJson;
-            tpl.DataSourceJson = request.DataSourceJson;
-            tpl.ThumbnailUrl = request.ThumbnailUrl;
-            tpl.Description = request.Description;
-            tpl.Tags = request.Tags;
-            tpl.IsPopular = request.IsPopular;
-            tpl.IsPublished = request.IsActive;
-            tpl.SortOrder = request.SortOrder;
-            tpl.UpdatedAt = DateTime.UtcNow;
-        }
-        else
-        {
-            tpl = new LabelTemplate
+            if (tpl != null)
             {
-                Id = request.Id ?? Guid.NewGuid(),
-                Name = request.Name.Trim(),
-                Category = request.Category,
-                WidthMm = request.WidthMm,
-                HeightMm = request.HeightMm,
-                Shape = request.Shape,
-                Background = request.Background,
-                ElementsJson = request.ElementsJson,
-                PrintSettingsJson = request.PrintSettingsJson,
-                DataSourceJson = request.DataSourceJson,
-                ThumbnailUrl = request.ThumbnailUrl,
-                Description = request.Description,
-                Tags = request.Tags,
-                IsPopular = request.IsPopular,
-                IsSystem = true,
-                IsPublished = request.IsActive,
-                SortOrder = request.SortOrder,
-                CreatedAt = DateTime.UtcNow
-            };
-            await _context.LabelTemplates.AddAsync(tpl);
-        }
+                tpl.Name = request.Name.Trim();
+                tpl.Category = category;
+                tpl.WidthMm = widthMm;
+                tpl.HeightMm = heightMm;
+                tpl.Shape = shape;
+                tpl.Background = background;
+                tpl.ElementsJson = elementsJson;
+                tpl.PrintSettingsJson = printSettingsJson;
+                tpl.DataSourceJson = request.DataSourceJson;
+                tpl.ThumbnailUrl = request.ThumbnailUrl;
+                tpl.Description = request.Description?.Trim();
+                tpl.Tags = request.Tags?.Trim();
+                tpl.IsPopular = request.IsPopular;
+                tpl.IsPublished = request.IsActive;
+                tpl.SortOrder = request.SortOrder;
+                tpl.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                tpl = new LabelTemplate
+                {
+                    Id = request.Id ?? Guid.NewGuid(),
+                    Name = request.Name.Trim(),
+                    Category = category,
+                    WidthMm = widthMm,
+                    HeightMm = heightMm,
+                    Shape = shape,
+                    Background = background,
+                    ElementsJson = elementsJson,
+                    PrintSettingsJson = printSettingsJson,
+                    DataSourceJson = request.DataSourceJson,
+                    ThumbnailUrl = request.ThumbnailUrl,
+                    Description = request.Description?.Trim(),
+                    Tags = request.Tags?.Trim(),
+                    IsPopular = request.IsPopular,
+                    IsSystem = true,
+                    IsPublished = request.IsActive,
+                    SortOrder = request.SortOrder,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _context.LabelTemplates.AddAsync(tpl);
+            }
 
-        await _context.SaveChangesAsync();
-        return Ok(tpl);
+            await _context.SaveChangesAsync();
+            return Ok(tpl);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = "Lưu mẫu tem thất bại: " + ex.Message, detail = ex.InnerException?.Message ?? ex.Message });
+        }
     }
 
     [HttpPut("{id}/published")]
