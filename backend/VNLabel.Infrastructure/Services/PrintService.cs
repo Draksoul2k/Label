@@ -89,7 +89,7 @@ public class PrintService : IPrintService
             if (watermark)
             {
                 var wmSize = (int)Math.Round(16 * (dpi / 203.0));
-                sb.AppendLine($"^FO{widthDots / 4},{heightDots / 2}^A0N,{wmSize},{wmSize}^FDVNLABEL.VN FREE^FS");
+                sb.AppendLine($"^FO{widthDots / 4},{heightDots / 2}^A0N,{wmSize},{wmSize}^FDHACODE.VN FREE^FS");
             }
 
             sb.AppendLine("^XZ");
@@ -172,7 +172,7 @@ public class PrintService : IPrintService
 
             if (watermark)
             {
-                sb.AppendLine("    <div class=\"watermark\">VNLABEL.VN FREE</div>");
+                sb.AppendLine("    <div class=\"watermark\">HACODE.VN FREE</div>");
             }
 
             sb.AppendLine("  </div>");
@@ -216,7 +216,7 @@ public class PrintService : IPrintService
 
                         if (watermark)
                         {
-                            layers.Layer().AlignCenter().AlignMiddle().Text("VNLABEL.VN FREE")
+                            layers.Layer().AlignCenter().AlignMiddle().Text("HACODE.VN FREE")
                                 .FontSize(14).Bold().FontColor(Colors.Grey.Lighten2);
                         }
                     });

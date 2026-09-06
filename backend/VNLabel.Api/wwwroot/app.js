@@ -962,7 +962,7 @@ async function renderBilling(container) {
 
     container.innerHTML = `
       <div style="text-align:center; margin-bottom:28px;">
-        <h2 style="font-size:22px; margin-bottom:8px;">Bảng Giá Dịch Vụ VNLabel</h2>
+        <h2 style="font-size:22px; margin-bottom:8px;">Bảng Giá Dịch Vụ HACODE</h2>
         <p style="font-size:14px; color:var(--text-muted);">Lựa chọn gói dịch vụ tối ưu cho doanh nghiệp và xưởng in của bạn.</p>
       </div>
 
@@ -1017,7 +1017,7 @@ async function requestUpgrade(planKey) {
         plan: planKey,
         cycle: "month",
         contactName: state.user?.name || "Khách hàng",
-        contactPhone: state.user?.phone || "0901555547",
+        contactPhone: state.user?.phone || "0942858285",
         note
       })
     });
