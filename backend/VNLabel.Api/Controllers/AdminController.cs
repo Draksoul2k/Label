@@ -182,15 +182,48 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("users")]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IActionResult> GetUsers([FromQuery] string? search)
     {
         if (!IsAdmin) return Forbid();
 
-        var users = await _context.Users
+        var query = _context.Users
             .IgnoreQueryFilters()
             .Include(u => u.Organization)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var s = search.Trim().ToLower();
+            query = query.Where(u => u.Name.ToLower().Contains(s) || u.Email.ToLower().Contains(s) || (u.Organization != null && u.Organization.Name.ToLower().Contains(s)));
+        }
+
+        var usersList = await query
             .OrderByDescending(u => u.CreatedAt)
-            .Select(u => new AdminUserDto
+            .ToListAsync();
+
+        var orgIds = usersList.Select(u => u.OrgId).Distinct().ToList();
+        var subs = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .Where(s => orgIds.Contains(s.OrgId))
+            .ToListAsync();
+
+        var subMap = subs
+            .GroupBy(s => s.OrgId)
+            .ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.StartDate).FirstOrDefault());
+
+        var result = usersList.Select(u =>
+        {
+            subMap.TryGetValue(u.OrgId, out var sub);
+            var planKey = u.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() switch
+            {
+                "business" => "Business",
+                "pro" => "Pro",
+                "basic" => "Basic",
+                _ => "Free"
+            });
+            var planName = u.IsSystemAdmin ? "Business" : (sub?.PlanName ?? planKey);
+
+            return new AdminUserDto
             {
                 Id = u.Id,
                 Name = u.Name,
@@ -199,12 +232,15 @@ public class AdminController : ControllerBase
                 Role = u.Role.ToString(),
                 OrgId = u.OrgId,
                 OrgName = u.Organization != null ? u.Organization.Name : "Tổ chức",
+                Plan = planKey,
+                PlanName = planName,
+                PlanEndDate = u.IsSystemAdmin ? null : sub?.EndDate,
                 IsSystemAdmin = u.IsSystemAdmin,
                 CreatedAt = u.CreatedAt
-            })
-            .ToListAsync();
+            };
+        }).ToList();
 
-        return Ok(users);
+        return Ok(result);
     }
 
     [HttpPut("users/{id}/plan")]
@@ -216,21 +252,48 @@ public class AdminController : ControllerBase
         if (user == null) return NotFound(new { message = "Không tìm thấy người dùng" });
 
         var sub = await _context.Subscriptions.IgnoreQueryFilters().FirstOrDefaultAsync(s => s.OrgId == user.OrgId);
-        var plan = await _context.SubscriptionPlans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Key == body.Plan);
+        var planKey = body.Plan?.ToLowerInvariant() ?? "pro";
+        var plan = await _context.SubscriptionPlans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Key.ToLower() == planKey);
 
-        var months = body.Cycle == "year" ? 12 : 1;
+        var months = body.Cycle == "year" ? 12 : (body.Cycle == "2year" ? 24 : 1);
+        var termName = body.Cycle == "year" ? "1 năm" : (body.Cycle == "2year" ? "2 năm" : "1 tháng");
+        var startDate = DateTime.TryParse(body.StartDate, out var parsedStart) ? parsedStart.ToUniversalTime() : DateTime.UtcNow;
+
         if (sub != null)
         {
-            sub.Plan = body.Plan;
-            sub.PlanName = plan?.Name ?? body.Plan;
-            sub.StartDate = DateTime.UtcNow;
-            sub.EndDate = DateTime.UtcNow.AddMonths(months);
+            sub.Plan = planKey;
+            sub.PlanName = plan?.Name ?? (char.ToUpper(planKey[0]) + planKey[1..]);
+            sub.BillingCycle = body.Cycle == "year" ? BillingCycle.Yearly : BillingCycle.Monthly;
+            sub.Term = body.Cycle;
+            sub.TermName = termName;
+            sub.StartDate = startDate;
+            sub.EndDate = planKey == "free" ? DateTime.UtcNow.AddYears(10) : startDate.AddMonths(months);
             sub.Status = SubscriptionStatus.Active;
+        }
+        else
+        {
+            sub = new Subscription
+            {
+                Id = Guid.NewGuid(),
+                OrgId = user.OrgId,
+                Plan = planKey,
+                PlanName = plan?.Name ?? (char.ToUpper(planKey[0]) + planKey[1..]),
+                BillingCycle = body.Cycle == "year" ? BillingCycle.Yearly : BillingCycle.Monthly,
+                Term = body.Cycle,
+                TermName = termName,
+                StartDate = startDate,
+                EndDate = planKey == "free" ? DateTime.UtcNow.AddYears(10) : startDate.AddMonths(months),
+                Status = SubscriptionStatus.Active,
+                AutoRenew = true,
+                Amount = 0
+            };
+            await _context.Subscriptions.AddAsync(sub);
         }
 
         await _context.SaveChangesAsync();
-        return Ok(new { message = "Cập nhật gói cước thành công" });
+        return Ok(new { message = $"Đã cập nhật gói cước thành {sub.PlanName} thành công!" });
     }
+
 
     [HttpGet("expiring")]
     public async Task<IActionResult> GetExpiring()
