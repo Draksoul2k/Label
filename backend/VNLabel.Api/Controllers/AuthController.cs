@@ -128,7 +128,19 @@ public class AuthController : ControllerBase
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(s => s.OrgId == user.OrgId && s.Status == SubscriptionStatus.Active);
 
-        var planName = sub?.PlanName ?? "Free";
+        var planName = "Free";
+        if (user.IsSystemAdmin)
+        {
+            planName = "Business";
+        }
+        else if (sub != null)
+        {
+            var p = (sub.Plan ?? "").ToLowerInvariant();
+            if (p == "business") planName = "Business";
+            else if (p == "pro") planName = "Pro";
+            else if (p == "basic") planName = "Basic";
+            else planName = sub.PlanName ?? "Free";
+        }
 
         var refreshToken = _jwtService.GenerateRefreshToken();
         user.RefreshToken = refreshToken;
@@ -196,7 +208,7 @@ public class AuthController : ControllerBase
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role.ToString(),
-                Plan = sub?.PlanName ?? "Free",
+                Plan = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() == "business" ? "Business" : (sub?.Plan?.ToLower() == "pro" ? "Pro" : (sub?.PlanName ?? "Free"))),
                 OrgId = user.OrgId,
                 OrgName = user.Organization?.Name ?? "Tổ chức",
                 IsSystemAdmin = user.IsSystemAdmin,
