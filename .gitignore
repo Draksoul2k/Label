@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+*.log
+*.tmp
+vnlabel.db-shm
+vnlabel.db-wal
+scratch/

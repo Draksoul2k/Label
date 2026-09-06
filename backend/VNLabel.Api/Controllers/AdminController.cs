@@ -1,0 +1,270 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using VNLabel.Core.DTOs;
+using VNLabel.Core.Entities;
+using VNLabel.Core.Enums;
+using VNLabel.Core.Interfaces;
+using VNLabel.Infrastructure.Data;
+
+namespace VNLabel.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class AdminController : ControllerBase
+{
+    private readonly AppDbContext _context;
+    private readonly ITenantService _tenantService;
+
+    public AdminController(AppDbContext context, ITenantService tenantService)
+    {
+        _context = context;
+        _tenantService = tenantService;
+    }
+
+    private bool IsAdmin => _tenantService.IsSystemAdmin || _tenantService.CurrentUserRole == "Owner";
+
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStats()
+    {
+        if (!IsAdmin) return Forbid();
+
+        var totalUsers = await _context.Users.IgnoreQueryFilters().CountAsync();
+        var totalOrgs = await _context.Organizations.IgnoreQueryFilters().CountAsync();
+        var totalBarcodes = await _context.BarcodeItems.IgnoreQueryFilters().CountAsync();
+        var activeSubs = await _context.Subscriptions.IgnoreQueryFilters().CountAsync(s => s.Status == SubscriptionStatus.Active && s.Plan != "free");
+        var pendingReqs = await _context.SubscriptionRequests.IgnoreQueryFilters().CountAsync(r => r.Status == RequestStatus.Pending);
+
+        var paidInvoices = await _context.Invoices.IgnoreQueryFilters()
+            .Where(i => i.Status == "Paid" && i.PaidAt >= DateTime.UtcNow.AddDays(-30))
+            .Select(i => i.Amount)
+            .ToListAsync();
+        var monthlyRevenue = paidInvoices.Sum();
+
+        return Ok(new AdminStatsDto
+        {
+            TotalUsers = totalUsers,
+            TotalOrganizations = totalOrgs,
+            TotalBarcodes = totalBarcodes,
+            ActiveSubscriptions = activeSubs,
+            PendingRequests = pendingReqs,
+            MonthlyRevenue = monthlyRevenue
+        });
+    }
+
+    [HttpGet("subscription-requests")]
+    public async Task<IActionResult> GetSubscriptionRequests()
+    {
+        if (!IsAdmin) return Forbid();
+
+        var requests = await _context.SubscriptionRequests
+            .IgnoreQueryFilters()
+            .Include(r => r.Organization)
+            .OrderByDescending(r => r.CreatedAt)
+            .Select(r => new SubscriptionRequestDto
+            {
+                Id = r.Id,
+                OrgId = r.OrgId,
+                OrgName = r.Organization != null ? r.Organization.Name : "Tổ chức",
+                Plan = r.Plan,
+                Cycle = r.Cycle,
+                ContactName = r.ContactName,
+                ContactPhone = r.ContactPhone,
+                Status = r.Status.ToString(),
+                Note = r.Note,
+                AdminNote = r.AdminNote,
+                CreatedAt = r.CreatedAt,
+                ProcessedAt = r.ProcessedAt
+            })
+            .ToListAsync();
+
+        return Ok(requests);
+    }
+
+    [HttpPost("subscription-requests/{id}/approve")]
+    public async Task<IActionResult> ApproveRequest(Guid id, [FromBody] ApproveRequestBody? body)
+    {
+        if (!IsAdmin) return Forbid();
+
+        var req = await _context.SubscriptionRequests
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (req == null) return NotFound(new { message = "Không tìm thấy yêu cầu" });
+
+        req.Status = RequestStatus.Approved;
+        req.AdminNote = body?.Note;
+        req.ProcessedAt = DateTime.UtcNow;
+
+        var cycle = body?.Cycle ?? req.Cycle;
+        var months = cycle == "year" ? 12 : (cycle == "2year" ? 24 : 1);
+        var termName = cycle == "year" ? "1 năm" : (cycle == "2year" ? "2 năm" : "1 tháng");
+
+        var plan = await _context.SubscriptionPlans
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(p => p.Key == req.Plan);
+
+        var amount = (plan?.PriceMonthly ?? 0) * months;
+        if (cycle == "year" && plan != null) amount = plan.PriceYearly;
+        if (cycle == "2year" && plan != null) amount = plan.PriceYearly * 2;
+
+        var existingSub = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(s => s.OrgId == req.OrgId);
+
+        if (existingSub != null)
+        {
+            existingSub.Plan = req.Plan;
+            existingSub.PlanName = plan?.Name ?? req.Plan.ToUpperInvariant();
+            existingSub.BillingCycle = cycle == "year" ? BillingCycle.Yearly : BillingCycle.Monthly;
+            existingSub.Term = cycle;
+            existingSub.TermName = termName;
+            existingSub.StartDate = DateTime.UtcNow;
+            existingSub.EndDate = DateTime.UtcNow.AddMonths(months);
+            existingSub.Status = SubscriptionStatus.Active;
+            existingSub.Amount = amount;
+        }
+        else
+        {
+            var newSub = new Subscription
+            {
+                Id = Guid.NewGuid(),
+                OrgId = req.OrgId,
+                Plan = req.Plan,
+                PlanName = plan?.Name ?? req.Plan.ToUpperInvariant(),
+                BillingCycle = cycle == "year" ? BillingCycle.Yearly : BillingCycle.Monthly,
+                Term = cycle,
+                TermName = termName,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddMonths(months),
+                Status = SubscriptionStatus.Active,
+                Amount = amount
+            };
+            await _context.Subscriptions.AddAsync(newSub);
+        }
+
+        // Create Invoice
+        var invoice = new Invoice
+        {
+            Id = Guid.NewGuid(),
+            OrgId = req.OrgId,
+            InvoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid():N}"[..18].ToUpperInvariant(),
+            Amount = amount,
+            Status = "Paid",
+            PaidAt = DateTime.UtcNow
+        };
+        await _context.Invoices.AddAsync(invoice);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Đã phê duyệt và kích hoạt gói cước thành công!" });
+    }
+
+    [HttpPost("subscription-requests/{id}/reject")]
+    public async Task<IActionResult> RejectRequest(Guid id, [FromBody] RejectRequestBody body)
+    {
+        if (!IsAdmin) return Forbid();
+
+        var req = await _context.SubscriptionRequests
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (req == null) return NotFound(new { message = "Không tìm thấy yêu cầu" });
+
+        req.Status = RequestStatus.Rejected;
+        req.AdminNote = body.Note;
+        req.ProcessedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Đã từ chối yêu cầu" });
+    }
+
+    [HttpGet("users")]
+    public async Task<IActionResult> GetUsers()
+    {
+        if (!IsAdmin) return Forbid();
+
+        var users = await _context.Users
+            .IgnoreQueryFilters()
+            .Include(u => u.Organization)
+            .OrderByDescending(u => u.CreatedAt)
+            .Select(u => new AdminUserDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Email = u.Email,
+                Phone = u.Phone,
+                Role = u.Role.ToString(),
+                OrgId = u.OrgId,
+                OrgName = u.Organization != null ? u.Organization.Name : "Tổ chức",
+                IsSystemAdmin = u.IsSystemAdmin,
+                CreatedAt = u.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(users);
+    }
+
+    [HttpPut("users/{id}/plan")]
+    public async Task<IActionResult> ChangeUserPlan(Guid id, [FromBody] AdminChangePlanRequest body)
+    {
+        if (!IsAdmin) return Forbid();
+
+        var user = await _context.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null) return NotFound(new { message = "Không tìm thấy người dùng" });
+
+        var sub = await _context.Subscriptions.IgnoreQueryFilters().FirstOrDefaultAsync(s => s.OrgId == user.OrgId);
+        var plan = await _context.SubscriptionPlans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Key == body.Plan);
+
+        var months = body.Cycle == "year" ? 12 : 1;
+        if (sub != null)
+        {
+            sub.Plan = body.Plan;
+            sub.PlanName = plan?.Name ?? body.Plan;
+            sub.StartDate = DateTime.UtcNow;
+            sub.EndDate = DateTime.UtcNow.AddMonths(months);
+            sub.Status = SubscriptionStatus.Active;
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Cập nhật gói cước thành công" });
+    }
+
+    [HttpGet("expiring")]
+    public async Task<IActionResult> GetExpiring()
+    {
+        if (!IsAdmin) return Forbid();
+
+        var threshold = DateTime.UtcNow.AddDays(7);
+        var expiring = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .Include(s => s.Organization)
+            .Where(s => s.Status == SubscriptionStatus.Active && s.Plan != "free" && s.EndDate <= threshold)
+            .Select(s => new
+            {
+                s.Id,
+                OrgName = s.Organization != null ? s.Organization.Name : "",
+                s.PlanName,
+                s.EndDate
+            })
+            .ToListAsync();
+
+        return Ok(expiring);
+    }
+
+    [HttpGet("reports")]
+    public IActionResult GetReports()
+    {
+        if (!IsAdmin) return Forbid();
+        return Ok(new { message = "Báo cáo doanh thu & tăng trưởng hệ thống sẵn sàng." });
+    }
+
+    [HttpGet("support")]
+    public IActionResult GetSupport()
+    {
+        if (!IsAdmin) return Forbid();
+        return Ok(new List<object>());
+    }
+}

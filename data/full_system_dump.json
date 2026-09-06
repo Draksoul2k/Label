@@ -1,0 +1,1039 @@
+{
+  "templates_library": {
+    "items": [
+      {
+        "id": "aa09198b-f624-4eac-b746-8cd3d9c64040",
+        "name": "Tem địa chỉ 70×36mm",
+        "widthMm": 70.0,
+        "heightMm": 36.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.8,\"y\":1.8,\"width\":66.4,\"height\":4.54,\"text\":\"KÍNH GỬI\",\"fontSize\":7.3,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.8,\"y\":6.98,\"width\":66.4,\"height\":7.78,\"text\":\"{{name}}\",\"fontSize\":12.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":1.8,\"y\":15.41,\"width\":66.4,\"height\":11.02,\"text\":\"{{description}}\",\"fontSize\":17.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"line\",\"x\":1.8,\"y\":27.72,\"width\":66.4,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-4\"},{\"type\":\"text\",\"x\":1.8,\"y\":29.02,\"width\":66.4,\"height\":5.18,\"text\":\"{{company}}\",\"fontSize\":8.3,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "address",
+        "description": "Khổ tem địa chỉ thông dụng, 24 tem một tờ A4.",
+        "tags": "địa chỉ, a4, gửi thư",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414002"
+      },
+      {
+        "id": "1034bee6-4258-4c70-b797-6c9f6daca2fe",
+        "name": "Tem tài sản 60×30mm",
+        "widthMm": 60.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"rect\",\"x\":0.75,\"y\":0.75,\"width\":58.5,\"height\":28.5,\"fill\":\"transparent\",\"stroke\":\"#111827\",\"strokeWidth\":0.9,\"borderRadius\":9.1,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":35.34,\"height\":4.86,\"text\":\"{{company}}\",\"fontSize\":7.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":1.5,\"y\":6.9,\"width\":35.34,\"height\":7.02,\"text\":\"{{name}}\",\"fontSize\":11.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":1.5,\"y\":14.46,\"width\":35.34,\"height\":4.86,\"text\":\"{{type}}\",\"fontSize\":7.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#4b5563\",\"id\":\"sys-4\"},{\"type\":\"qrcode\",\"x\":39.12,\"y\":3.12,\"width\":15.66,\"height\":15.66,\"field\":\"sku\",\"id\":\"sys-5\"},{\"type\":\"line\",\"x\":1.5,\"y\":20.94,\"width\":57,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-6\"},{\"type\":\"text\",\"x\":1.5,\"y\":22.02,\"width\":57,\"height\":6.48,\"text\":\"Mã tài sản: {{sku}}\",\"fontSize\":10.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-7\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "asset",
+        "description": "Tên tài sản, loại và QR tra cứu, có khung viền.",
+        "tags": "tài sản, qr, quản lý",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7413942"
+      },
+      {
+        "id": "519416cc-3550-491c-a123-6fae226a3509",
+        "name": "Tem mã vạch 30×20mm",
+        "widthMm": 30.0,
+        "heightMm": 20.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"barcode\",\"x\":1.2,\"y\":1.2,\"width\":27.6,\"height\":17.6,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-1\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "barcode",
+        "description": "Chỉ mã vạch, phủ kín tem — quét nhanh nhất.",
+        "tags": "mã vạch, code128, nhỏ",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7413693"
+      },
+      {
+        "id": "11a6152c-8be8-4cdc-adf6-8ef33bc6fe9d",
+        "name": "Tem mã vạch 50×25mm",
+        "widthMm": 50.0,
+        "heightMm": 25.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.25,\"y\":1.25,\"width\":47.5,\"height\":5.85,\"text\":\"{{name}}\",\"fontSize\":9.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"id\":\"sys-1\"},{\"type\":\"barcode\",\"x\":1.25,\"y\":8,\"width\":47.5,\"height\":15.75,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-2\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "barcode",
+        "description": "Tên hàng phía trên, mã vạch phía dưới.",
+        "tags": "mã vạch, tên hàng",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 3,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7413679"
+      },
+      {
+        "id": "dba55987-e542-4663-90a7-9e19c7c6ef40",
+        "name": "Tem chai nước 60×90mm",
+        "widthMm": 60.0,
+        "heightMm": 90.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":3,\"y\":3,\"width\":54,\"height\":11.76,\"text\":\"{{company}}\",\"fontSize\":18.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":3,\"y\":18.12,\"width\":54,\"height\":21.84,\"text\":\"{{name}}\",\"fontSize\":19.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":3,\"y\":41.64,\"width\":54,\"height\":11.76,\"text\":\"{{size}}\",\"fontSize\":18.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"line\",\"x\":16.5,\"y\":55.92,\"width\":27,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-4\"},{\"type\":\"qrcode\",\"x\":19.2,\"y\":60.12,\"width\":21.6,\"height\":21.6,\"field\":\"sku\",\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "beverage",
+        "description": "Nhãn thân chai dọc: thương hiệu, tên, dung tích và QR.",
+        "tags": "chai, nước, dọc",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414095"
+      },
+      {
+        "id": "5a00c4ae-de50-4394-847f-aedcd3e511a6",
+        "name": "Tem ly cà phê 60×40mm",
+        "widthMm": 60.0,
+        "heightMm": 40.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2,\"y\":2,\"width\":39.2,\"height\":10.08,\"text\":\"{{name}}\",\"fontSize\":14.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2,\"y\":12.8,\"width\":39.2,\"height\":6.48,\"text\":\"{{description}}\",\"fontSize\":10.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":2,\"y\":20.72,\"width\":39.2,\"height\":9.36,\"text\":\"{{price}}\",\"fontSize\":14.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-3\"},{\"type\":\"qrcode\",\"x\":43.44,\"y\":5.6,\"width\":14.56,\"height\":14.56,\"field\":\"sku\",\"id\":\"sys-4\"},{\"type\":\"text\",\"x\":2,\"y\":32.24,\"width\":56,\"height\":5.76,\"text\":\"{{company}}\",\"fontSize\":9.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "beverage",
+        "description": "Tên món, giá và QR menu — dán nắp ly.",
+        "tags": "cà phê, ly, menu",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 3,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414109"
+      },
+      {
+        "id": "583fb727-c990-4641-9069-35940f866a6c",
+        "name": "Tem sách 60×30mm",
+        "widthMm": 60.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":57,\"height\":7.02,\"text\":\"{{name}}\",\"fontSize\":11.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":9.06,\"width\":57,\"height\":4.32,\"text\":\"{{description}}\",\"fontSize\":6.9,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"fontStyle\":\"italic\",\"id\":\"sys-2\"},{\"type\":\"barcode\",\"x\":1.5,\"y\":14.46,\"width\":33.06,\"height\":14.04,\"field\":\"barcode\",\"format\":\"EAN13\",\"showText\":true,\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":36.84,\"y\":15.54,\"width\":21.66,\"height\":8.1,\"text\":\"{{price}}\",\"fontSize\":7.9,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"right\",\"id\":\"sys-4\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "book",
+        "description": "Tên sách, tác giả, mã EAN và giá bìa.",
+        "tags": "sách, ean, giá bìa",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.741455"
+      },
+      {
+        "id": "670e43e5-909d-493a-adcc-48e3bfb61ce9",
+        "name": "Tem mỹ phẩm 50×30mm",
+        "widthMm": 50.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":47,\"height\":3.78,\"text\":\"{{company}}\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":6.36,\"width\":47,\"height\":6.48,\"text\":\"{{name}}\",\"fontSize\":10.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":1.5,\"y\":13.38,\"width\":47,\"height\":3.78,\"text\":\"{{size}}\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"line\",\"x\":15.6,\"y\":18.24,\"width\":18.8,\"height\":0.6,\"stroke\":\"#e5e7eb\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-4\"},{\"type\":\"barcode\",\"x\":8.55,\"y\":19.86,\"width\":32.9,\"height\":8.64,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":false,\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "cosmetic",
+        "description": "Thương hiệu, tên sản phẩm, dung tích và mã vạch.",
+        "tags": "mỹ phẩm, dung tích",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414206"
+      },
+      {
+        "id": "d2413386-b941-4526-b6d9-e4d52ff7879f",
+        "name": "Tem điện tử 60×30mm",
+        "widthMm": 60.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":35.34,\"height\":5.4,\"text\":\"{{name}}\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":7.44,\"width\":35.34,\"height\":3.78,\"text\":\"Model: {{type}}\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":1.5,\"y\":11.76,\"width\":35.34,\"height\":3.78,\"text\":\"S/N: {{sku}}\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"qrcode\",\"x\":39.12,\"y\":1.5,\"width\":14.04,\"height\":14.04,\"field\":\"sku\",\"id\":\"sys-4\"},{\"type\":\"barcode\",\"x\":1.5,\"y\":17.16,\"width\":57,\"height\":7.56,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":false,\"id\":\"sys-5\"},{\"type\":\"text\",\"x\":1.5,\"y\":25.26,\"width\":57,\"height\":3.24,\"text\":\"{{company}}\",\"fontSize\":5.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-6\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "electronic",
+        "description": "Model, số serial, QR tra cứu và mã vạch.",
+        "tags": "điện tử, serial, model",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414311"
+      },
+      {
+        "id": "72306837-bfa2-4f02-8cf2-bf3db3d48a8a",
+        "name": "Tem bảo hành 60×40mm",
+        "widthMm": 60.0,
+        "heightMm": 40.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2,\"y\":2,\"width\":34.72,\"height\":7.2,\"text\":\"{{name}}\",\"fontSize\":11.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2,\"y\":9.92,\"width\":34.72,\"height\":5.04,\"text\":\"Model: {{type}}\",\"fontSize\":8.1,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":2,\"y\":15.68,\"width\":34.72,\"height\":5.04,\"text\":\"S/N: {{sku}}\",\"fontSize\":8.1,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"qrcode\",\"x\":38.96,\"y\":2,\"width\":18.72,\"height\":18.72,\"field\":\"sku\",\"id\":\"sys-4\"},{\"type\":\"barcode\",\"x\":2,\"y\":22.88,\"width\":56,\"height\":10.08,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":false,\"id\":\"sys-5\"},{\"type\":\"text\",\"x\":2,\"y\":33.68,\"width\":56,\"height\":4.32,\"text\":\"{{company}}\",\"fontSize\":6.9,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-6\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "electronic",
+        "description": "Tem bảo hành có QR tra cứu thời hạn.",
+        "tags": "bảo hành, qr, tra cứu",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 3,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414528"
+      },
+      {
+        "id": "66c854f1-40a7-43a3-a8b4-51ffc2271bb4",
+        "name": "Tem quà tặng 50×30mm",
+        "widthMm": 50.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"rect\",\"x\":0.9,\"y\":0.9,\"width\":48.2,\"height\":28.2,\"fill\":\"transparent\",\"stroke\":\"#9ca3af\",\"strokeWidth\":0.9,\"borderRadius\":11.3,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":4.2,\"width\":47,\"height\":4.32,\"text\":\"{{company}}\",\"fontSize\":6.9,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":1.5,\"y\":10.14,\"width\":47,\"height\":7.02,\"text\":\"{{name}}\",\"fontSize\":11.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"id\":\"sys-3\"},{\"type\":\"line\",\"x\":15.6,\"y\":19.32,\"width\":18.8,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-4\"},{\"type\":\"text\",\"x\":1.5,\"y\":20.94,\"width\":47,\"height\":5.4,\"text\":\"{{description}}\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#374151\",\"fontStyle\":\"italic\",\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "event",
+        "description": "Khung viền nhẹ, lời nhắn in nghiêng ở dưới.",
+        "tags": "quà tặng, lời nhắn",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414611"
+      },
+      {
+        "id": "bfbf99c1-bc78-45d1-ba94-32a94dad87d0",
+        "name": "Tem quần áo 40×60mm",
+        "widthMm": 40.0,
+        "heightMm": 60.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2,\"y\":2,\"width\":36,\"height\":7.28,\"text\":\"{{company}}\",\"fontSize\":11.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2,\"y\":10.96,\"width\":36,\"height\":10.08,\"text\":\"{{name}}\",\"fontSize\":13.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-2\"},{\"type\":\"line\",\"x\":2,\"y\":23.28,\"width\":36,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":2,\"y\":25.52,\"width\":16.2,\"height\":5.6,\"text\":\"SIZE\",\"fontSize\":5.9,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-4\"},{\"type\":\"text\",\"x\":2,\"y\":31.12,\"width\":16.2,\"height\":11.2,\"text\":\"{{size}}\",\"fontSize\":5.9,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-5\"},{\"type\":\"text\",\"x\":20,\"y\":26.64,\"width\":18,\"height\":14.56,\"text\":\"{{price}}\",\"fontSize\":6.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"right\",\"id\":\"sys-6\"},{\"type\":\"barcode\",\"x\":2,\"y\":44.56,\"width\":36,\"height\":13.44,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-7\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "fashion",
+        "description": "Thẻ treo: thương hiệu, tên, size lớn, giá và mã vạch.",
+        "tags": "quần áo, thẻ treo, size",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414239"
+      },
+      {
+        "id": "6e2d46b8-c2e5-4a46-aecc-c1a2ba831f83",
+        "name": "Tem thực phẩm 60×40mm",
+        "widthMm": 60.0,
+        "heightMm": 40.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2,\"y\":2,\"width\":56,\"height\":7.2,\"text\":\"{{name}}\",\"fontSize\":11.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2,\"y\":9.92,\"width\":30.8,\"height\":4.68,\"text\":\"KL tịnh: {{weight}}\",\"fontSize\":7.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":2,\"y\":14.96,\"width\":30.8,\"height\":4.68,\"text\":\"Quy cách: {{size}}\",\"fontSize\":7.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":34.48,\"y\":9.2,\"width\":23.52,\"height\":10.08,\"text\":\"{{price}}\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"right\",\"id\":\"sys-4\"},{\"type\":\"line\",\"x\":2,\"y\":20.72,\"width\":56,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-5\"},{\"type\":\"text\",\"x\":2,\"y\":21.8,\"width\":28,\"height\":4.68,\"text\":\"NSX: ...../...../.....\",\"fontSize\":7.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-6\"},{\"type\":\"text\",\"x\":30,\"y\":21.8,\"width\":28,\"height\":4.68,\"text\":\"HSD: ...../...../.....\",\"fontSize\":7.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-7\"},{\"type\":\"barcode\",\"x\":2,\"y\":27.92,\"width\":56,\"height\":10.08,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-8\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "food",
+        "description": "Khối lượng tịnh, quy cách, giá và ô ngày sản xuất / hạn dùng.",
+        "tags": "thực phẩm, hsd, khối lượng",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414028"
+      },
+      {
+        "id": "f5d10fc6-e8d2-411d-bccc-b4b19c044c79",
+        "name": "Tem thực phẩm 80×50mm",
+        "widthMm": 80.0,
+        "heightMm": 50.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2.5,\"y\":2.5,\"width\":75,\"height\":9,\"text\":\"{{name}}\",\"fontSize\":14.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2.5,\"y\":12.4,\"width\":41.25,\"height\":5.85,\"text\":\"KL tịnh: {{weight}}\",\"fontSize\":9.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":2.5,\"y\":18.7,\"width\":41.25,\"height\":5.85,\"text\":\"Quy cách: {{size}}\",\"fontSize\":9.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":46,\"y\":11.5,\"width\":31.5,\"height\":12.6,\"text\":\"{{price}}\",\"fontSize\":11.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"right\",\"id\":\"sys-4\"},{\"type\":\"line\",\"x\":2.5,\"y\":25.9,\"width\":75,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-5\"},{\"type\":\"text\",\"x\":2.5,\"y\":27.25,\"width\":37.5,\"height\":5.85,\"text\":\"NSX: ...../...../.....\",\"fontSize\":9.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-6\"},{\"type\":\"text\",\"x\":40,\"y\":27.25,\"width\":37.5,\"height\":5.85,\"text\":\"HSD: ...../...../.....\",\"fontSize\":9.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-7\"},{\"type\":\"barcode\",\"x\":2.5,\"y\":34.9,\"width\":75,\"height\":12.6,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-8\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "food",
+        "description": "Bản rộng cho hộp và khay lớn.",
+        "tags": "thực phẩm, hộp, hsd",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 2,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414034"
+      },
+      {
+        "id": "457d45d7-5662-40a1-b678-b5fb149db7b5",
+        "name": "Tem hạn sử dụng 50×30mm",
+        "widthMm": 50.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":47,\"height\":5.94,\"text\":\"{{name}}\",\"fontSize\":9.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"id\":\"sys-1\"},{\"type\":\"rect\",\"x\":1.5,\"y\":8.52,\"width\":47,\"height\":13.5,\"fill\":\"transparent\",\"stroke\":\"#111827\",\"strokeWidth\":0.9,\"borderRadius\":3.8,\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":2.4,\"y\":9.6,\"width\":45.2,\"height\":5.4,\"text\":\"NSX: ....../....../......\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":2.4,\"y\":15.54,\"width\":45.2,\"height\":5.4,\"text\":\"HSD: ....../....../......\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-4\"},{\"type\":\"text\",\"x\":1.5,\"y\":23.1,\"width\":47,\"height\":5.4,\"text\":\"{{company}}\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "food",
+        "description": "Ô NSX / HSD viền rõ để ghi tay hoặc in theo lô.",
+        "tags": "hsd, nsx, hạn dùng",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 3,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414041"
+      },
+      {
+        "id": "61a1732a-0492-4bc9-8169-b6793de6b1c2",
+        "name": "Tem nông sản 60×40mm",
+        "widthMm": 60.0,
+        "heightMm": 40.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2,\"y\":2,\"width\":56,\"height\":8.64,\"text\":\"{{name}}\",\"fontSize\":13.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2,\"y\":11.36,\"width\":30.8,\"height\":4.68,\"text\":\"Xuất xứ: {{type}}\",\"fontSize\":7.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":2,\"y\":16.4,\"width\":30.8,\"height\":4.68,\"text\":\"KL: {{weight}}\",\"fontSize\":7.5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":34.48,\"y\":10.64,\"width\":23.52,\"height\":10.8,\"text\":\"{{price}}\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"right\",\"id\":\"sys-4\"},{\"type\":\"barcode\",\"x\":2,\"y\":23.6,\"width\":56,\"height\":14.4,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "fresh",
+        "description": "Tên, xuất xứ, khối lượng và giá cho hàng tươi.",
+        "tags": "nông sản, xuất xứ, tươi",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414136"
+      },
+      {
+        "id": "98679a09-c2aa-4a4c-b0ea-6efbeecceec0",
+        "name": "Tem trang sức 68x12mm",
+        "widthMm": 68.0,
+        "heightMm": 12.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"id\":\"el_1\",\"type\":\"barcode\",\"x\":1.17,\"y\":4.54,\"width\":21.75,\"height\":7.42,\"rotation\":0,\"zIndex\":1,\"format\":\"CODE128\",\"field\":\"\",\"value\":\"MH: NV00123\",\"showText\":true,\"textAlign\":\"center\",\"textPosition\":\"bottom\",\"fontSize\":6,\"moduleWidth\":0.15,\"barHeight\":4.46},{\"id\":\"el_2\",\"type\":\"text\",\"x\":0.65,\"y\":0.42,\"width\":25.13,\"height\":1.89,\"rotation\":0,\"zIndex\":2,\"text\":\"Công ty tnhh công nghệ Vinh Nguyễn\",\"fontSize\":4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"fontStyle\":\"normal\",\"color\":\"#374151\",\"textAlign\":\"left\"},{\"id\":\"el_3\",\"type\":\"text\",\"x\":26.69,\"y\":0.35,\"width\":30.09,\"height\":2.74,\"rotation\":0,\"zIndex\":3,\"text\":\"Nhẫn nam mv00123\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"fontStyle\":\"normal\",\"color\":\"#374151\",\"textAlign\":\"left\"},{\"id\":\"el_4\",\"type\":\"text\",\"x\":26.46,\"y\":3.34,\"width\":24.17,\"height\":2.74,\"rotation\":0,\"zIndex\":4,\"text\":\"Vàng 24K\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"fontStyle\":\"italic\",\"color\":\"#374151\",\"textAlign\":\"left\"},{\"id\":\"el_5\",\"type\":\"text\",\"x\":26.54,\"y\":6.34,\"width\":24.17,\"height\":2.74,\"rotation\":0,\"zIndex\":5,\"text\":\"TLV: 3.5 chỉ\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"fontStyle\":\"italic\",\"color\":\"#374151\",\"textAlign\":\"left\",\"locked\":false},{\"id\":\"el_6\",\"type\":\"text\",\"x\":26.62,\"y\":9.11,\"width\":24.17,\"height\":2.74,\"rotation\":0,\"zIndex\":6,\"text\":\"Giá : 43.250.000đ\",\"fontSize\":6,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"fontStyle\":\"italic\",\"color\":\"#374151\",\"textAlign\":\"left\",\"locked\":false},{\"id\":\"el_7\",\"type\":\"text\",\"x\":0.58,\"y\":2.5,\"width\":25.44,\"height\":1.89,\"rotation\":0,\"zIndex\":7,\"text\":\"RR9 Hồng Lĩnh, P Hòa Hưng, HCM\",\"fontSize\":4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"fontStyle\":\"normal\",\"color\":\"#374151\",\"textAlign\":\"left\",\"locked\":false}]",
+        "printSettingsJson": "{\"type\":\"thermal\",\"dpi\":203,\"gap\":3,\"copies\":1,\"marginTop\":3,\"marginLeft\":3,\"cols\":1,\"cutLine\":false}",
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "jewelry",
+        "description": "Tem chuyên dụng cho tiệm vàng, tiệm trang sức mắt kính",
+        "tags": null,
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 0,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-05T07:31:49.1668696"
+      },
+      {
+        "id": "cf73c890-69f9-4d3b-92af-c2de1afa6eba",
+        "name": "Tem trang sức 60×10mm",
+        "widthMm": 60.0,
+        "heightMm": 10.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":0.6,\"y\":0.6,\"width\":18,\"height\":8.8,\"text\":\"{{sku}}\",\"fontSize\":5,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"center\",\"id\":\"sys-1\"},{\"type\":\"barcode\",\"x\":19.2,\"y\":0.6,\"width\":21.6,\"height\":8.8,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":false,\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":42,\"y\":0.6,\"width\":17.4,\"height\":8.8,\"text\":\"{{price}}\",\"fontSize\":5,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"id\":\"sys-3\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "jewelry",
+        "description": "Tem tạ hai đầu: mã bên trái, giá bên phải, mã vạch ở giữa.",
+        "tags": "trang sức, tem tạ, nhẫn",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414278"
+      },
+      {
+        "id": "1f26fb32-aade-4c23-a00a-c21d1946003d",
+        "name": "Tem bìa hồ sơ 100×40mm",
+        "widthMm": 100.0,
+        "heightMm": 40.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":2,\"y\":2,\"width\":96,\"height\":10.8,\"text\":\"{{name}}\",\"fontSize\":17.3,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":2,\"y\":14.24,\"width\":96,\"height\":6.48,\"text\":\"{{description}}\",\"fontSize\":10.4,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-2\"},{\"type\":\"line\",\"x\":2,\"y\":22.88,\"width\":96,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-3\"},{\"type\":\"barcode\",\"x\":2,\"y\":24.32,\"width\":96,\"height\":13.68,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-4\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "office",
+        "description": "Tiêu đề hồ sơ và mã lưu trữ kèm mã vạch.",
+        "tags": "hồ sơ, lưu trữ, bìa",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 2,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7413981"
+      },
+      {
+        "id": "a6ec4f15-a8e6-4cd1-a71b-7239b797414b",
+        "name": "Tem hộp thuốc 60×30mm",
+        "widthMm": 60.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":57,\"height\":4.86,\"text\":\"{{name}}\",\"fontSize\":7.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":6.9,\"width\":57,\"height\":3.24,\"text\":\"{{size}}\",\"fontSize\":5.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#374151\",\"id\":\"sys-2\"},{\"type\":\"line\",\"x\":1.5,\"y\":10.95,\"width\":57,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-3\"},{\"type\":\"text\",\"x\":1.5,\"y\":11.76,\"width\":28.5,\"height\":3.24,\"text\":\"Lô SX: ............\",\"fontSize\":5.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-4\"},{\"type\":\"text\",\"x\":30,\"y\":11.76,\"width\":28.5,\"height\":3.24,\"text\":\"HSD: ............\",\"fontSize\":5.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-5\"},{\"type\":\"text\",\"x\":1.5,\"y\":15.54,\"width\":57,\"height\":3.24,\"text\":\"{{company}}\",\"fontSize\":5.2,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"uppercase\":true,\"id\":\"sys-6\"},{\"type\":\"barcode\",\"x\":1.5,\"y\":19.86,\"width\":57,\"height\":8.64,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-7\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "pharma",
+        "description": "Tên thuốc, quy cách, ô số lô và hạn dùng.",
+        "tags": "thuốc, lô, hsd",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7414167"
+      },
+      {
+        "id": "52e14ca8-c8a9-46ff-9cb8-89edac4dfe4f",
+        "name": "Nhãn giá 40×30mm",
+        "widthMm": 40.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"id\":\"el_1\",\"type\":\"text\",\"x\":2.5,\"y\":12.5,\"width\":25.11,\"height\":6.97,\"rotation\":0,\"zIndex\":1,\"text\":\"Nhãn giá 40×30mm\\n\\n\",\"fontSize\":8,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"fontStyle\":\"normal\",\"color\":\"#000000\",\"textAlign\":\"left\"}]",
+        "printSettingsJson": "{\"type\":\"thermal\",\"dpi\":203,\"gap\":3,\"copies\":1,\"marginTop\":3,\"marginLeft\":3,\"cols\":1,\"cutLine\":false}",
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "price",
+        "description": "Tem giá bán lẻ tiêu chuẩn: tên hàng, giá và mã vạch.",
+        "tags": "giá, bán lẻ, mã vạch",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 1,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-08-04T17:25:23.2260533"
+      },
+      {
+        "id": "2637cad5-c942-4a97-bae1-a1f8ddc48c96",
+        "name": "Nhãn bán lẻ 50×30mm",
+        "widthMm": 50.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"id\":\"el_1\",\"type\":\"text\",\"x\":5.24,\"y\":3.8,\"width\":37.56,\"height\":8.67,\"rotation\":0,\"zIndex\":1,\"text\":\"Nhãn bán lẻ 50×30mm\\n\\n\",\"fontSize\":10,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"fontStyle\":\"normal\",\"color\":\"#000000\",\"textAlign\":\"left\"}]",
+        "printSettingsJson": "{\"type\":\"thermal\",\"dpi\":203,\"gap\":3,\"copies\":1,\"marginTop\":3,\"marginLeft\":3,\"cols\":1,\"cutLine\":false}",
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "price",
+        "description": "Giá nổi bật bên phải, mã vạch chạy hết chiều ngang.",
+        "tags": "giá, kệ, bán lẻ",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 2,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-08-04T17:25:23.2260594"
+      },
+      {
+        "id": "486a1cf6-b02f-4239-8eeb-a9de2b5a363e",
+        "name": "Tem giá kệ 70×38mm",
+        "widthMm": 70.0,
+        "heightMm": 38.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.9,\"y\":1.9,\"width\":38.4,\"height\":9.58,\"text\":\"{{name}}\",\"fontSize\":14.1,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.9,\"y\":12.16,\"width\":38.4,\"height\":6.16,\"text\":\"{{description}}\",\"fontSize\":9.8,\"fontFamily\":\"Arial\",\"fontWeight\":\"normal\",\"textAlign\":\"left\",\"color\":\"#6b7280\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":41.62,\"y\":1.9,\"width\":26.48,\"height\":15.73,\"text\":\"{{price}}\",\"fontSize\":9.7,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"right\",\"id\":\"sys-3\"},{\"type\":\"line\",\"x\":1.9,\"y\":19.68,\"width\":66.2,\"height\":0.6,\"stroke\":\"#d1d5db\",\"strokeWidth\":1.1,\"lineStyle\":\"solid\",\"id\":\"sys-4\"},{\"type\":\"barcode\",\"x\":1.9,\"y\":21.05,\"width\":66.2,\"height\":15.05,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":true,\"id\":\"sys-5\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "price",
+        "description": "Khổ nẹp kệ siêu thị, giá đọc được từ xa.",
+        "tags": "kệ, siêu thị, giá",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 4,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7413731"
+      },
+      {
+        "id": "74015a16-4868-4ca6-a943-3686d98d5aaa",
+        "name": "Tem khuyến mãi 50×30mm",
+        "widthMm": 50.0,
+        "heightMm": 30.0,
+        "background": "#ffffff",
+        "elementsJson": "[{\"type\":\"text\",\"x\":1.5,\"y\":1.5,\"width\":47,\"height\":5.4,\"text\":\"giá khuyến mãi\",\"fontSize\":7.052,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"color\":\"#dc2626\",\"uppercase\":true,\"invert\":true,\"id\":\"sys-1\"},{\"type\":\"text\",\"x\":1.5,\"y\":7.98,\"width\":47,\"height\":5.4,\"text\":\"{{name}}\",\"fontSize\":8.6,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"left\",\"id\":\"sys-2\"},{\"type\":\"text\",\"x\":1.5,\"y\":13.92,\"width\":47,\"height\":8.1,\"text\":\"{{price}}\",\"fontSize\":13,\"fontFamily\":\"Arial\",\"fontWeight\":\"bold\",\"textAlign\":\"center\",\"color\":\"#dc2626\",\"id\":\"sys-3\"},{\"type\":\"barcode\",\"x\":1.5,\"y\":22.56,\"width\":47,\"height\":5.94,\"field\":\"barcode\",\"format\":\"CODE128\",\"showText\":false,\"id\":\"sys-4\"}]",
+        "printSettingsJson": null,
+        "shape": "rect",
+        "dataSourceJson": null,
+        "isSystem": true,
+        "category": "price",
+        "description": "Dải đỏ khuyến mãi phía trên, giá in đậm ở giữa.",
+        "tags": "khuyến mãi, giảm giá, đỏ",
+        "isPopular": true,
+        "isActive": true,
+        "sortOrder": 6,
+        "organizationId": null,
+        "thumbnailUrl": null,
+        "createdByUserId": null,
+        "createdByUserName": null,
+        "createdAt": "2026-09-01T16:27:23.7413719"
+      }
+    ],
+    "total": 123,
+    "page": 1,
+    "pageSize": 24,
+    "totalPages": 6
+  },
+  "plans": [
+    {
+      "key": "free",
+      "name": "Free",
+      "description": "Dùng thử, phù hợp cá nhân mới bắt đầu.",
+      "popular": false,
+      "priceMonthly": 0,
+      "priceYearly": 0,
+      "barcodeLimit": 50,
+      "productLimit": 30,
+      "csvRows": 0,
+      "maxUsers": 1,
+      "types": [
+        "Code128",
+        "QrCode"
+      ],
+      "features": [
+        "50 mã vạch / tháng",
+        "30 sản phẩm"
+      ],
+      "featureFlags": {
+        "bulkUpload": false,
+        "backgroundJob": false,
+        "pdfExport": false,
+        "templates": false,
+        "logoBranding": false,
+        "zplExport": false,
+        "directPrint": true,
+        "watermark": true,
+        "subAccounts": false,
+        "categories": false,
+        "history": true,
+        "usageHistory": false,
+        "api": false,
+        "activityLog": false,
+        "designer": false,
+        "systemTemplates": false,
+        "products": false
+      }
+    },
+    {
+      "key": "pro",
+      "name": "Pro",
+      "description": "Gói thông dụng nhất — đầy đủ tính năng cho cửa hàng & doanh nghiệp.",
+      "popular": true,
+      "priceMonthly": 59000,
+      "priceYearly": 699000,
+      "barcodeLimit": 5000,
+      "productLimit": 5000,
+      "csvRows": 1000,
+      "maxUsers": 10,
+      "types": [
+        "Code128",
+        "QrCode",
+        "Ean13",
+        "Upc",
+        "Code39"
+      ],
+      "features": [
+        "5,000 mã vạch / tháng",
+        "5,000 sản phẩm",
+        "Upload CSV tới 1,000 dòng",
+        "Xuất PDF khổ nhãn chuẩn",
+        "Xuất file ZPL",
+        "Tài khoản phụ & phân quyền",
+        "Không watermark trên ảnh"
+      ],
+      "featureFlags": {
+        "bulkUpload": true,
+        "backgroundJob": true,
+        "pdfExport": true,
+        "templates": true,
+        "logoBranding": true,
+        "zplExport": true,
+        "directPrint": true,
+        "watermark": false,
+        "subAccounts": true,
+        "categories": true,
+        "history": true,
+        "usageHistory": true,
+        "api": false,
+        "activityLog": false,
+        "designer": true,
+        "systemTemplates": false,
+        "products": true
+      }
+    },
+    {
+      "key": "business",
+      "name": "Business",
+      "description": "Gói cao cấp nhất — gần như không giới hạn, API & đa tài khoản.",
+      "popular": false,
+      "priceMonthly": 166000,
+      "priceYearly": 1990000,
+      "barcodeLimit": 100000,
+      "productLimit": 100000,
+      "csvRows": 100000,
+      "maxUsers": -1,
+      "types": [
+        "Code128",
+        "QrCode",
+        "Ean13",
+        "Upc",
+        "Code39"
+      ],
+      "features": [
+        "100,000 mã vạch / tháng",
+        "100,000 sản phẩm",
+        "Upload CSV tới 100,000 dòng",
+        "Xuất PDF khổ nhãn chuẩn",
+        "Xuất file ZPL",
+        "Tài khoản phụ & phân quyền",
+        "API access",
+        "Không watermark trên ảnh"
+      ],
+      "featureFlags": {
+        "bulkUpload": true,
+        "backgroundJob": true,
+        "pdfExport": true,
+        "templates": true,
+        "logoBranding": true,
+        "zplExport": true,
+        "directPrint": true,
+        "watermark": false,
+        "subAccounts": true,
+        "categories": true,
+        "history": true,
+        "usageHistory": true,
+        "api": true,
+        "activityLog": true,
+        "designer": true,
+        "systemTemplates": true,
+        "products": true
+      }
+    }
+  ],
+  "fonts": {
+    "groups": [
+      {
+        "label": "Phổ biến",
+        "fonts": [
+          {
+            "label": "Arial",
+            "value": "Arial",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Times New Roman",
+            "value": "Times New Roman",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Courier New",
+            "value": "Courier New",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Verdana",
+            "value": "Verdana",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Georgia",
+            "value": "Georgia",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Tahoma",
+            "value": "Tahoma",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Microsoft Sans Serif",
+            "value": "'Microsoft Sans Serif', sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Calibri",
+            "value": "Calibri",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Segoe UI",
+            "value": "Segoe UI",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Trebuchet MS",
+            "value": "Trebuchet MS",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Impact",
+            "value": "Impact",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Comic Sans MS",
+            "value": "Comic Sans MS",
+            "supportsVietnamese": true
+          }
+        ]
+      },
+      {
+        "label": "中文 · Tiếng Trung",
+        "fonts": [
+          {
+            "label": "微软雅黑 · Microsoft YaHei",
+            "value": "'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "宋体 · SimSun",
+            "value": "SimSun, 'Songti SC', 'Noto Serif SC', serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "黑体 · SimHei",
+            "value": "SimHei, 'Heiti SC', 'Noto Sans SC', sans-serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "楷体 · KaiTi",
+            "value": "KaiTi, 'Kaiti SC', STKaiti, serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "仿宋 · FangSong",
+            "value": "FangSong, STFangsong, serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "等线 · DengXian",
+            "value": "DengXian, 'Microsoft YaHei', sans-serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "新宋体 · NSimSun",
+            "value": "NSimSun, SimSun, serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "微软正黑 · MS JhengHei (繁)",
+            "value": "'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', sans-serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "新細明體 · PMingLiU (繁)",
+            "value": "PMingLiU, 'Songti TC', 'Noto Serif TC', serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "标楷体 · DFKai-SB (繁)",
+            "value": "'DFKai-SB', BiauKai, 'Kaiti TC', serif",
+            "supportsVietnamese": false
+          }
+        ]
+      },
+      {
+        "label": "Chân phương · dễ đọc",
+        "fonts": [
+          {
+            "label": "Helvetica",
+            "value": "Helvetica, Arial, sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Arial Narrow (hẹp)",
+            "value": "'Arial Narrow', Arial, sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Arial Black (rất đậm)",
+            "value": "'Arial Black', Arial, sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Franklin Gothic",
+            "value": "'Franklin Gothic Medium', Arial, sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Century Gothic",
+            "value": "'Century Gothic', 'Apple Gothic', sans-serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Candara",
+            "value": "Candara, Calibri, sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Corbel",
+            "value": "Corbel, Calibri, sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Gill Sans",
+            "value": "'Gill Sans', 'Gill Sans MT', Calibri, sans-serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Lucida Sans",
+            "value": "'Lucida Sans', 'Lucida Grande', sans-serif",
+            "supportsVietnamese": false
+          }
+        ]
+      },
+      {
+        "label": "Có chân · trang trọng",
+        "fonts": [
+          {
+            "label": "Cambria",
+            "value": "Cambria, Georgia, serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Constantia",
+            "value": "Constantia, Georgia, serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Palatino",
+            "value": "'Palatino Linotype', Palatino, serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Book Antiqua",
+            "value": "'Book Antiqua', Palatino, serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Garamond",
+            "value": "Garamond, 'Times New Roman', serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Bookman Old Style",
+            "value": "'Bookman Old Style', Georgia, serif",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Rockwell",
+            "value": "Rockwell, Georgia, serif",
+            "supportsVietnamese": false
+          }
+        ]
+      },
+      {
+        "label": "Đều nét · cho mã số",
+        "fonts": [
+          {
+            "label": "Consolas",
+            "value": "Consolas, 'Courier New', monospace",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Lucida Console",
+            "value": "'Lucida Console', Monaco, monospace",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Cascadia Mono",
+            "value": "'Cascadia Mono', Consolas, monospace",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Monospace (hệ thống)",
+            "value": "monospace",
+            "supportsVietnamese": true
+          }
+        ]
+      },
+      {
+        "label": "Trang trí · nhấn mạnh",
+        "fonts": [
+          {
+            "label": "Segoe UI Semibold",
+            "value": "'Segoe UI Semibold', 'Segoe UI', sans-serif",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Segoe Print",
+            "value": "'Segoe Print', 'Bradley Hand', cursive",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Segoe Script",
+            "value": "'Segoe Script', 'Brush Script MT', cursive",
+            "supportsVietnamese": true
+          },
+          {
+            "label": "Brush Script",
+            "value": "'Brush Script MT', cursive",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Copperplate",
+            "value": "Copperplate, 'Copperplate Gothic Light', fantasy",
+            "supportsVietnamese": false
+          },
+          {
+            "label": "Papyrus",
+            "value": "Papyrus, fantasy",
+            "supportsVietnamese": false
+          }
+        ]
+      },
+      {
+        "label": "Tùy chỉnh",
+        "fonts": [
+          {
+            "label": "Caacupé One",
+            "value": "'Caacupé One', sans-serif",
+            "supportsVietnamese": false
+          }
+        ]
+      },
+      {
+        "label": "Nhận diện từ ảnh",
+        "fonts": [
+          {
+            "label": "MV Boli",
+            "value": "'MV Boli', sans-serif",
+            "supportsVietnamese": false
+          }
+        ]
+      }
+    ],
+    "faces": [
+      {
+        "family": "Caacupé One",
+        "kind": "google",
+        "url": null,
+        "format": null,
+        "googleFamily": "Caacupé One",
+        "weights": "400;700"
+      }
+    ]
+  },
+  "terms": [
+    {
+      "key": "month",
+      "name": "1 tháng",
+      "months": 1,
+      "prices": {
+        "pro": 59000,
+        "business": 166000
+      }
+    },
+    {
+      "key": "year",
+      "name": "1 năm",
+      "months": 12,
+      "prices": {
+        "pro": 699000,
+        "business": 1990000
+      }
+    },
+    {
+      "key": "2year",
+      "name": "2 năm",
+      "months": 24,
+      "prices": {
+        "pro": 1398000,
+        "business": 3980000
+      }
+    }
+  ],
+  "contact": {
+    "zaloOaName": "VNLabel",
+    "zaloOaUrl": "https://zalo.me/2830743105912995038",
+    "zaloOaId": "",
+    "hotline": "0901555547",
+    "email": "hotro@vnlabel.vn",
+    "workingHours": "8:00 – 17:00, Thứ 2 – Thứ 7"
+  }
+}
