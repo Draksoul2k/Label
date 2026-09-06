@@ -11,10 +11,11 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 COPY frontend/ ./frontend/
+COPY frontend/ ./wwwroot/
 COPY data/ ./data/
 
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV PORT=80
-EXPOSE 80
+ENV PORT=10000
+EXPOSE 10000
 
 ENTRYPOINT ["dotnet", "VNLabel.Api.dll"]

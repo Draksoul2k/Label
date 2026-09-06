@@ -10,11 +10,22 @@ using VNLabel.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Support dynamic port for Render / Railway / Docker
-var port = Environment.GetEnvironmentVariable("PORT");
-if (!string.IsNullOrEmpty(port))
+// Support dynamic port for Render ($PORT) and local fallback (5043)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5043";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// Configure WebRoot path
+var frontendDir = Path.Combine(builder.Environment.ContentRootPath, "frontend");
+if (!Directory.Exists(frontendDir))
+    frontendDir = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+if (!Directory.Exists(frontendDir))
+    frontendDir = Path.Combine(Directory.GetCurrentDirectory(), "frontend");
+if (!Directory.Exists(frontendDir))
+    frontendDir = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "frontend");
+
+if (Directory.Exists(frontendDir))
 {
-    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+    builder.WebHost.UseWebRoot(Path.GetFullPath(frontendDir));
 }
 
 // 1. Add Services
