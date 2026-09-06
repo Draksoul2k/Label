@@ -442,3 +442,35 @@ body {
   font-weight: 600 !important;
   margin-top: 14px !important;
 }
+
+/* Resizer Splitter Bars & Panel Width Enhancement */
+.dsgn-panel-resizer {
+  width: 11px !important;
+  min-width: 11px !important;
+  cursor: col-resize !important;
+  background: #f8fafc !important;
+  border-left: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+.dsgn-panel-resizer:hover, .dsgn-panel-resizer:active {
+  background: #e0f2fe !important;
+  border-color: #38bdf8 !important;
+}
+.dsgn-panel-resizer-grip {
+  width: 4px !important;
+  height: 50px !important;
+  border-radius: 4px !important;
+  background: #94a3b8 !important;
+  transition: all 0.2s ease !important;
+}
+.dsgn-panel-resizer:hover .dsgn-panel-resizer-grip,
+.dsgn-panel-resizer:active .dsgn-panel-resizer-grip {
+  background: #116cbf !important;
+  height: 80px !important;
+  box-shadow: 0 0 8px rgba(17, 108, 191, 0.5) !important;
+}
