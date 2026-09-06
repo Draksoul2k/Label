@@ -14,19 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5043";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// Configure WebRoot path
-var frontendDir = Path.Combine(builder.Environment.ContentRootPath, "frontend");
-if (!Directory.Exists(frontendDir))
-    frontendDir = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-if (!Directory.Exists(frontendDir))
-    frontendDir = Path.Combine(Directory.GetCurrentDirectory(), "frontend");
-if (!Directory.Exists(frontendDir))
-    frontendDir = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "frontend");
-
-if (Directory.Exists(frontendDir))
-{
-    builder.WebHost.UseWebRoot(Path.GetFullPath(frontendDir));
-}
 
 // 1. Add Services
 builder.Services.AddControllers()
@@ -156,13 +143,13 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger";
 });
 
-app.UseStaticFiles();
-
-var frontendPath = Path.Combine(app.Environment.ContentRootPath, "..", "..", "frontend");
-if (!Directory.Exists(frontendPath))
-    frontendPath = Path.Combine(Directory.GetCurrentDirectory(), "frontend");
-if (!Directory.Exists(frontendPath))
+var frontendPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
+if (!Directory.Exists(frontendPath) || !File.Exists(Path.Combine(frontendPath, "index.html")))
     frontendPath = Path.Combine(app.Environment.ContentRootPath, "frontend");
+if (!Directory.Exists(frontendPath) || !File.Exists(Path.Combine(frontendPath, "index.html")))
+    frontendPath = Path.Combine(Directory.GetCurrentDirectory(), "frontend");
+if (!Directory.Exists(frontendPath) || !File.Exists(Path.Combine(frontendPath, "index.html")))
+    frontendPath = Path.Combine(app.Environment.ContentRootPath, "..", "..", "frontend");
 
 if (Directory.Exists(frontendPath))
 {
