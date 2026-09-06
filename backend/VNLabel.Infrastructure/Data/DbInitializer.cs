@@ -207,8 +207,8 @@ public static class DbInitializer
             var adminOrg = new Organization
             {
                 Id = Guid.NewGuid(),
-                Name = "VNLabel System Admin",
-                Slug = "vnlabel-admin",
+                Name = "Hacode System Admin",
+                Slug = "hacode-admin",
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -216,7 +216,7 @@ public static class DbInitializer
             {
                 Id = Guid.NewGuid(),
                 OrgId = adminOrg.Id,
-                Email = "admin@vnlabel.vn",
+                Email = "admin@hacode.vn",
                 Phone = "0901555547",
                 Name = "Quản Trị Viên Hệ Thống",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123456"),
@@ -226,9 +226,64 @@ public static class DbInitializer
                 CreatedAt = DateTime.UtcNow
             };
 
+            var adminSub = new Subscription
+            {
+                Id = Guid.NewGuid(),
+                OrgId = adminOrg.Id,
+                Plan = "business",
+                PlanName = "Business Pro",
+                BillingCycle = BillingCycle.Yearly,
+                Term = "lifetime",
+                TermName = "Trọn đời",
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddYears(100),
+                Status = SubscriptionStatus.Active,
+                AutoRenew = true,
+                Amount = 1990000
+            };
+
             await context.Organizations.AddRangeAsync(org, adminOrg);
             await context.Users.AddRangeAsync(user, adminUser);
-            await context.Subscriptions.AddAsync(sub);
+            await context.Subscriptions.AddRangeAsync(sub, adminSub);
+            await context.SaveChangesAsync();
+        }
+
+        // 5. Ensure admin@hacode.vn is always configured and active
+        var existingAdmin = await context.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => u.Email == "admin@hacode.vn" || u.Email == "admin@vnlabel.vn");
+
+        if (existingAdmin != null)
+        {
+            existingAdmin.Email = "admin@hacode.vn";
+            existingAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123456");
+            existingAdmin.IsSystemAdmin = true;
+            existingAdmin.Role = UserRole.Owner;
+            existingAdmin.IsEmailVerified = true;
+
+            var existingAdminSub = await context.Subscriptions
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(s => s.OrgId == existingAdmin.OrgId);
+
+            if (existingAdminSub == null)
+            {
+                await context.Subscriptions.AddAsync(new Subscription
+                {
+                    Id = Guid.NewGuid(),
+                    OrgId = existingAdmin.OrgId,
+                    Plan = "business",
+                    PlanName = "Business Pro",
+                    BillingCycle = BillingCycle.Yearly,
+                    Term = "lifetime",
+                    TermName = "Trọn đời",
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddYears(100),
+                    Status = SubscriptionStatus.Active,
+                    AutoRenew = true,
+                    Amount = 1990000
+                });
+            }
+
             await context.SaveChangesAsync();
         }
     }
