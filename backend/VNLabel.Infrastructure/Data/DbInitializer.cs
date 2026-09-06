@@ -217,7 +217,7 @@ public static class DbInitializer
                 Id = Guid.NewGuid(),
                 OrgId = adminOrg.Id,
                 Email = "admin@hacode.vn",
-                Phone = "0901555547",
+                Phone = "0942858285",
                 Name = "Quản Trị Viên Hệ Thống",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123456"),
                 Role = UserRole.Owner,
@@ -256,6 +256,7 @@ public static class DbInitializer
         if (existingAdmin != null)
         {
             existingAdmin.Email = "admin@hacode.vn";
+            existingAdmin.Phone = "0942858285";
             existingAdmin.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123456");
             existingAdmin.IsSystemAdmin = true;
             existingAdmin.Role = UserRole.Owner;

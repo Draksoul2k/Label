@@ -46,11 +46,11 @@ public class SubscriptionTermDto
 
 public class SupportContactDto
 {
-    public string ZaloOaName { get; set; } = "VNLabel";
-    public string ZaloOaUrl { get; set; } = "https://zalo.me/2830743105912995038";
+    public string ZaloOaName { get; set; } = "HACODE";
+    public string ZaloOaUrl { get; set; } = "https://zalo.me/0942858285";
     public string ZaloOaId { get; set; } = "";
-    public string Hotline { get; set; } = "0901555547";
-    public string Email { get; set; } = "hotro@vnlabel.vn";
+    public string Hotline { get; set; } = "0942858285";
+    public string Email { get; set; } = "info@hacode.vn";
     public string WorkingHours { get; set; } = "8:00 – 17:00, Thứ 2 – Thứ 7";
 }
 

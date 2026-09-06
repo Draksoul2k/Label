@@ -1,7 +1,7 @@
 :root {
-  --primary: #ff9900;
-  --primary-dark: #e68900;
-  --primary-light: #ffb84d;
+  --primary: #116cbf;
+  --primary-dark: #0d5294;
+  --primary-light: #1690c0;
   --accent: #2f2f4c;
   --accent-light: #3d3d63;
   --success: #22c55e;
@@ -286,4 +286,148 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 14px;
+}
+
+
+/* === HACODE BRANDING OVERRIDES === */
+.sidebar-logo {
+  height: var(--topbar-height) !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  box-sizing: border-box !important;
+}
+.sidebar-logo .logo-box {
+  width: 165px !important;
+  height: 42px !important;
+  background: url('/assets/logo.png') left center / contain no-repeat !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  cursor: pointer !important;
+}
+.sidebar-logo .logo-text {
+  display: none !important;
+}
+.sidebar-logo .sidebar-collapse-btn {
+  border: 1px solid var(--border) !important;
+  background: #f8fafc !important;
+  color: var(--text-muted) !important;
+  margin-left: auto !important;
+}
+.sidebar-logo .sidebar-collapse-btn:hover {
+  background: #f1f5f9 !important;
+  color: var(--primary) !important;
+  border-color: #cbd5e1 !important;
+}
+.app-shell.sidebar-collapsed .sidebar-logo {
+  height: auto !important;
+  padding: 12px 10px !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+.app-shell.sidebar-collapsed .sidebar-logo .logo-box {
+  width: 38px !important;
+  height: 38px !important;
+  background: url('/assets/icon.png') center / contain no-repeat !important;
+  margin: 0 auto !important;
+}
+.app-shell.sidebar-collapsed .sidebar-logo .sidebar-collapse-btn {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+.auth-logo .logo-icon {
+  width: 180px !important;
+  height: 52px !important;
+  background: #ffffff url('/assets/logo.png') center / contain no-repeat !important;
+  background-origin: content-box !important;
+  background-clip: padding-box !important;
+  padding: 6px 12px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+/* Landing page header logo HACODE */
+.nav-public .logo {
+  text-decoration: none !important;
+}
+.nav-public .logo .logo-mark {
+  width: 160px !important;
+  height: 44px !important;
+  background: url('/assets/logo.png') left center / contain no-repeat !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+.nav-public .logo .vnlabel-logo {
+  display: none !important;
+}
+
+/* Landing page footer logo HACODE */
+.site-footer .footer-inner .logo .logo-mark {
+  width: 160px !important;
+  height: 44px !important;
+  background: url('/assets/logo_ft.png') left center / contain no-repeat !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+.site-footer .footer-inner .logo .vnlabel-logo {
+  display: none !important;
+}
+
+
+/* === HACODE OCEANIC BLUE THEME POLISH === */
+::selection {
+  background: rgba(17, 108, 191, 0.25) !important;
+  color: #0d5294 !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #116cbf 0%, #1690c0 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(17, 108, 191, 0.25) !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0d5294 0%, #116cbf 100%) !important;
+  box-shadow: 0 5px 14px rgba(17, 108, 191, 0.35) !important;
+}
+
+.btn-outline-primary {
+  border-color: #116cbf !important;
+  color: #116cbf !important;
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+  background: #116cbf !important;
+  color: #ffffff !important;
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(17, 108, 191, 0.22), rgba(17, 108, 191, 0.04)) !important;
+  border-left: 3px solid #116cbf !important;
+  color: #ffffff !important;
+}
+
+.nav-item.active .nav-icon {
+  background: linear-gradient(135deg, #116cbf 0%, #1690c0 100%) !important;
+  box-shadow: 0 3px 9px rgba(17, 108, 191, 0.45) !important;
+}
+
+.form-control:focus, .input:focus {
+  border-color: #116cbf !important;
+  box-shadow: 0 0 0 3px rgba(17, 108, 191, 0.18) !important;
 }
