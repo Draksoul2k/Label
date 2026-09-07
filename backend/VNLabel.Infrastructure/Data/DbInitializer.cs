@@ -347,5 +347,56 @@ public static class DbInitializer
 
             await context.SaveChangesAsync();
         }
+
+        // 7. Ensure kythuat@hacode.vn is always configured and active
+        var existingKyThuat = await context.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == "kythuat@hacode.vn");
+
+        if (existingKyThuat == null)
+        {
+            var ktOrg = new Organization
+            {
+                Id = Guid.NewGuid(),
+                Name = "Kỹ Thuật HACODE",
+                Slug = "ky-thuat-hacode-" + Guid.NewGuid().ToString()[..6],
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var newKtUser = new User
+            {
+                Id = Guid.NewGuid(),
+                OrgId = ktOrg.Id,
+                Email = "kythuat@hacode.vn",
+                Phone = "0942858285",
+                Name = "Kỹ Thuật Viên HACODE",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("12345678"),
+                Role = UserRole.Owner,
+                IsSystemAdmin = false,
+                IsEmailVerified = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var ktSub = new Subscription
+            {
+                Id = Guid.NewGuid(),
+                OrgId = ktOrg.Id,
+                Plan = "pro",
+                PlanName = "Pro",
+                BillingCycle = BillingCycle.Yearly,
+                Term = "trial",
+                TermName = "Gói Thử Nghiệm Kỹ Thuật (Pro)",
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddYears(2),
+                Status = SubscriptionStatus.Active,
+                AutoRenew = true,
+                Amount = 0
+            };
+
+            await context.Organizations.AddAsync(ktOrg);
+            await context.Users.AddAsync(newKtUser);
+            await context.Subscriptions.AddAsync(ktSub);
+            await context.SaveChangesAsync();
+        }
     }
 }
