@@ -1,5 +1,7 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using VNLabel.Core.Entities;
 using VNLabel.Core.Enums;
 
@@ -9,7 +11,22 @@ public static class DbInitializer
 {
     public static async Task SeedAsync(AppDbContext context, string dataDirPath)
     {
-        await context.Database.EnsureCreatedAsync();
+        try
+        {
+            var creator = context.Database.GetService<IRelationalDatabaseCreator>();
+            await creator.CreateTablesAsync();
+        }
+        catch
+        {
+            try
+            {
+                await context.Database.EnsureCreatedAsync();
+            }
+            catch
+            {
+                // Tables already created
+            }
+        }
 
         // 1. Seed Subscription Plans
         if (!await context.SubscriptionPlans.AnyAsync())
