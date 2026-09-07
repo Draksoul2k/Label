@@ -34,6 +34,7 @@ public class CurrentSubscriptionDto
     public string? PreviousPlan { get; set; }
     public string? PreviousPlanName { get; set; }
     public DateTime? PreviousEndDate { get; set; }
+    public string? TrialNote { get; set; } = "Liên hệ HACODE (Hotline/Zalo: 0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!";
 }
 
 public class SubscriptionTermDto
