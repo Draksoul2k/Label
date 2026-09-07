@@ -74,11 +74,11 @@ public class PrintController : ControllerBase
         var isWatermark = await CheckWatermarkRequired(orgId.Value);
         var compiledLabels = await BuildCompiledLabels(orgId.Value, template, request.Items);
 
-        if (await IsFreePlan(orgId.Value) && compiledLabels.Count > 20)
+        if (!await CheckMonthlyPrintLimit(orgId.Value))
         {
             return BadRequest(new { 
-                message = "Tài khoản Free chỉ được in tối đa 20 tem mỗi lần.", 
-                detail = "Gói Miễn phí chỉ được in tối đa 20 tem mỗi lượt in. Vui lòng nâng cấp lên gói Pro hoặc Business để in không giới hạn!" 
+                message = "Bạn đã dùng hết 20 lượt in của gói Free trong tháng này.", 
+                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!" 
             });
         }
 
@@ -87,6 +87,7 @@ public class PrintController : ControllerBase
         var zpl = _printService.GenerateZpl(template, compiledLabels, settings, request.Dpi, isWatermark);
         var bytes = Encoding.UTF8.GetBytes(zpl);
 
+        await RecordPrintActivity(orgId.Value, template.Name, compiledLabels.Count);
         return File(bytes, "text/plain", $"labels_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zpl");
     }
 
@@ -105,17 +106,18 @@ public class PrintController : ControllerBase
         var isWatermark = await CheckWatermarkRequired(orgId.Value);
         var compiledLabels = await BuildCompiledLabels(orgId.Value, template, request.Items);
 
-        if (await IsFreePlan(orgId.Value) && compiledLabels.Count > 20)
+        if (!await CheckMonthlyPrintLimit(orgId.Value))
         {
             return BadRequest(new { 
-                message = "Tài khoản Free chỉ được in tối đa 20 tem mỗi lần.", 
-                detail = "Gói Miễn phí chỉ được in tối đa 20 tem mỗi lượt in. Vui lòng nâng cấp lên gói Pro hoặc Business để in không giới hạn!" 
+                message = "Bạn đã dùng hết 20 lượt in của gói Free trong tháng này.", 
+                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!" 
             });
         }
 
         var settings = request.PrinterSettings ?? ParsePrinterSettings(template.PrintSettingsJson);
 
         var html = _printService.GenerateHtmlPrint(template, compiledLabels, settings, isWatermark);
+        await RecordPrintActivity(orgId.Value, template.Name, compiledLabels.Count);
         return Content(html, "text/html", Encoding.UTF8);
     }
 
@@ -134,17 +136,18 @@ public class PrintController : ControllerBase
         var isWatermark = await CheckWatermarkRequired(orgId.Value);
         var compiledLabels = await BuildCompiledLabels(orgId.Value, template, request.Items);
 
-        if (await IsFreePlan(orgId.Value) && compiledLabels.Count > 20)
+        if (!await CheckMonthlyPrintLimit(orgId.Value))
         {
             return BadRequest(new { 
-                message = "Tài khoản Free chỉ được in tối đa 20 tem mỗi lần.", 
-                detail = "Gói Miễn phí chỉ được in tối đa 20 tem mỗi lượt in. Vui lòng nâng cấp lên gói Pro hoặc Business để in không giới hạn!" 
+                message = "Bạn đã dùng hết 20 lượt in của gói Free trong tháng này.", 
+                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!" 
             });
         }
 
         var settings = request.PrinterSettings ?? ParsePrinterSettings(template.PrintSettingsJson);
 
         var pdfBytes = _printService.GeneratePdf(template, compiledLabels, settings, isWatermark);
+        await RecordPrintActivity(orgId.Value, template.Name, compiledLabels.Count);
         return File(pdfBytes, "application/pdf", $"labels_{DateTime.UtcNow:yyyyMMdd_HHmmss}.pdf");
     }
 
@@ -222,6 +225,37 @@ public class PrintController : ControllerBase
     private async Task<bool> CheckWatermarkRequired(Guid orgId)
     {
         return await IsFreePlan(orgId);
+    }
+
+    private async Task<bool> CheckMonthlyPrintLimit(Guid orgId)
+    {
+        if (await IsFreePlan(orgId))
+        {
+            var now = DateTime.UtcNow;
+            var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var printCount = await _context.ActivityLogs
+                .Where(l => l.OrgId == orgId && l.Action.StartsWith("Print") && l.CreatedAt >= startOfMonth)
+                .CountAsync();
+            return printCount < 20;
+        }
+        return true;
+    }
+
+    private async Task RecordPrintActivity(Guid orgId, string templateName, int labelCount)
+    {
+        try
+        {
+            _context.ActivityLogs.Add(new ActivityLog
+            {
+                OrgId = orgId,
+                UserId = _tenantService.CurrentUserId,
+                Action = "Print",
+                Details = $"In tem: {templateName} ({labelCount} tem)",
+                CreatedAt = DateTime.UtcNow
+            });
+            await _context.SaveChangesAsync();
+        }
+        catch { }
     }
 
     private static PrinterSettings ParsePrinterSettings(string json)
