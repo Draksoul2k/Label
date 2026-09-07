@@ -513,35 +513,21 @@ public class AdminController : ControllerBase
 
             if (isTrial) continue;
 
-            decimal mrr = 0;
-            if (sub.Amount > 0)
+            decimal planRev = sub.Amount > 0 ? sub.Amount : (planKey switch
             {
-                var cycle = sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 12 : 1;
-                mrr = sub.Amount / cycle;
-            }
-            else
-            {
-                if (planKey == "pro")
-                {
-                    mrr = (sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year") ? 699000m / 12 : 59000m;
-                }
-                else if (planKey == "business")
-                {
-                    mrr = (sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year") ? 1990000m / 12 : 166000m;
-                }
-                else if (planKey == "basic")
-                {
-                    mrr = (sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year") ? 790000m / 12 : 79000m;
-                }
-            }
+                "pro" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 699000 : 59000,
+                "business" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 1990000 : 166000,
+                "basic" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 790000 : 79000,
+                _ => 0
+            });
 
             var keyName = char.ToUpper(planKey[0]) + planKey[1..];
             if (!revenueByPlan.ContainsKey(keyName))
                 revenueByPlan[keyName] = 0;
-            revenueByPlan[keyName] += Math.Round(mrr, 0);
+            revenueByPlan[keyName] += planRev;
         }
 
-        // 3. Mức sử dụng toàn hệ thống (mã vạch tạo theo 6 tháng gần nhất)
+        // 3. Mức sử dụng toàn hệ thống (mã vạch & mẫu tem tạo theo 6 tháng gần nhất)
         var now = DateTime.UtcNow;
         var systemUsage = new List<SystemUsageDto>();
         for (int i = 5; i >= 0; i--)
@@ -550,14 +536,18 @@ public class AdminController : ControllerBase
             var startOfTarget = new DateTime(targetMonth.Year, targetMonth.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             var endOfTarget = startOfTarget.AddMonths(1);
 
-            var count = await _context.BarcodeItems
+            var barcodeCount = await _context.BarcodeItems
                 .IgnoreQueryFilters()
                 .CountAsync(b => b.CreatedAt >= startOfTarget && b.CreatedAt < endOfTarget);
+
+            var templateCount = await _context.LabelTemplates
+                .IgnoreQueryFilters()
+                .CountAsync(t => t.CreatedAt >= startOfTarget && t.CreatedAt < endOfTarget);
 
             systemUsage.Add(new SystemUsageDto
             {
                 Month = $"T{targetMonth.Month}/{targetMonth.Year}",
-                Count = count
+                Count = barcodeCount + templateCount
             });
         }
 
