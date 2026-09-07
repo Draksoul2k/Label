@@ -222,7 +222,22 @@ static string ParsePostgresUrl(string connStr)
             var host = uri.Host;
             var port = uri.Port > 0 ? uri.Port : 5432;
             var database = uri.AbsolutePath.TrimStart('/');
-            return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Prefer;Trust Server Certificate=true";
+
+            // Supabase Direct Host IPv4 fix:
+            // db.[ref].supabase.co is IPv6-only. Render is IPv4-only.
+            // Automatically switch to Supabase IPv4 Pooler so connection never fails!
+            if (host.StartsWith("db.") && host.EndsWith(".supabase.co"))
+            {
+                var projectRef = host.Substring(3, host.IndexOf(".supabase.co") - 3);
+                host = "aws-0-ap-southeast-1.pooler.supabase.com";
+                if (!username.Contains("."))
+                {
+                    username = $"{username}.{projectRef}";
+                }
+                Console.WriteLine($"--> [Database] Auto-routed Supabase IPv6 to IPv4 Pooler: {host} (User: {username})");
+            }
+
+            return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
         }
         catch (Exception ex)
         {
