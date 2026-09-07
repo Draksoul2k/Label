@@ -51,6 +51,7 @@ public class OrganizationController : ControllerBase
         if (orgId == null) return Unauthorized();
 
         var members = await _context.Users
+            .IgnoreQueryFilters()
             .Where(u => u.OrgId == orgId)
             .OrderByDescending(u => u.CreatedAt)
             .Select(u => new OrgMemberDto
@@ -84,18 +85,21 @@ public class OrganizationController : ControllerBase
         if (await _context.Users.IgnoreQueryFilters().AnyAsync(u => u.Email == email))
             return BadRequest(new { message = "Email này đã được sử dụng trong hệ thống" });
 
-        // Check plan user limit
-        var sub = await _context.Subscriptions
-            .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(s => s.OrgId == orgId && s.Status == SubscriptionStatus.Active);
-
-        var planKey = sub?.Plan ?? "free";
-        var plan = await _context.SubscriptionPlans.FirstOrDefaultAsync(p => p.Key == planKey);
-        if (plan != null && plan.MaxUsers != -1)
+        // Check plan user limit (bypass for system admin)
+        if (!_tenantService.IsSystemAdmin)
         {
-            var currentCount = await _context.Users.CountAsync(u => u.OrgId == orgId);
-            if (currentCount >= plan.MaxUsers)
-                return BadRequest(new { message = $"Gói cước của bạn chỉ cho phép tối đa {plan.MaxUsers} thành viên. Vui lòng nâng cấp gói cước để mời thêm." });
+            var sub = await _context.Subscriptions
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(s => s.OrgId == orgId && s.Status == SubscriptionStatus.Active);
+
+            var planKey = sub?.Plan ?? "free";
+            var plan = await _context.SubscriptionPlans.FirstOrDefaultAsync(p => p.Key == planKey);
+            if (plan != null && plan.MaxUsers != -1)
+            {
+                var currentCount = await _context.Users.CountAsync(u => u.OrgId == orgId);
+                if (currentCount >= plan.MaxUsers)
+                    return BadRequest(new { message = $"Gói cước của bạn chỉ cho phép tối đa {plan.MaxUsers} thành viên. Vui lòng nâng cấp gói cước để mời thêm." });
+            }
         }
 
         var role = Enum.TryParse<UserRole>(request.Role, true, out var r) ? r : UserRole.Member;
