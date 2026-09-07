@@ -443,10 +443,130 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("reports")]
-    public IActionResult GetReports()
+    public async Task<IActionResult> GetReports()
     {
         if (!IsAdmin) return Forbid();
-        return Ok(new { message = "Báo cáo doanh thu & tăng trưởng hệ thống sẵn sàng." });
+
+        // Lấy danh sách OrgId của Admin để không tính tiền vào doanh thu
+        var adminOrgIds = await _context.Users
+            .IgnoreQueryFilters()
+            .Where(u => u.IsSystemAdmin || u.Email == "admin@hacode.vn")
+            .Select(u => u.OrgId)
+            .Distinct()
+            .ToListAsync();
+
+        var allUsers = await _context.Users
+            .IgnoreQueryFilters()
+            .ToListAsync();
+
+        var allSubs = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .Where(s => s.Status == SubscriptionStatus.Active)
+            .ToListAsync();
+
+        var subMap = allSubs
+            .GroupBy(s => s.OrgId)
+            .ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.StartDate).FirstOrDefault());
+
+        // 1. Phân bổ người dùng theo gói
+        var usersByPlan = new Dictionary<string, int>
+        {
+            { "Free", 0 },
+            { "Pro", 0 },
+            { "Business", 0 }
+        };
+
+        foreach (var user in allUsers)
+        {
+            subMap.TryGetValue(user.OrgId, out var sub);
+            var planKey = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() switch
+            {
+                "business" => "Business",
+                "pro" => "Pro",
+                "basic" => "Basic",
+                _ => "Free"
+            });
+
+            if (!usersByPlan.ContainsKey(planKey))
+                usersByPlan[planKey] = 0;
+            usersByPlan[planKey]++;
+        }
+
+        // 2. Doanh thu theo gói (Quy đổi về mỗi tháng MRR)
+        var revenueByPlan = new Dictionary<string, decimal>
+        {
+            { "Free", 0 },
+            { "Pro", 0 },
+            { "Business", 0 }
+        };
+
+        foreach (var sub in allSubs)
+        {
+            if (adminOrgIds.Contains(sub.OrgId)) continue;
+
+            var planKey = (sub.Plan ?? "").ToLowerInvariant();
+            if (planKey == "free") continue;
+
+            bool isTrial = sub.Term == "trial" || 
+                           (sub.TermName != null && sub.TermName.ToLower().Contains("thử")) ||
+                           (sub.Amount == 0 && (sub.Term == "trial" || (planKey == "pro" && sub.StartDate.AddDays(35) >= sub.EndDate)));
+
+            if (isTrial) continue;
+
+            decimal mrr = 0;
+            if (sub.Amount > 0)
+            {
+                var cycle = sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 12 : 1;
+                mrr = sub.Amount / cycle;
+            }
+            else
+            {
+                if (planKey == "pro")
+                {
+                    mrr = (sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year") ? 699000m / 12 : 59000m;
+                }
+                else if (planKey == "business")
+                {
+                    mrr = (sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year") ? 1990000m / 12 : 166000m;
+                }
+                else if (planKey == "basic")
+                {
+                    mrr = (sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year") ? 790000m / 12 : 79000m;
+                }
+            }
+
+            var keyName = char.ToUpper(planKey[0]) + planKey[1..];
+            if (!revenueByPlan.ContainsKey(keyName))
+                revenueByPlan[keyName] = 0;
+            revenueByPlan[keyName] += Math.Round(mrr, 0);
+        }
+
+        // 3. Mức sử dụng toàn hệ thống (mã vạch tạo theo 6 tháng gần nhất)
+        var now = DateTime.UtcNow;
+        var systemUsage = new List<SystemUsageDto>();
+        for (int i = 5; i >= 0; i--)
+        {
+            var targetMonth = now.AddMonths(-i);
+            var startOfTarget = new DateTime(targetMonth.Year, targetMonth.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var endOfTarget = startOfTarget.AddMonths(1);
+
+            var count = await _context.BarcodeItems
+                .IgnoreQueryFilters()
+                .CountAsync(b => b.CreatedAt >= startOfTarget && b.CreatedAt < endOfTarget);
+
+            systemUsage.Add(new SystemUsageDto
+            {
+                Month = $"T{targetMonth.Month}/{targetMonth.Year}",
+                Count = count
+            });
+        }
+
+        return Ok(new AdminReportsDto
+        {
+            RevenueByPlan = revenueByPlan,
+            UsersByPlan = usersByPlan,
+            SystemUsage = systemUsage
+        });
     }
 
     [HttpGet("users/{id}/details")]

@@ -44,6 +44,19 @@ public class AdminUserDto
     public string? RevenueText { get; set; }
 }
 
+public class AdminReportsDto
+{
+    public Dictionary<string, decimal> RevenueByPlan { get; set; } = new();
+    public Dictionary<string, int> UsersByPlan { get; set; } = new();
+    public List<SystemUsageDto> SystemUsage { get; set; } = new();
+}
+
+public class SystemUsageDto
+{
+    public string Month { get; set; } = string.Empty;
+    public int Count { get; set; }
+}
+
 public class AdminResetPasswordRequest
 {
     public string? NewPassword { get; set; }
