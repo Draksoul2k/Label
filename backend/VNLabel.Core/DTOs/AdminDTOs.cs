@@ -44,6 +44,35 @@ public class AdminUserDto
     public string? RevenueText { get; set; }
 }
 
+public class AdminResetPasswordRequest
+{
+    public string? NewPassword { get; set; }
+}
+
+public class AdminUserDetailsDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string? Phone { get; set; }
+    public string Company { get; set; } = string.Empty;
+    public Guid OrgId { get; set; }
+    public string Role { get; set; } = "Member";
+    public bool IsSystemAdmin { get; set; }
+    public bool IsEmailVerified { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string Plan { get; set; } = "Free";
+    public string PlanName { get; set; } = "Free";
+    public DateTime? PlanStartDate { get; set; }
+    public DateTime? PlanEndDate { get; set; }
+    public string TermName { get; set; } = string.Empty;
+    public decimal Revenue { get; set; }
+    public string RevenueText { get; set; } = "0 đ";
+    public int BarcodeCount { get; set; }
+    public int TemplateCount { get; set; }
+    public int MemberCount { get; set; }
+}
+
 public class AdminChangePlanRequest
 {
     public string Plan { get; set; } = "pro";

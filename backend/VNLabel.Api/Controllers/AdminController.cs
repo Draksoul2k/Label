@@ -449,10 +449,180 @@ public class AdminController : ControllerBase
         return Ok(new { message = "Báo cáo doanh thu & tăng trưởng hệ thống sẵn sàng." });
     }
 
-    [HttpGet("support")]
-    public IActionResult GetSupport()
+    [HttpGet("users/{id}/details")]
+    public async Task<IActionResult> GetUserDetails(Guid id)
     {
         if (!IsAdmin) return Forbid();
-        return Ok(new List<object>());
+
+        var user = await _context.Users
+            .IgnoreQueryFilters()
+            .Include(u => u.Organization)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null) return NotFound(new { message = "Không tìm thấy người dùng" });
+
+        var sub = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .Where(s => s.OrgId == user.OrgId)
+            .OrderByDescending(s => s.StartDate)
+            .FirstOrDefaultAsync();
+
+        var barcodeCount = await _context.BarcodeItems
+            .IgnoreQueryFilters()
+            .CountAsync(b => b.OrgId == user.OrgId);
+
+        var templateCount = await _context.LabelTemplates
+            .IgnoreQueryFilters()
+            .CountAsync(t => t.OrgId == user.OrgId);
+
+        var memberCount = await _context.Users
+            .IgnoreQueryFilters()
+            .CountAsync(u => u.OrgId == user.OrgId);
+
+        var planKey = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() switch
+        {
+            "business" => "Business",
+            "pro" => "Pro",
+            "basic" => "Basic",
+            _ => "Free"
+        });
+
+        bool isTrial = !user.IsSystemAdmin && sub != null && (
+            sub.Term == "trial" || 
+            (sub.TermName != null && sub.TermName.ToLower().Contains("thử")) ||
+            (sub.Amount == 0 && (sub.Term == "trial" || (planKey.ToLower() == "pro" && sub.StartDate.AddDays(35) >= sub.EndDate)))
+        );
+
+        decimal userRev = 0;
+        string revText = "0 đ";
+        if (user.IsSystemAdmin || planKey.ToLower() == "free" || sub == null)
+        {
+            userRev = 0;
+            revText = "0 đ";
+        }
+        else if (isTrial)
+        {
+            userRev = 0;
+            revText = "0 đ (Dùng thử)";
+        }
+        else
+        {
+            userRev = sub.Amount > 0 ? sub.Amount : (planKey.ToLower() switch
+            {
+                "pro" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 699000 : 59000,
+                "business" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 1990000 : 166000,
+                "basic" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 790000 : 79000,
+                _ => 0
+            });
+            revText = userRev.ToString("N0") + " đ";
+        }
+
+        return Ok(new AdminUserDetailsDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            Phone = user.Phone,
+            Company = user.Organization?.Name ?? "Tổ chức",
+            OrgId = user.OrgId,
+            Role = user.Role.ToString(),
+            IsSystemAdmin = user.IsSystemAdmin,
+            IsEmailVerified = user.IsEmailVerified,
+            CreatedAt = user.CreatedAt,
+            Plan = planKey,
+            PlanName = user.IsSystemAdmin ? "Business" : (sub?.PlanName ?? planKey),
+            PlanStartDate = sub?.StartDate ?? user.CreatedAt,
+            PlanEndDate = user.IsSystemAdmin ? null : sub?.EndDate,
+            TermName = isTrial ? "30 ngày dùng thử Pro" : (sub?.TermName ?? (user.IsSystemAdmin ? "Vô thời hạn" : "Mặc định")),
+            Revenue = userRev,
+            RevenueText = revText,
+            BarcodeCount = barcodeCount,
+            TemplateCount = templateCount,
+            MemberCount = memberCount
+        });
+    }
+
+    [HttpPost("users/{id}/reset-password")]
+    public async Task<IActionResult> ResetPassword(Guid id, [FromBody] AdminResetPasswordRequest? body)
+    {
+        if (!IsAdmin) return Forbid();
+
+        var user = await _context.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null) return NotFound(new { message = "Không tìm thấy người dùng" });
+
+        var newPass = string.IsNullOrWhiteSpace(body?.NewPassword) ? "12345678" : body.NewPassword.Trim();
+        if (newPass.Length < 6)
+        {
+            return BadRequest(new { message = "Mật khẩu phải có ít nhất 6 ký tự" });
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPass);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = $"Đã đặt lại mật khẩu cho tài khoản {user.Email} thành công!",
+            email = user.Email,
+            name = user.Name,
+            newPassword = newPass
+        });
+    }
+
+    [HttpGet("support")]
+    public async Task<IActionResult> GetSupport([FromQuery] string? email)
+    {
+        if (!IsAdmin) return Forbid();
+        if (string.IsNullOrWhiteSpace(email)) return Ok(new { found = false });
+
+        var search = email.Trim().ToLower();
+        var user = await _context.Users
+            .IgnoreQueryFilters()
+            .Include(u => u.Organization)
+            .FirstOrDefaultAsync(u => u.Email.ToLower() == search || u.Name.ToLower().Contains(search));
+
+        if (user == null) return Ok(new { found = false });
+
+        var sub = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .Where(s => s.OrgId == user.OrgId)
+            .OrderByDescending(s => s.StartDate)
+            .FirstOrDefaultAsync();
+
+        var barcodeCount = await _context.BarcodeItems
+            .IgnoreQueryFilters()
+            .CountAsync(b => b.OrgId == user.OrgId);
+
+        var memberCount = await _context.Users
+            .IgnoreQueryFilters()
+            .CountAsync(u => u.OrgId == user.OrgId);
+
+        var planKey = user.IsSystemAdmin ? "Business" : (sub?.Plan?.ToLower() switch
+        {
+            "business" => "Business",
+            "pro" => "Pro",
+            "basic" => "Basic",
+            _ => "Free"
+        });
+
+        return Ok(new
+        {
+            found = true,
+            id = user.Id,
+            name = user.Name,
+            email = user.Email,
+            phone = user.Phone,
+            company = user.Organization?.Name ?? "Tổ chức",
+            role = user.Role.ToString(),
+            plan = planKey,
+            emailVerified = user.IsEmailVerified,
+            planStartDate = sub?.StartDate ?? user.CreatedAt,
+            planEndDate = user.IsSystemAdmin ? (DateTime?)null : sub?.EndDate,
+            memberCount,
+            barcodeCount,
+            createdAt = user.CreatedAt
+        });
     }
 }
