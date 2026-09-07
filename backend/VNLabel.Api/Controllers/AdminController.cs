@@ -36,14 +36,28 @@ public class AdminController : ControllerBase
         var activeSubs = await _context.Subscriptions.IgnoreQueryFilters().CountAsync(s => s.Status == SubscriptionStatus.Active && s.Plan != "free");
         var pendingReqs = await _context.SubscriptionRequests.IgnoreQueryFilters().CountAsync(r => r.Status == RequestStatus.Pending);
 
-        // MRR Calculation (Method 2: based on active subscriptions, excluding admin-granted 30-day trial)
-        var activeSubsList = await _context.Subscriptions
+        var now = DateTime.UtcNow;
+        var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var endOfMonth = startOfMonth.AddMonths(1);
+
+        var currentQuarter = (now.Month - 1) / 3 + 1;
+        var startOfQuarter = new DateTime(now.Year, (currentQuarter - 1) * 3 + 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var endOfQuarter = startOfQuarter.AddMonths(3);
+
+        var startOfYear = new DateTime(now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var endOfYear = startOfYear.AddYears(1);
+
+        // Tính doanh thu theo số người đăng ký kích hoạt trong tháng, quý, năm (loại trừ gói thử nghiệm 30 ngày)
+        var allActivePaidSubs = await _context.Subscriptions
             .IgnoreQueryFilters()
-            .Where(s => s.Status == SubscriptionStatus.Active && s.EndDate >= DateTime.UtcNow)
+            .Where(s => s.Status == SubscriptionStatus.Active && s.Plan != "free")
             .ToListAsync();
 
-        decimal mrr = 0;
-        foreach (var sub in activeSubsList)
+        decimal monthlyRevenue = 0;
+        decimal quarterlyRevenue = 0;
+        decimal yearlyRevenue = 0;
+
+        foreach (var sub in allActivePaidSubs)
         {
             var planKey = (sub.Plan ?? "").ToLowerInvariant();
             if (planKey == "free") continue;
@@ -55,26 +69,32 @@ public class AdminController : ControllerBase
 
             if (isTrial) continue;
 
-            if (planKey == "pro")
+            decimal planPrice = sub.Amount > 0 ? sub.Amount : (planKey switch
             {
-                mrr += 59000;
+                "pro" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 699000 : 59000,
+                "business" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 1990000 : 166000,
+                "basic" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 790000 : 79000,
+                _ => 59000
+            });
+
+            // Người đăng ký / kích hoạt trong tháng này
+            if (sub.StartDate >= startOfMonth && sub.StartDate < endOfMonth)
+            {
+                monthlyRevenue += planPrice;
             }
-            else if (planKey == "business")
+
+            // Người đăng ký / kích hoạt trong quý này
+            if (sub.StartDate >= startOfQuarter && sub.StartDate < endOfQuarter)
             {
-                mrr += 166000;
+                quarterlyRevenue += planPrice;
             }
-            else if (planKey == "basic")
+
+            // Người đăng ký / kích hoạt trong năm này
+            if (sub.StartDate >= startOfYear && sub.StartDate < endOfYear)
             {
-                mrr += 79000;
-            }
-            else if (sub.Amount > 0)
-            {
-                mrr += sub.Amount;
+                yearlyRevenue += planPrice;
             }
         }
-
-        var quarterlyRevenue = mrr * 3;
-        var yearlyRevenue = mrr * 12;
 
         return Ok(new AdminStatsDto
         {
@@ -83,8 +103,8 @@ public class AdminController : ControllerBase
             TotalBarcodes = totalBarcodes,
             ActiveSubscriptions = activeSubs,
             PendingRequests = pendingReqs,
-            MonthlyRevenue = mrr,
-            Mrr = mrr,
+            MonthlyRevenue = monthlyRevenue,
+            Mrr = monthlyRevenue,
             QuarterlyRevenue = quarterlyRevenue,
             YearlyRevenue = yearlyRevenue
         });
@@ -312,6 +332,14 @@ public class AdminController : ControllerBase
             ? DateTime.UtcNow.AddYears(100) 
             : (isTrial ? baseDate.AddDays(30) : startDate.AddMonths(months));
 
+        decimal amount = 0;
+        if (!isTrial && planKey != "free")
+        {
+            if (body.Cycle == "year") amount = plan?.PriceYearly ?? (planKey == "business" ? 1990000 : 699000);
+            else if (body.Cycle == "2year") amount = (plan?.PriceYearly ?? (planKey == "business" ? 1990000 : 699000)) * 2;
+            else amount = (plan?.PriceMonthly ?? (planKey == "business" ? 166000 : 59000)) * months;
+        }
+
         if (sub != null)
         {
             sub.Plan = planKey;
@@ -322,6 +350,7 @@ public class AdminController : ControllerBase
             sub.StartDate = startDate;
             sub.EndDate = targetEndDate;
             sub.Status = SubscriptionStatus.Active;
+            sub.Amount = amount;
         }
         else
         {
@@ -338,7 +367,7 @@ public class AdminController : ControllerBase
                 EndDate = targetEndDate,
                 Status = SubscriptionStatus.Active,
                 AutoRenew = true,
-                Amount = 0
+                Amount = amount
             };
             await _context.Subscriptions.AddAsync(sub);
         }
