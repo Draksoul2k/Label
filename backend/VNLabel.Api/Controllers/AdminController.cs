@@ -36,11 +36,45 @@ public class AdminController : ControllerBase
         var activeSubs = await _context.Subscriptions.IgnoreQueryFilters().CountAsync(s => s.Status == SubscriptionStatus.Active && s.Plan != "free");
         var pendingReqs = await _context.SubscriptionRequests.IgnoreQueryFilters().CountAsync(r => r.Status == RequestStatus.Pending);
 
-        var paidInvoices = await _context.Invoices.IgnoreQueryFilters()
-            .Where(i => i.Status == "Paid" && i.PaidAt >= DateTime.UtcNow.AddDays(-30))
-            .Select(i => i.Amount)
+        // MRR Calculation (Method 2: based on active subscriptions, excluding admin-granted 30-day trial)
+        var activeSubsList = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .Where(s => s.Status == SubscriptionStatus.Active && s.EndDate >= DateTime.UtcNow)
             .ToListAsync();
-        var monthlyRevenue = paidInvoices.Sum();
+
+        decimal mrr = 0;
+        foreach (var sub in activeSubsList)
+        {
+            var planKey = (sub.Plan ?? "").ToLowerInvariant();
+            if (planKey == "free") continue;
+
+            // Bỏ qua các gói dùng thử miễn phí 30 ngày do Admin cấp
+            bool isTrial = sub.Term == "trial" || 
+                           (sub.TermName != null && sub.TermName.ToLower().Contains("thử")) ||
+                           (sub.Amount == 0 && (sub.Term == "trial" || (planKey == "pro" && sub.StartDate.AddDays(35) >= sub.EndDate)));
+
+            if (isTrial) continue;
+
+            if (planKey == "pro")
+            {
+                mrr += 59000;
+            }
+            else if (planKey == "business")
+            {
+                mrr += 166000;
+            }
+            else if (planKey == "basic")
+            {
+                mrr += 79000;
+            }
+            else if (sub.Amount > 0)
+            {
+                mrr += sub.Amount;
+            }
+        }
+
+        var quarterlyRevenue = mrr * 3;
+        var yearlyRevenue = mrr * 12;
 
         return Ok(new AdminStatsDto
         {
@@ -49,7 +83,10 @@ public class AdminController : ControllerBase
             TotalBarcodes = totalBarcodes,
             ActiveSubscriptions = activeSubs,
             PendingRequests = pendingReqs,
-            MonthlyRevenue = monthlyRevenue
+            MonthlyRevenue = mrr,
+            Mrr = mrr,
+            QuarterlyRevenue = quarterlyRevenue,
+            YearlyRevenue = yearlyRevenue
         });
     }
 

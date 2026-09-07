@@ -8,6 +8,9 @@ public class AdminStatsDto
     public int ActiveSubscriptions { get; set; }
     public int PendingRequests { get; set; }
     public decimal MonthlyRevenue { get; set; }
+    public decimal Mrr { get; set; }
+    public decimal QuarterlyRevenue { get; set; }
+    public decimal YearlyRevenue { get; set; }
 }
 
 public class ApproveRequestBody

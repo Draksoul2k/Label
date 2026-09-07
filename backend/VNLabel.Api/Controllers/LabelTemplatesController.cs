@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VNLabel.Core.DTOs;
 using VNLabel.Core.Entities;
+using VNLabel.Core.Enums;
 using VNLabel.Core.Interfaces;
 using VNLabel.Infrastructure.Data;
 
@@ -241,6 +242,21 @@ public class LabelTemplatesController : ControllerBase
         }
         else
         {
+            // Create new template - Check Free plan limit (10 templates)
+            if (await IsFreePlan(orgId.Value))
+            {
+                var currentCount = await _context.LabelTemplates
+                    .Where(t => !t.IsSystem && t.OrgId == orgId.Value)
+                    .CountAsync();
+                if (currentCount >= 10)
+                {
+                    return BadRequest(new { 
+                        message = "Gói Free chỉ được lưu tối đa 10 mẫu tem.",
+                        detail = "Tài khoản Free chỉ được lưu tối đa 10 mẫu tem. Vui lòng nâng cấp gói Pro để lưu không giới hạn!"
+                    });
+                }
+            }
+
             // Create new template
             template = new LabelTemplate
             {
@@ -297,6 +313,20 @@ public class LabelTemplatesController : ControllerBase
         if (source == null) return NotFound(new { message = "Không tìm thấy mẫu trong thư viện" });
 
         var copyName = !string.IsNullOrWhiteSpace(request?.Name) ? request.Name.Trim() : $"{source.Name} (Bản sao)";
+
+        if (await IsFreePlan(orgId.Value))
+        {
+            var currentCount = await _context.LabelTemplates
+                .Where(t => !t.IsSystem && t.OrgId == orgId.Value)
+                .CountAsync();
+            if (currentCount >= 10)
+            {
+                return BadRequest(new { 
+                    message = "Gói Free chỉ được lưu tối đa 10 mẫu tem.",
+                    detail = "Tài khoản Free chỉ được lưu tối đa 10 mẫu tem. Vui lòng nâng cấp gói Pro để lưu không giới hạn!"
+                });
+            }
+        }
 
         var copy = new LabelTemplate
         {
@@ -376,5 +406,18 @@ public class LabelTemplatesController : ControllerBase
 
         var url = $"/uploads/images/{fileName}";
         return Ok(new { url });
+    }
+
+    private async Task<bool> IsFreePlan(Guid orgId)
+    {
+        if (_tenantService.IsSystemAdmin) return false;
+        var sub = await _context.Subscriptions
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(s => s.OrgId == orgId && s.Status == SubscriptionStatus.Active);
+
+        if (sub == null) return true;
+        if (sub.EndDate < DateTime.UtcNow) return true;
+        var planKey = (sub.Plan ?? "free").ToLowerInvariant();
+        return planKey == "free";
     }
 }
