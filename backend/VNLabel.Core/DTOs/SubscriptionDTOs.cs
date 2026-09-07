@@ -64,6 +64,11 @@ public class PlanRequestBody
     public string? Note { get; set; }
 }
 
+public class RequestTrialDto
+{
+    public string? Note { get; set; }
+}
+
 public class SubscriptionRequestDto
 {
     public Guid Id { get; set; }

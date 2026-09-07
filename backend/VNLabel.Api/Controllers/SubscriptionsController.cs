@@ -224,6 +224,49 @@ public class SubscriptionsController : ControllerBase
         });
     }
 
+    [HttpPost("trial-request")]
+    public async Task<IActionResult> RequestTrial([FromBody] RequestTrialDto? body)
+    {
+        var orgId = _tenantService.CurrentOrgId;
+        var userId = _tenantService.CurrentUserId;
+        if (orgId == null) return Unauthorized();
+
+        var user = userId != null ? await _context.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId) : null;
+        var org = await _context.Organizations.IgnoreQueryFilters().FirstOrDefaultAsync(o => o.Id == orgId);
+
+        var existingPending = await _context.SubscriptionRequests
+            .Where(r => r.OrgId == orgId && r.Status == RequestStatus.Pending)
+            .FirstOrDefaultAsync();
+
+        if (existingPending != null)
+        {
+            return Ok(new { message = "Bạn đã có một yêu cầu đang chờ Admin duyệt!", id = existingPending.Id, pending = true });
+        }
+
+        var request = new SubscriptionRequest
+        {
+            Id = Guid.NewGuid(),
+            OrgId = orgId.Value,
+            Plan = "pro",
+            Cycle = "trial",
+            ContactName = user?.Name ?? org?.Name ?? "Khách hàng",
+            ContactPhone = user?.Phone ?? "",
+            Note = body?.Note ?? "Khách hàng gửi yêu cầu kích hoạt dùng thử 30 ngày gói Pro",
+            Status = RequestStatus.Pending,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _context.SubscriptionRequests.AddAsync(request);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Yêu cầu trải nghiệm 30 ngày dùng thử gói Pro đã được gửi thành công tới Quản trị viên HACODE!",
+            id = request.Id,
+            pending = true
+        });
+    }
+
     [HttpGet("requests")]
     public async Task<IActionResult> GetMyRequests()
     {

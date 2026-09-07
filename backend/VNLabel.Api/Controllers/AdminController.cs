@@ -98,20 +98,27 @@ public class AdminController : ControllerBase
         req.ProcessedAt = DateTime.UtcNow;
 
         var cycle = body?.Cycle ?? req.Cycle;
+        bool isTrial = cycle == "trial";
         var months = cycle == "year" ? 12 : (cycle == "2year" ? 24 : 1);
-        var termName = cycle == "year" ? "1 năm" : (cycle == "2year" ? "2 năm" : "1 tháng");
+        var termName = isTrial ? "30 ngày dùng thử Pro" : (cycle == "year" ? "1 năm" : (cycle == "2year" ? "2 năm" : "1 tháng"));
 
         var plan = await _context.SubscriptionPlans
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(p => p.Key == req.Plan);
 
-        var amount = (plan?.PriceMonthly ?? 0) * months;
+        var amount = isTrial ? 0 : ((plan?.PriceMonthly ?? 0) * months);
         if (cycle == "year" && plan != null) amount = plan.PriceYearly;
         if (cycle == "2year" && plan != null) amount = plan.PriceYearly * 2;
 
         var existingSub = await _context.Subscriptions
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(s => s.OrgId == req.OrgId);
+
+        var baseDate = (existingSub != null && existingSub.EndDate > DateTime.UtcNow && existingSub.Plan?.ToLower() == "pro")
+            ? existingSub.EndDate
+            : DateTime.UtcNow;
+
+        var targetEndDate = isTrial ? baseDate.AddDays(30) : DateTime.UtcNow.AddMonths(months);
 
         if (existingSub != null)
         {
@@ -121,7 +128,7 @@ public class AdminController : ControllerBase
             existingSub.Term = cycle;
             existingSub.TermName = termName;
             existingSub.StartDate = DateTime.UtcNow;
-            existingSub.EndDate = DateTime.UtcNow.AddMonths(months);
+            existingSub.EndDate = targetEndDate;
             existingSub.Status = SubscriptionStatus.Active;
             existingSub.Amount = amount;
         }
@@ -137,7 +144,7 @@ public class AdminController : ControllerBase
                 Term = cycle,
                 TermName = termName,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(months),
+                EndDate = targetEndDate,
                 Status = SubscriptionStatus.Active,
                 Amount = amount
             };
@@ -255,9 +262,18 @@ public class AdminController : ControllerBase
         var planKey = body.Plan?.ToLowerInvariant() ?? "pro";
         var plan = await _context.SubscriptionPlans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Key.ToLower() == planKey);
 
+        bool isTrial = body.Cycle == "trial";
         var months = body.Cycle == "year" ? 12 : (body.Cycle == "2year" ? 24 : 1);
-        var termName = body.Cycle == "year" ? "1 năm" : (body.Cycle == "2year" ? "2 năm" : "1 tháng");
+        var termName = isTrial ? "30 ngày dùng thử Pro" : (body.Cycle == "year" ? "1 năm" : (body.Cycle == "2year" ? "2 năm" : "1 tháng"));
         var startDate = DateTime.TryParse(body.StartDate, out var parsedStart) ? parsedStart.ToUniversalTime() : DateTime.UtcNow;
+
+        var baseDate = (sub != null && sub.EndDate > DateTime.UtcNow && sub.Plan?.ToLower() == "pro")
+            ? sub.EndDate
+            : startDate;
+
+        var targetEndDate = planKey == "free" 
+            ? DateTime.UtcNow.AddYears(100) 
+            : (isTrial ? baseDate.AddDays(30) : startDate.AddMonths(months));
 
         if (sub != null)
         {
@@ -267,7 +283,7 @@ public class AdminController : ControllerBase
             sub.Term = body.Cycle;
             sub.TermName = termName;
             sub.StartDate = startDate;
-            sub.EndDate = planKey == "free" ? DateTime.UtcNow.AddYears(10) : startDate.AddMonths(months);
+            sub.EndDate = targetEndDate;
             sub.Status = SubscriptionStatus.Active;
         }
         else
@@ -282,7 +298,7 @@ public class AdminController : ControllerBase
                 Term = body.Cycle,
                 TermName = termName,
                 StartDate = startDate,
-                EndDate = planKey == "free" ? DateTime.UtcNow.AddYears(10) : startDate.AddMonths(months),
+                EndDate = targetEndDate,
                 Status = SubscriptionStatus.Active,
                 AutoRenew = true,
                 Amount = 0
