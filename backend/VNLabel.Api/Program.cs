@@ -215,13 +215,33 @@ static string ParsePostgresUrl(string connStr)
     {
         try
         {
-            var uri = new Uri(connStr);
-            var userInfo = uri.UserInfo.Split(':');
-            var username = userInfo[0];
-            var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
-            var host = uri.Host;
-            var port = uri.Port > 0 ? uri.Port : 5432;
-            var database = uri.AbsolutePath.TrimStart('/');
+            // Use regex to robustly parse passwords with special chars like '@'
+            var match = System.Text.RegularExpressions.Regex.Match(
+                connStr, 
+                @"^postgres(?:ql)?://([^:]+):(.+)@([^:/]+)(?::(\d+))?/(.+)$", 
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            string username, password, host, database;
+            int port = 5432;
+
+            if (match.Success)
+            {
+                username = match.Groups[1].Value;
+                password = Uri.UnescapeDataString(match.Groups[2].Value);
+                host = match.Groups[3].Value;
+                if (int.TryParse(match.Groups[4].Value, out var parsedPort)) port = parsedPort;
+                database = match.Groups[5].Value.Split('?')[0];
+            }
+            else
+            {
+                var uri = new Uri(connStr);
+                var userInfo = uri.UserInfo.Split(':');
+                username = userInfo[0];
+                password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+                host = uri.Host;
+                port = uri.Port > 0 ? uri.Port : 5432;
+                database = uri.AbsolutePath.TrimStart('/');
+            }
 
             // Supabase Direct Host IPv4 fix:
             // db.[ref].supabase.co is IPv6-only. Render is IPv4-only.
