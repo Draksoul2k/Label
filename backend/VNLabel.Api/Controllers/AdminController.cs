@@ -47,7 +47,15 @@ public class AdminController : ControllerBase
         var startOfYear = new DateTime(now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var endOfYear = startOfYear.AddYears(1);
 
-        // Tính doanh thu theo số người đăng ký kích hoạt trong tháng, quý, năm (loại trừ gói thử nghiệm 30 ngày)
+        // Lấy danh sách OrgId của Admin để không tính tiền vào doanh thu
+        var adminOrgIds = await _context.Users
+            .IgnoreQueryFilters()
+            .Where(u => u.IsSystemAdmin || u.Email == "admin@hacode.vn")
+            .Select(u => u.OrgId)
+            .Distinct()
+            .ToListAsync();
+
+        // Tính doanh thu theo số người đăng ký kích hoạt trong tháng, quý, năm (loại trừ gói thử nghiệm 30 ngày và Admin)
         var allActivePaidSubs = await _context.Subscriptions
             .IgnoreQueryFilters()
             .Where(s => s.Status == SubscriptionStatus.Active && s.Plan != "free")
@@ -59,6 +67,8 @@ public class AdminController : ControllerBase
 
         foreach (var sub in allActivePaidSubs)
         {
+            if (adminOrgIds.Contains(sub.OrgId)) continue;
+
             var planKey = (sub.Plan ?? "").ToLowerInvariant();
             if (planKey == "free") continue;
 
@@ -287,6 +297,37 @@ public class AdminController : ControllerBase
             });
             var planName = u.IsSystemAdmin ? "Business" : (sub?.PlanName ?? planKey);
 
+            bool isAdminUser = u.IsSystemAdmin || (u.Email != null && u.Email.ToLower() == "admin@hacode.vn");
+            bool isTrial = !isAdminUser && sub != null && (
+                sub.Term == "trial" || 
+                (sub.TermName != null && sub.TermName.ToLower().Contains("thử")) ||
+                (sub.Amount == 0 && (sub.Term == "trial" || (planKey.ToLower() == "pro" && sub.StartDate.AddDays(35) >= sub.EndDate)))
+            );
+
+            decimal userRev = 0;
+            string revText = "0 đ";
+            if (isAdminUser || planKey.ToLower() == "free" || sub == null)
+            {
+                userRev = 0;
+                revText = "0 đ";
+            }
+            else if (isTrial)
+            {
+                userRev = 0;
+                revText = "0 đ (Dùng thử)";
+            }
+            else
+            {
+                userRev = sub.Amount > 0 ? sub.Amount : (planKey.ToLower() switch
+                {
+                    "pro" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 699000 : 59000,
+                    "business" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 1990000 : 166000,
+                    "basic" => sub.BillingCycle == BillingCycle.Yearly || sub.Term == "year" ? 790000 : 79000,
+                    _ => 0
+                });
+                revText = userRev.ToString("N0") + " đ";
+            }
+
             return new AdminUserDto
             {
                 Id = u.Id,
@@ -300,7 +341,9 @@ public class AdminController : ControllerBase
                 PlanName = planName,
                 PlanEndDate = u.IsSystemAdmin ? null : sub?.EndDate,
                 IsSystemAdmin = u.IsSystemAdmin,
-                CreatedAt = u.CreatedAt
+                CreatedAt = u.CreatedAt,
+                Revenue = userRev,
+                RevenueText = revText
             };
         }).ToList();
 

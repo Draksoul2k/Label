@@ -34,11 +34,14 @@ public class AdminUserDto
     public string Role { get; set; } = "Member";
     public Guid OrgId { get; set; }
     public string OrgName { get; set; } = string.Empty;
+    public string Company => OrgName;
     public string Plan { get; set; } = "free";
     public string PlanName { get; set; } = "Free";
     public DateTime? PlanEndDate { get; set; }
     public bool IsSystemAdmin { get; set; }
     public DateTime CreatedAt { get; set; }
+    public decimal Revenue { get; set; }
+    public string? RevenueText { get; set; }
 }
 
 public class AdminChangePlanRequest
