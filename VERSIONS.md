@@ -6,6 +6,19 @@ Tài liệu này ghi chú toàn bộ các mốc phiên bản ổn định (check
 
 ## 📦 Danh Sách Các Phiên Bản
 
+### [v1.0.5-fix-pro-registration-and-user-plan] - 09/09/2026 (Sửa lỗi đăng ký và cấp gói Pro cho user trên Admin & Billing)
+* **Trạng thái:** ✅ Đã hoàn tất và kiểm thử.
+* **Git Tag:** `v1.0.5-fix-pro-registration-and-user-plan`
+* **Git Branch Backup:** `backup-v1.0.5-fix-pro-registration-and-user-plan`
+* **Nội dung cải tiến & sửa lỗi:**
+  1. **Khắc phục lỗi Đăng ký / Kích hoạt / Cấp gói Pro cho User**:
+     - Phát hiện nguyên nhân gốc rễ: Khi Admin cấp gói Pro (`PUT /api/admin/users/:id/plan`) hoặc duyệt yêu cầu gói (`POST /api/admin/subscription-requests/:id/approve`), lệnh chèn bản ghi vào bảng `Subscriptions` trên Supabase bị lỗi `HTTP 400 null value in column "AutoRenew" of relation "Subscriptions" violates not-null constraint`.
+     - Bổ sung trường `AutoRenew: true` bắt buộc, tính toán đúng số tiền `Amount` (699.000đ/năm, 59.000đ/tháng) và tính toán thời gian `StartDate`, `EndDate` chính xác.
+     - Hỗ trợ cả hai phương thức HTTP `PUT` và `POST` cho route `/api/admin/users/:id/plan`.
+     - Người dùng hoặc Quản trị viên thao tác cấp gói Pro / chuyển gói thành công 100%, không còn báo lỗi thất bại.
+
+---
+
 ### [v1.0.4-clean-plan-status-and-cat-icons] - 09/09/2026 (Hiển thị gói đang dùng & Sửa biểu tượng danh mục mẫu tem)
 * **Trạng thái:** ✅ Đã hoàn tất và kiểm thử.
 * **Git Tag:** `v1.0.4-clean-plan-status-and-cat-icons`

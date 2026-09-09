@@ -1622,29 +1622,41 @@ app.post(['/api/admin/subscription-requests/:id/approve', '/admin/subscription-r
     if (!reqs || reqs.length === 0) return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
     const r = reqs[0];
 
-    const cycle = req.body?.cycle || r.Cycle;
-    const isTrial = cycle === 'trial';
-    const months = cycle === 'year' ? 12 : (cycle === '2year' ? 24 : 1);
-    const termName = isTrial ? '30 ngày dùng thử Pro' : (cycle === 'year' ? '1 năm' : '1 tháng');
+    const cycleKey = (req.body?.cycle || r.Cycle || 'year').toLowerCase();
+    const isTrial = cycleKey === 'trial';
+    const months = cycleKey === 'year' ? 12 : (cycleKey === '2year' ? 24 : 1);
+    const termName = isTrial ? '30 ngày dùng thử Pro' : (cycleKey === 'year' ? '1 năm' : (cycleKey === '2year' ? '2 năm' : '1 tháng'));
+    const start = req.body?.startDate ? new Date(req.body.startDate) : new Date();
+    const startTime = isNaN(start.getTime()) ? Date.now() : start.getTime();
+    const startIso = new Date(startTime).toISOString();
     const endDate = isTrial
-      ? new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString()
-      : new Date(Date.now() + months * 30 * 24 * 3600 * 1000).toISOString();
+      ? new Date(startTime + 30 * 24 * 3600 * 1000).toISOString()
+      : new Date(startTime + months * 30 * 24 * 3600 * 1000).toISOString();
+
+    const planKey = (r.Plan || 'pro').toLowerCase();
+    const amount = planKey === 'pro'
+      ? (cycleKey === 'year' ? 699000 : (cycleKey === '2year' ? 1398000 : 59000))
+      : (planKey === 'business'
+          ? (cycleKey === 'year' ? 1990000 : (cycleKey === '2year' ? 3980000 : 166000))
+          : 0);
 
     await supaFetch('Subscriptions', {
       method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify([{
         Id: crypto.randomUUID(),
         OrgId: r.OrgId,
-        Plan: r.Plan,
-        PlanName: r.Plan.toUpperCase(),
-        BillingCycle: cycle === 'year' ? 1 : 0,
-        Term: cycle,
+        Plan: planKey,
+        PlanName: planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free'),
+        BillingCycle: cycleKey === 'year' ? 1 : 0,
+        Term: cycleKey,
         TermName: termName,
-        StartDate: new Date().toISOString(),
+        StartDate: startIso,
         EndDate: endDate,
         Status: 0,
-        Amount: isTrial ? 0 : 59000 * months
+        AutoRenew: true,
+        Amount: isTrial ? 0 : amount,
+        OrganizationId: r.OrgId
       }])
     });
 
@@ -1754,34 +1766,50 @@ app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, asyn
   }
 });
 
-app.put(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, requireAdmin, async (req, res) => {
+const handleAdminChangeUserPlan = async (req, res) => {
   try {
-    const { plan, cycle } = req.body;
+    const { plan, cycle, startDate } = req.body;
     const users = await supaFetch(`Users?Id=eq.${req.params.id}&select=OrgId`);
     if (!users || users.length === 0) return res.status(404).json({ message: 'User not found' });
     const orgId = users[0].OrgId;
 
-    const isTrial = cycle === 'trial';
-    const months = cycle === 'year' ? 12 : 1;
+    const planKey = (plan || 'pro').toLowerCase();
+    const cycleKey = (cycle || 'year').toLowerCase();
+    const isTrial = cycleKey === 'trial';
+    const months = cycleKey === 'year' ? 12 : (cycleKey === '2year' ? 24 : 1);
+    const start = startDate ? new Date(startDate) : new Date();
+    const startTime = isNaN(start.getTime()) ? Date.now() : start.getTime();
+    const startIso = new Date(startTime).toISOString();
     const endDate = isTrial
-      ? new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString()
-      : (plan === 'free' ? new Date(Date.now() + 36500 * 24 * 3600 * 1000).toISOString() : new Date(Date.now() + months * 30 * 24 * 3600 * 1000).toISOString());
+      ? new Date(startTime + 30 * 24 * 3600 * 1000).toISOString()
+      : (planKey === 'free'
+          ? new Date(startTime + 36500 * 24 * 3600 * 1000).toISOString()
+          : new Date(startTime + months * 30 * 24 * 3600 * 1000).toISOString());
+
+    const termName = isTrial ? '30 ngày dùng thử Pro' : (cycleKey === 'year' ? '1 năm' : (cycleKey === '2year' ? '2 năm' : '1 tháng'));
+    const amount = planKey === 'pro'
+      ? (cycleKey === 'year' ? 699000 : (cycleKey === '2year' ? 1398000 : 59000))
+      : (planKey === 'business'
+          ? (cycleKey === 'year' ? 1990000 : (cycleKey === '2year' ? 3980000 : 166000))
+          : 0);
 
     await supaFetch('Subscriptions', {
       method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify([{
         Id: crypto.randomUUID(),
         OrgId: orgId,
-        Plan: (plan || 'pro').toLowerCase(),
-        PlanName: plan ? plan.toUpperCase() : 'PRO',
-        BillingCycle: cycle === 'year' ? 1 : 0,
-        Term: cycle || 'month',
-        TermName: isTrial ? '30 ngày dùng thử Pro' : (cycle === 'year' ? '1 năm' : '1 tháng'),
-        StartDate: new Date().toISOString(),
+        Plan: planKey,
+        PlanName: planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free'),
+        BillingCycle: cycleKey === 'year' ? 1 : 0,
+        Term: cycleKey,
+        TermName: termName,
+        StartDate: startIso,
         EndDate: endDate,
         Status: 0,
-        Amount: 0
+        AutoRenew: true,
+        Amount: isTrial ? 0 : amount,
+        OrganizationId: orgId
       }])
     });
 
@@ -1789,7 +1817,10 @@ app.put(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, 
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});
+};
+
+app.put(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, requireAdmin, handleAdminChangeUserPlan);
+app.post(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, requireAdmin, handleAdminChangeUserPlan);
 
 app.get(['/api/admin/users/:id/details', '/admin/users/:id/details'], authMiddleware, requireAdmin, async (req, res) => {
   try {
