@@ -6,6 +6,22 @@ Tài liệu này ghi chú toàn bộ các mốc phiên bản ổn định (check
 
 ## 📦 Danh Sách Các Phiên Bản
 
+### [v1.0.6-fix-subscription-resolution-and-foreign-key] - 09/09/2026 (Khắc phục triệt để lỗi đăng ký gói Pro và đồng bộ gói đang dùng)
+* **Trạng thái:** ✅ Đã kiểm thử E2E và triển khai.
+* **Git Tag:** `v1.0.6-fix-subscription-resolution-and-foreign-key`
+* **Git Branch Backup:** `backup-v1.0.6-fix-subscription-resolution-and-foreign-key`
+* **Nội dung cải tiến & sửa lỗi:**
+  1. **Khắc phục lỗi ưu tiên gói cước (Resolution Priority)**:
+     - Phát hiện nguyên nhân tài khoản sau khi nâng cấp Pro vẫn hiển thị gói Free: Bản ghi Free ban đầu được gán `EndDate` đến năm 2126. Khi backend truy vấn `order=EndDate.desc`, hệ thống luôn bốc nhầm gói Free thay vì gói Pro mới tạo.
+     - Xây dựng hàm `getActiveSubscriptionForOrg(orgId)` thông minh: ưu tiên các gói trả phí/dùng thử (`Pro`, `Business`) còn hạn so với gói `Free`, và tự động chọn gói mới nhất theo `StartDate`.
+     - Áp dụng trên toàn bộ hệ thống: `/api/auth/login`, `/api/profile`, `/api/dashboard/overview`, `/api/subscriptions/current`, `/api/admin/users`, `/api/admin/users/:id/details`.
+  2. **Tự động đóng gói cũ khi cấp / duyệt gói mới**:
+     - Khi Admin cấp gói hoặc duyệt yêu cầu đăng ký, hệ thống tự động cập nhật trạng thái các gói cũ thành `Status = 1` (Expired), tránh xung đột dữ liệu.
+  3. **Đồng bộ đầy đủ ràng buộc khóa ngoại (Foreign Key) và Not-Null**:
+     - Đồng bộ cả hai cột `OrgId` và `OrganizationId` trong bảng `Subscriptions` trên Supabase, đảm bảo tính toàn vẹn dữ liệu cho mọi luồng đăng ký user mới, nâng cấp gói và duyệt yêu cầu.
+
+---
+
 ### [v1.0.5-fix-pro-registration-and-user-plan] - 09/09/2026 (Sửa lỗi đăng ký và cấp gói Pro cho user trên Admin & Billing)
 * **Trạng thái:** ✅ Đã hoàn tất và kiểm thử.
 * **Git Tag:** `v1.0.5-fix-pro-registration-and-user-plan`

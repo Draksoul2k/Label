@@ -20,6 +20,35 @@ const JWT_SECRET = process.env.JWT_SECRET || 'VNLabelSuperSecretKeyForJwtAuthent
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://boaroamqjvzcmlrfsfit.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYXJvYW1xanZ6Y21scmZzZml0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NDQ1OTgsImV4cCI6MjEwNDMyMDU5OH0.pzinNPh-pxWWc2CPsClcPHdWAeydgudZyOye08gezq8';
 
+
+async function getActiveSubscriptionForOrg(orgId) {
+  if (!orgId) return null;
+  try {
+    const subs = await supaFetch(`Subscriptions?OrgId=eq.${orgId}&select=*`);
+    if (!subs || subs.length === 0) return null;
+    const now = new Date();
+    const activeSubs = subs.filter(s => {
+      const isNotExpired = !s.EndDate || new Date(s.EndDate) > now;
+      const isActive = s.Status === 0 || s.Status === 'Active' || s.Status === undefined;
+      return isNotExpired && isActive;
+    });
+    const paidOrTrial = activeSubs.filter(s => (s.Plan || '').toLowerCase() !== 'free');
+    if (paidOrTrial.length > 0) {
+      paidOrTrial.sort((a, b) => new Date(b.StartDate || 0) - new Date(a.StartDate || 0));
+      return paidOrTrial[0];
+    }
+    if (activeSubs.length > 0) {
+      activeSubs.sort((a, b) => new Date(b.StartDate || 0) - new Date(a.StartDate || 0));
+      return activeSubs[0];
+    }
+    subs.sort((a, b) => new Date(b.StartDate || 0) - new Date(a.StartDate || 0));
+    return subs[0];
+  } catch (err) {
+    console.error('getActiveSubscriptionForOrg error:', err);
+    return null;
+  }
+}
+
 async function supaFetch(path, options = {}) {
   const url = `${SUPABASE_URL}/rest/v1/${path}`;
   const headers = {
@@ -141,9 +170,8 @@ app.post(['/api/auth/login', '/auth/login'], async (req, res) => {
 
     let planKey = user.IsSystemAdmin ? 'Business' : 'Free';
     if (user.OrgId) {
-      const subs = await supaFetch(`Subscriptions?OrgId=eq.${user.OrgId}&order=EndDate.desc&limit=1`);
-      if (subs && subs.length > 0) {
-        const s = subs[0];
+      const s = await getActiveSubscriptionForOrg(user.OrgId);
+      if (s) {
         const p = (s.Plan || 'free').toLowerCase();
         if (p === 'business') planKey = 'Business';
         else if (p === 'pro') planKey = 'Pro';
@@ -230,6 +258,13 @@ app.post(['/api/auth/register', '/auth/register'], async (req, res) => {
       }])
     });
 
+    try {
+      await supaFetch(`Subscriptions?OrgId=eq.${orgId}&Status=eq.0`, {
+        method: 'PATCH',
+        body: JSON.stringify({ Status: 1 })
+      });
+    } catch (e) {}
+
     await supaFetch('Subscriptions', {
       method: 'POST',
       headers: { 'Prefer': 'return=representation' },
@@ -245,7 +280,8 @@ app.post(['/api/auth/register', '/auth/register'], async (req, res) => {
         EndDate: new Date(Date.now() + 3650 * 24 * 3600 * 1000).toISOString(),
         Status: 0,
         AutoRenew: true,
-        Amount: 0
+        Amount: 0,
+        OrganizationId: orgId
       }])
     });
 
@@ -314,9 +350,9 @@ app.get(['/api/profile', '/profile'], authMiddleware, async (req, res) => {
 
     let planKey = u.IsSystemAdmin ? 'Business' : 'Free';
     if (u.OrgId) {
-      const subs = await supaFetch(`Subscriptions?OrgId=eq.${u.OrgId}&order=EndDate.desc&limit=1`);
-      if (subs && subs.length > 0) {
-        const p = (subs[0].Plan || 'free').toLowerCase();
+      const s = await getActiveSubscriptionForOrg(u.OrgId);
+      if (s) {
+        const p = (s.Plan || 'free').toLowerCase();
         if (p === 'business') planKey = 'Business';
         else if (p === 'pro') planKey = 'Pro';
         else if (p === 'basic') planKey = 'Basic';
@@ -418,9 +454,8 @@ app.get(['/api/dashboard/overview', '/dashboard/overview'], authMiddleware, asyn
     let planKey = req.user.isSystemAdmin ? 'Business' : 'Free';
     let daysRemaining = 36500;
     try {
-      const subs = await supaFetch(`Subscriptions?OrgId=eq.${orgId}&order=EndDate.desc&limit=1`);
-      if (subs && subs.length > 0) {
-        const s = subs[0];
+      const s = await getActiveSubscriptionForOrg(orgId);
+      if (s) {
         const p = (s.Plan || 'free').toLowerCase();
         if (p === 'business') planKey = 'Business';
         else if (p === 'pro') planKey = 'Pro';
@@ -1088,8 +1123,8 @@ app.get(['/api/subscriptions/current', '/subscriptions/current'], authMiddleware
       });
     }
 
-    const subs = await supaFetch(`Subscriptions?OrgId=eq.${req.user.orgId}&order=EndDate.desc&limit=1`);
-    if (!subs || subs.length === 0) {
+    const s = await getActiveSubscriptionForOrg(req.user.orgId);
+    if (!s) {
       return res.json({
         id: '00000000-0000-0000-0000-000000000000',
         plan: 'free',
@@ -1100,8 +1135,6 @@ app.get(['/api/subscriptions/current', '/subscriptions/current'], authMiddleware
         daysRemaining: 3650
       });
     }
-
-    const s = subs[0];
     const daysRemaining = Math.max(0, Math.ceil((new Date(s.EndDate) - new Date()) / (1000 * 3600 * 24)));
     res.json({
       id: s.Id,
@@ -1254,18 +1287,18 @@ app.post(['/api/subscriptions/requests/:id/cancel', '/subscriptions/requests/:id
 
 app.post(['/api/subscriptions/cancel', '/subscriptions/cancel'], authMiddleware, async (req, res) => {
   try {
-    const subs = await supaFetch(`Subscriptions?OrgId=eq.${req.user.orgId}&order=EndDate.desc&limit=1`);
-    if (subs && subs.length > 0) {
-      await supaFetch(`Subscriptions?Id=eq.${subs[0].Id}`, {
+    const s = await getActiveSubscriptionForOrg(req.user.orgId);
+    if (s) {
+      await supaFetch(`Subscriptions?Id=eq.${s.Id}`, {
         method: 'PATCH',
         body: JSON.stringify({ AutoRenew: false })
       });
     }
-    const daysRemaining = subs && subs.length > 0 ? Math.max(0, Math.ceil((new Date(subs[0].EndDate) - new Date()) / (1000 * 3600 * 24))) : 0;
+    const daysRemaining = s ? Math.max(0, Math.ceil((new Date(s.EndDate) - new Date()) / (1000 * 3600 * 24))) : 0;
     res.json({
-      id: subs ? subs[0].Id : '00000000-0000-0000-0000-000000000000',
-      plan: subs ? subs[0].Plan : 'free',
-      planName: subs ? (subs[0].PlanName || subs[0].Plan) : 'Free',
+      id: s ? s.Id : '00000000-0000-0000-0000-000000000000',
+      plan: s ? s.Plan : 'free',
+      planName: s ? (s.PlanName || s.Plan) : 'Free',
       autoRenew: false,
       daysRemaining: daysRemaining,
       status: 'Active'
@@ -1277,18 +1310,18 @@ app.post(['/api/subscriptions/cancel', '/subscriptions/cancel'], authMiddleware,
 
 app.post(['/api/subscriptions/reactivate', '/subscriptions/reactivate'], authMiddleware, async (req, res) => {
   try {
-    const subs = await supaFetch(`Subscriptions?OrgId=eq.${req.user.orgId}&order=EndDate.desc&limit=1`);
-    if (subs && subs.length > 0) {
-      await supaFetch(`Subscriptions?Id=eq.${subs[0].Id}`, {
+    const s = await getActiveSubscriptionForOrg(req.user.orgId);
+    if (s) {
+      await supaFetch(`Subscriptions?Id=eq.${s.Id}`, {
         method: 'PATCH',
         body: JSON.stringify({ AutoRenew: true })
       });
     }
-    const daysRemaining = subs && subs.length > 0 ? Math.max(0, Math.ceil((new Date(subs[0].EndDate) - new Date()) / (1000 * 3600 * 24))) : 0;
+    const daysRemaining = s ? Math.max(0, Math.ceil((new Date(s.EndDate) - new Date()) / (1000 * 3600 * 24))) : 0;
     res.json({
-      id: subs ? subs[0].Id : '00000000-0000-0000-0000-000000000000',
-      plan: subs ? subs[0].Plan : 'free',
-      planName: subs ? (subs[0].PlanName || subs[0].Plan) : 'Free',
+      id: s ? s.Id : '00000000-0000-0000-0000-000000000000',
+      plan: s ? s.Plan : 'free',
+      planName: s ? (s.PlanName || s.Plan) : 'Free',
       autoRenew: true,
       daysRemaining: daysRemaining,
       status: 'Active'
@@ -1640,6 +1673,13 @@ app.post(['/api/admin/subscription-requests/:id/approve', '/admin/subscription-r
           ? (cycleKey === 'year' ? 1990000 : (cycleKey === '2year' ? 3980000 : 166000))
           : 0);
 
+    try {
+      await supaFetch(`Subscriptions?OrgId=eq.${r.OrgId}&Status=eq.0`, {
+        method: 'PATCH',
+        body: JSON.stringify({ Status: 1 })
+      });
+    } catch (e) {}
+
     await supaFetch('Subscriptions', {
       method: 'POST',
       headers: { 'Prefer': 'return=representation' },
@@ -1709,8 +1749,26 @@ app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, asyn
 
     const subMap = {};
     for (const s of (subs || [])) {
-      if (!subMap[s.OrgId] || new Date(s.StartDate) > new Date(subMap[s.OrgId].StartDate)) {
+      const now = new Date();
+      const isActive = (s.Status === 0 || s.Status === 'Active' || s.Status === undefined) && (!s.EndDate || new Date(s.EndDate) > now);
+      const isPaid = (s.Plan || '').toLowerCase() !== 'free';
+      const cur = subMap[s.OrgId];
+      if (!cur) {
         subMap[s.OrgId] = s;
+      } else {
+        const curActive = (cur.Status === 0 || cur.Status === 'Active' || cur.Status === undefined) && (!cur.EndDate || new Date(cur.EndDate) > now);
+        const curPaid = (cur.Plan || '').toLowerCase() !== 'free';
+        if (isActive && !curActive) {
+          subMap[s.OrgId] = s;
+        } else if (isActive === curActive) {
+          if (isPaid && !curPaid) {
+            subMap[s.OrgId] = s;
+          } else if (isPaid === curPaid) {
+            if (new Date(s.StartDate || 0) > new Date(cur.StartDate || 0)) {
+              subMap[s.OrgId] = s;
+            }
+          }
+        }
       }
     }
 
@@ -1793,6 +1851,13 @@ const handleAdminChangeUserPlan = async (req, res) => {
           ? (cycleKey === 'year' ? 1990000 : (cycleKey === '2year' ? 3980000 : 166000))
           : 0);
 
+    try {
+      await supaFetch(`Subscriptions?OrgId=eq.${orgId}&Status=eq.0`, {
+        method: 'PATCH',
+        body: JSON.stringify({ Status: 1 })
+      });
+    } catch (e) {}
+
     await supaFetch('Subscriptions', {
       method: 'POST',
       headers: { 'Prefer': 'return=representation' },
@@ -1832,8 +1897,7 @@ app.get(['/api/admin/users/:id/details', '/admin/users/:id/details'], authMiddle
     const orgs = await supaFetch(`Organizations?Id=eq.${u.OrgId}&select=Name`);
     const orgName = orgs && orgs.length > 0 ? orgs[0].Name : (isAdm ? 'Hacode System Admin' : 'Tổ chức');
 
-    const subs = await supaFetch(`Subscriptions?OrgId=eq.${u.OrgId}&order=EndDate.desc&limit=1`);
-    const sub = subs && subs.length > 0 ? subs[0] : null;
+    const sub = await getActiveSubscriptionForOrg(u.OrgId);
 
     res.json({
       id: u.Id,
