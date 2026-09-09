@@ -8,6 +8,13 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+app.use((req, res, next) => {
+  if (!req.url.startsWith('/api') && req.url !== '/') {
+    req.url = '/api' + req.url;
+  }
+  next();
+});
+
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://boaroamqjvzcmlrfsfit.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYXJvYW1xanZ6Y21scmZzZml0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NDQ1OTgsImV4cCI6MjEwNDMyMDU5OH0.pzinNPh-pxWWc2CPsClcPHdWAeydgudZyOye08gezq8';
 const JWT_SECRET = process.env.JWT_SECRET || 'VNLabelSuperSecretKeyForJwtAuthenticationMustBeAtLeast32BytesLong!';
