@@ -2,11 +2,7 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://label.hacode.vn/api/:path*"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api/|assets/|.*\\..*).*)$",
       "destination": "/index.html"
     }
   ]
