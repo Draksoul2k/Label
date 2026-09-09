@@ -6,6 +6,20 @@ Tài liệu này ghi chú toàn bộ các mốc phiên bản ổn định (check
 
 ## 📦 Danh Sách Các Phiên Bản
 
+### [v1.0.4-clean-plan-status-and-cat-icons] - 09/09/2026 (Hiển thị gói đang dùng & Sửa biểu tượng danh mục mẫu tem)
+* **Trạng thái:** ✅ Đã hoàn tất và kiểm thử.
+* **Git Tag:** `v1.0.4-clean-plan-status-and-cat-icons`
+* **Git Branch Backup:** `backup-v1.0.4-clean-plan-status-and-cat-icons`
+* **Nội dung cải tiến & sửa lỗi:**
+  1. **Hiển thị trạng thái gói dịch vụ (/billing)**:
+     - Gói tài khoản đã đăng ký (ví dụ gói Pro) hiện nút trạng thái **"Đang dùng"** rõ ràng, không hiển thị chữ "Gia hạn Pro" hay nhắc gia hạn khi gói còn nhiều thời hạn (ví dụ còn 365 ngày).
+     - Nút "Gia hạn gói" ở khung thông tin trên cùng và nút "Gia hạn" trên thẻ gói chỉ tự động xuất hiện khi tài khoản **gần đến ngày hết hạn** (dưới 30 ngày).
+  2. **Khắc phục lỗi biểu tượng danh mục thư viện mẫu tem (/system-templates)**:
+     - Chuyển đổi toàn bộ mã icon từ tiền tố FontAwesome (`fa-tag`, `fa-utensils`, `fa-barcode`...) sang định dạng SVG nội tại của frontend (`tag`, `bowl`, `code`, `cup`, `plug`, `gem`, `folder`, `box`, `book`, `leaf`, `gift`, `bottle`, `pill`, `truck`, `shirt`).
+     - Các nút danh mục hiển thị đầy đủ icon vector sắc nét, xóa bỏ hoàn toàn hiện tượng hiển thị chữ thô `fa-tag`, `fa-utensils`.
+
+---
+
 ### [v1.0.3-spa-routes-and-syntax-fix] - 09/09/2026 (Khắc phục triệt để lỗi 404 NOT_FOUND & 500 FUNCTION_INVOCATION_FAILED trên Vercel)
 * **Trạng thái:** ✅ Đã kiểm thử và triển khai.
 * **Git Tag:** `v1.0.3-spa-routes-and-syntax-fix`

@@ -61,22 +61,22 @@ function requireAdmin(req, res, next) {
 }
 
 const categoryIcons = {
-  address: { name: 'Tem địa chỉ / Vận chuyển', icon: 'fa-truck' },
-  asset: { name: 'Tem tài sản', icon: 'fa-boxes-stacked' },
-  barcode: { name: 'Mã vạch chuẩn', icon: 'fa-barcode' },
-  beverage: { name: 'Đồ uống & Trà sữa', icon: 'fa-mug-hot' },
-  book: { name: 'Sách & Thư viện', icon: 'fa-book' },
-  cosmetic: { name: 'Mỹ phẩm', icon: 'fa-spa' },
-  electronic: { name: 'Điện tử & Thiết bị', icon: 'fa-microchip' },
-  event: { name: 'Sự kiện & Quà tặng', icon: 'fa-gift' },
-  fashion: { name: 'Thời trang & Thẻ bài', icon: 'fa-shirt' },
-  food: { name: 'Thực phẩm & Bánh kẹo', icon: 'fa-utensils' },
-  fresh: { name: 'Nông sản & Trái cây', icon: 'fa-apple-whole' },
-  jewelry: { name: 'Trang sức & Kính mắt', icon: 'fa-ring' },
-  office: { name: 'Văn phòng phẩm', icon: 'fa-folder-open' },
-  pharma: { name: 'Dược phẩm & Thuốc', icon: 'fa-pills' },
-  price: { name: 'Nhãn giá siêu thị', icon: 'fa-tag' },
-  general: { name: 'Mẫu thông dụng', icon: 'fa-layer-group' }
+  address: { name: 'Tem địa chỉ / Vận chuyển', icon: 'truck' },
+  asset: { name: 'Tem tài sản', icon: 'box' },
+  barcode: { name: 'Mã vạch chuẩn', icon: 'code' },
+  beverage: { name: 'Đồ uống & Trà sữa', icon: 'cup' },
+  book: { name: 'Sách & Thư viện', icon: 'book' },
+  cosmetic: { name: 'Mỹ phẩm', icon: 'bottle' },
+  electronic: { name: 'Điện tử & Thiết bị', icon: 'plug' },
+  event: { name: 'Sự kiện & Quà tặng', icon: 'gift' },
+  fashion: { name: 'Thời trang & Thẻ bài', icon: 'shirt' },
+  food: { name: 'Thực phẩm & Bánh kẹo', icon: 'bowl' },
+  fresh: { name: 'Nông sản & Trái cây', icon: 'leaf' },
+  jewelry: { name: 'Trang sức & Kính mắt', icon: 'gem' },
+  office: { name: 'Văn phòng phẩm', icon: 'folder' },
+  pharma: { name: 'Dược phẩm & Thuốc', icon: 'pill' },
+  price: { name: 'Nhãn giá siêu thị', icon: 'tag' },
+  general: { name: 'Mẫu thông dụng', icon: 'tag' }
 };
 
 function formatTemplate(t) {
@@ -532,7 +532,7 @@ app.get(['/api/label-templates/categories', '/label-templates/categories'], asyn
     }
 
     const result = Object.keys(counts).map(key => {
-      const meta = categoryIcons[key] || { name: key, icon: 'fa-tag' };
+      const meta = categoryIcons[key] || { name: key, icon: 'tag' };
       return {
         key: key,
         name: meta.name,
