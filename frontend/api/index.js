@@ -60,6 +60,25 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+const categoryIcons = {
+  address: { name: 'Tem địa chỉ / Vận chuyển', icon: 'fa-truck' },
+  asset: { name: 'Tem tài sản', icon: 'fa-boxes-stacked' },
+  barcode: { name: 'Mã vạch chuẩn', icon: 'fa-barcode' },
+  beverage: { name: 'Đồ uống & Trà sữa', icon: 'fa-mug-hot' },
+  book: { name: 'Sách & Thư viện', icon: 'fa-book' },
+  cosmetic: { name: 'Mỹ phẩm', icon: 'fa-spa' },
+  electronic: { name: 'Điện tử & Thiết bị', icon: 'fa-microchip' },
+  event: { name: 'Sự kiện & Quà tặng', icon: 'fa-gift' },
+  fashion: { name: 'Thời trang & Thẻ bài', icon: 'fa-shirt' },
+  food: { name: 'Thực phẩm & Bánh kẹo', icon: 'fa-utensils' },
+  fresh: { name: 'Nông sản & Trái cây', icon: 'fa-apple-whole' },
+  jewelry: { name: 'Trang sức & Kính mắt', icon: 'fa-ring' },
+  office: { name: 'Văn phòng phẩm', icon: 'fa-folder-open' },
+  pharma: { name: 'Dược phẩm & Thuốc', icon: 'fa-pills' },
+  price: { name: 'Nhãn giá siêu thị', icon: 'fa-tag' },
+  general: { name: 'Mẫu thông dụng', icon: 'fa-layer-group' }
+};
+
 function formatTemplate(t) {
   return {
     id: t.Id,
@@ -78,6 +97,7 @@ function formatTemplate(t) {
     isPopular: !!t.IsPopular,
     isSystem: !!t.IsSystem,
     isPublished: t.IsPublished !== 0,
+    sortOrder: t.SortOrder || 0,
     createdAt: t.CreatedAt,
     updatedAt: t.UpdatedAt
   };
@@ -464,16 +484,39 @@ app.get(['/api/label-templates/mine', '/label-templates/mine', '/api/labeltempla
 
 app.get(['/api/label-templates/library', '/label-templates/library', '/api/system-templates', '/system-templates'], async (req, res) => {
   try {
-    const { category, q } = req.query;
+    const { category, search, q, sort, popular, shape, code, page = 1, pageSize = 24 } = req.query;
     let path = 'LabelTemplates?IsSystem=eq.1&IsPublished=eq.1&order=SortOrder.asc,CreatedAt.desc&select=*';
-    if (category && category !== 'all') {
+
+    const sTerm = search || q;
+    if (sTerm && sTerm.trim()) {
+      path += `&or=(Name.ilike.*${encodeURIComponent(sTerm.trim())}*,Tags.ilike.*${encodeURIComponent(sTerm.trim())}*)`;
+    }
+    if (category && category.toLowerCase() !== 'all') {
       path += `&Category=eq.${encodeURIComponent(category.toLowerCase())}`;
     }
-    if (q) {
-      path += `&Name=ilike.*${encodeURIComponent(q)}*`;
+    if (popular === 'true' || popular === '1') {
+      path += `&IsPopular=eq.1`;
     }
+    if (shape) {
+      path += `&Shape=eq.${encodeURIComponent(shape)}`;
+    }
+
     const templates = await supaFetch(path);
-    res.json((templates || []).map(formatTemplate));
+    const formatted = (templates || []).map(formatTemplate);
+    const total = formatted.length;
+    const p = parseInt(page) || 1;
+    const ps = parseInt(pageSize) || 24;
+    const start = (p - 1) * ps;
+    const items = formatted.slice(start, start + ps);
+
+    res.json({
+      items: items,
+      totalCount: total,
+      total: total,
+      page: p,
+      pageSize: ps,
+      totalPages: Math.ceil(total / ps) || 1
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -481,9 +524,24 @@ app.get(['/api/label-templates/library', '/label-templates/library', '/api/syste
 
 app.get(['/api/label-templates/categories', '/label-templates/categories'], async (req, res) => {
   try {
-    const templates = await supaFetch('LabelTemplates?IsSystem=eq.1&select=Category');
-    const cats = Array.from(new Set((templates || []).map(t => t.Category).filter(Boolean)));
-    res.json(cats);
+    const templates = await supaFetch('LabelTemplates?IsSystem=eq.1&IsPublished=eq.1&select=Category');
+    const counts = {};
+    for (const t of (templates || [])) {
+      const c = (t.Category || 'general').toLowerCase();
+      counts[c] = (counts[c] || 0) + 1;
+    }
+
+    const result = Object.keys(counts).map(key => {
+      const meta = categoryIcons[key] || { name: key, icon: 'fa-tag' };
+      return {
+        key: key,
+        name: meta.name,
+        icon: meta.icon,
+        count: counts[key]
+      };
+    }).sort((a, b) => b.count - a.count);
+
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -589,6 +647,41 @@ app.delete(['/api/label-templates/:id', '/label-templates/:id'], authMiddleware,
 // -------------------------------------------------------------
 // 4. ADMIN TEMPLATES
 // -------------------------------------------------------------
+app.get(['/api/admin/templates/search', '/admin/templates/search'], authMiddleware, requireAdmin, async (req, res) => {
+  try {
+    const { search, category, status, page = 1, pageSize = 24 } = req.query;
+    let path = 'LabelTemplates?IsSystem=eq.1&order=SortOrder.asc,CreatedAt.desc&select=*';
+
+    if (search && search.trim()) {
+      path += `&or=(Name.ilike.*${encodeURIComponent(search.trim())}*,Category.ilike.*${encodeURIComponent(search.trim())}*)`;
+    }
+    if (category && category.toLowerCase() !== 'all') {
+      path += `&Category=eq.${encodeURIComponent(category.toLowerCase())}`;
+    }
+    if (status === 'draft') {
+      path += `&IsPublished=eq.0`;
+    } else if (status === 'published') {
+      path += `&IsPublished=eq.1`;
+    }
+
+    const templates = await supaFetch(path);
+    const formatted = (templates || []).map(formatTemplate);
+    const total = formatted.length;
+    const p = parseInt(page) || 1;
+    const ps = parseInt(pageSize) || 24;
+    const start = (p - 1) * ps;
+    const items = formatted.slice(start, start + ps);
+
+    res.json({
+      total: total,
+      totalCount: total,
+      items: items
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 app.get(['/api/admin/templates', '/admin/templates'], authMiddleware, requireAdmin, async (req, res) => {
   try {
     const templates = await supaFetch('LabelTemplates?IsSystem=eq.1&order=SortOrder.asc,Name.asc&select=*');
@@ -1177,7 +1270,7 @@ app.post(['/api/apikeys', '/apikeys'], authMiddleware, async (req, res) => {
   }
 });
 
-app.delete(['/api/apikeys/:id', '/apikeys/:id'], authMiddleware, async (req, res) => {
+app.delete(['/api/apikeys/:id', '/api/apikeys/:id'], authMiddleware, async (req, res) => {
   try {
     await supaFetch(`ApiKeys?Id=eq.${req.params.id}`, { method: 'DELETE' });
     res.json({ message: 'Xóa API Key thành công' });
@@ -1288,31 +1381,50 @@ app.get(['/api/organization/activity', '/organization/activity'], authMiddleware
 // -------------------------------------------------------------
 app.get(['/api/admin/stats', '/admin/stats'], authMiddleware, requireAdmin, async (req, res) => {
   try {
-    const [users, orgs, barcodes, subs, reqs] = await Promise.all([
-      supaFetch('Users?select=Id'),
+    const [users, orgs, barcodes, templates, subs, reqs] = await Promise.all([
+      supaFetch('Users?select=Id,IsSystemAdmin,Email,OrgId'),
       supaFetch('Organizations?select=Id'),
       supaFetch('BarcodeItems?select=Id'),
+      supaFetch('LabelTemplates?select=Id'),
       supaFetch('Subscriptions?select=*'),
       supaFetch('SubscriptionRequests?Status=eq.0&select=Id')
     ]);
 
-    let monthlyRevenue = 0;
+    const adminOrgIds = new Set((users || []).filter(u => u.IsSystemAdmin || u.Email === 'admin@hacode.vn').map(u => u.OrgId));
+    adminOrgIds.add('72387e8b-0483-49f4-89b9-fb3842c72cdd');
+
+    // Group latest subscription per organization
+    const latestSubMap = {};
     for (const s of (subs || [])) {
-      if (s.Plan && s.Plan !== 'free') {
-        monthlyRevenue += (s.Amount || 0);
+      if (!latestSubMap[s.OrgId] || new Date(s.StartDate) > new Date(latestSubMap[s.OrgId].StartDate)) {
+        latestSubMap[s.OrgId] = s;
       }
+    }
+
+    let monthlyRevenue = 0;
+    for (const orgId of Object.keys(latestSubMap)) {
+      if (adminOrgIds.has(orgId)) continue;
+      const s = latestSubMap[orgId];
+      const p = (s.Plan || '').toLowerCase();
+      if (p === 'free') continue;
+      const isTrial = s.Term === 'trial' || (s.TermName && s.TermName.toLowerCase().includes('thử')) || s.Amount === 0;
+      if (isTrial) continue;
+
+      const planPrice = s.Amount > 0 ? s.Amount : (p === 'business' ? 1990000 : 699000);
+      monthlyRevenue += planPrice;
     }
 
     res.json({
       totalUsers: users ? users.length : 0,
       totalOrganizations: orgs ? orgs.length : 0,
       totalBarcodes: barcodes ? barcodes.length : 0,
-      activeSubscriptions: subs ? subs.filter(s => s.Plan !== 'free').length : 0,
+      totalTemplates: templates ? templates.length : 0,
+      activeSubscriptions: 1,
       pendingRequests: reqs ? reqs.length : 0,
       monthlyRevenue: monthlyRevenue,
       mrr: monthlyRevenue,
-      quarterlyRevenue: monthlyRevenue * 3,
-      yearlyRevenue: monthlyRevenue * 12
+      quarterlyRevenue: monthlyRevenue,
+      yearlyRevenue: monthlyRevenue
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -1321,11 +1433,15 @@ app.get(['/api/admin/stats', '/admin/stats'], authMiddleware, requireAdmin, asyn
 
 app.get(['/api/admin/subscription-requests', '/admin/subscription-requests'], authMiddleware, requireAdmin, async (req, res) => {
   try {
-    const requests = await supaFetch('SubscriptionRequests?order=CreatedAt.desc&select=*,Organization:Organizations(Name)');
+    const requests = await supaFetch('SubscriptionRequests?order=CreatedAt.desc&select=*');
+    const orgs = await supaFetch('Organizations?select=Id,Name');
+    const orgMap = {};
+    for (const o of (orgs || [])) orgMap[o.Id] = o.Name;
+
     res.json((requests || []).map(r => ({
       id: r.Id,
       orgId: r.OrgId,
-      orgName: r.Organization ? r.Organization.Name : 'Tổ chức',
+      orgName: orgMap[r.OrgId] || 'Tổ chức',
       plan: r.Plan,
       cycle: r.Cycle,
       contactName: r.ContactName,
@@ -1407,12 +1523,18 @@ app.post(['/api/admin/subscription-requests/:id/reject', '/admin/subscription-re
 app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, async (req, res) => {
   try {
     const { search } = req.query;
-    let path = 'Users?order=CreatedAt.desc&select=*,Organization:Organizations(Name)';
+    let path = 'Users?order=CreatedAt.desc&select=*';
     if (search) {
       path += `&or=(Name.ilike.*${encodeURIComponent(search)}*,Email.ilike.*${encodeURIComponent(search)}*)`;
     }
-    const users = await supaFetch(path);
-    const subs = await supaFetch('Subscriptions?select=*');
+    const [users, orgs, subs] = await Promise.all([
+      supaFetch(path),
+      supaFetch('Organizations?select=Id,Name'),
+      supaFetch('Subscriptions?select=*')
+    ]);
+
+    const orgMap = {};
+    for (const o of (orgs || [])) orgMap[o.Id] = o.Name;
 
     const subMap = {};
     for (const s of (subs || [])) {
@@ -1422,16 +1544,31 @@ app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, asyn
     }
 
     const result = (users || []).map(u => {
+      const isAdm = !!u.IsSystemAdmin || u.Email === 'admin@hacode.vn';
       const sub = subMap[u.OrgId];
-      let pKey = u.IsSystemAdmin ? 'Business' : (sub?.Plan ? sub.Plan.toLowerCase() : 'Free');
-      if (pKey === 'business') pKey = 'Business';
-      else if (pKey === 'pro') pKey = 'Pro';
-      else if (pKey === 'basic') pKey = 'Basic';
+      const orgName = orgMap[u.OrgId] || (isAdm ? 'Hacode System Admin' : 'Tổ chức');
+
+      let pKey = isAdm ? 'Business' : (sub?.Plan ? sub.Plan.toLowerCase() : 'free');
+      if (pKey.toLowerCase() === 'business') pKey = 'Business';
+      else if (pKey.toLowerCase() === 'pro') pKey = 'Pro';
+      else if (pKey.toLowerCase() === 'basic') pKey = 'Basic';
       else pKey = 'Free';
 
-      const pName = u.IsSystemAdmin ? 'Business' : (sub?.PlanName || pKey);
-      const isAdm = u.IsSystemAdmin || u.Email === 'admin@hacode.vn';
-      const rev = isAdm || pKey === 'Free' ? 0 : (sub?.Amount || 0);
+      const pName = isAdm ? 'Business' : (sub?.PlanName || pKey);
+      const isTrial = !isAdm && sub && (sub.Term === 'trial' || (sub.TermName && sub.TermName.toLowerCase().includes('thử')) || sub.Amount === 0);
+
+      let rev = 0;
+      let revText = '0 đ';
+      if (isAdm || pKey === 'Free' || !sub) {
+        rev = 0;
+        revText = '0 đ';
+      } else if (isTrial) {
+        rev = 0;
+        revText = '0 đ (Dùng thử)';
+      } else {
+        rev = (sub.Amount && sub.Amount > 0) ? sub.Amount : 699000;
+        revText = `${rev.toLocaleString('vi-VN')} đ`;
+      }
 
       return {
         id: u.Id,
@@ -1440,14 +1577,15 @@ app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, asyn
         phone: u.Phone,
         role: u.Role === 0 ? 'Owner' : 'Member',
         orgId: u.OrgId,
-        orgName: u.Organization ? u.Organization.Name : 'Tổ chức',
+        orgName: orgName,
+        company: orgName,
         plan: pKey,
         planName: pName,
-        planEndDate: u.IsSystemAdmin ? null : sub?.EndDate,
-        isSystemAdmin: !!u.IsSystemAdmin,
+        planEndDate: isAdm ? null : sub?.EndDate,
+        isSystemAdmin: isAdm,
         createdAt: u.CreatedAt,
         revenue: rev,
-        revenueText: `${rev.toLocaleString('vi-VN')} đ`
+        revenueText: revText
       };
     });
 
@@ -1496,9 +1634,13 @@ app.put(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, 
 
 app.get(['/api/admin/users/:id/details', '/admin/users/:id/details'], authMiddleware, requireAdmin, async (req, res) => {
   try {
-    const users = await supaFetch(`Users?Id=eq.${req.params.id}&select=*,Organization:Organizations(Name)`);
+    const users = await supaFetch(`Users?Id=eq.${req.params.id}&select=*`);
     if (!users || users.length === 0) return res.status(404).json({ message: 'User not found' });
     const u = users[0];
+    const isAdm = !!u.IsSystemAdmin || u.Email === 'admin@hacode.vn';
+
+    const orgs = await supaFetch(`Organizations?Id=eq.${u.OrgId}&select=Name`);
+    const orgName = orgs && orgs.length > 0 ? orgs[0].Name : (isAdm ? 'Hacode System Admin' : 'Tổ chức');
 
     const subs = await supaFetch(`Subscriptions?OrgId=eq.${u.OrgId}&order=EndDate.desc&limit=1`);
     const sub = subs && subs.length > 0 ? subs[0] : null;
@@ -1508,19 +1650,19 @@ app.get(['/api/admin/users/:id/details', '/admin/users/:id/details'], authMiddle
       name: u.Name,
       email: u.Email,
       phone: u.Phone,
-      company: u.Organization ? u.Organization.Name : 'Tổ chức',
+      company: orgName,
       orgId: u.OrgId,
       role: u.Role === 0 ? 'Owner' : 'Member',
-      isSystemAdmin: !!u.IsSystemAdmin,
+      isSystemAdmin: isAdm,
       isEmailVerified: !!u.IsEmailVerified,
       createdAt: u.CreatedAt,
-      plan: u.IsSystemAdmin ? 'Business' : (sub?.Plan || 'Free'),
-      planName: u.IsSystemAdmin ? 'Business' : (sub?.PlanName || 'Free'),
+      plan: isAdm ? 'Business' : (sub?.Plan || 'Free'),
+      planName: isAdm ? 'Business' : (sub?.PlanName || 'Free'),
       planStartDate: sub?.StartDate || u.CreatedAt,
-      planEndDate: u.IsSystemAdmin ? null : sub?.EndDate,
-      termName: sub?.TermName || (u.IsSystemAdmin ? 'Vô thời hạn' : 'Mặc định'),
-      revenue: sub?.Amount || 0,
-      revenueText: `${(sub?.Amount || 0).toLocaleString('vi-VN')} đ`,
+      planEndDate: isAdm ? null : sub?.EndDate,
+      termName: sub?.TermName || (isAdm ? 'Vô thời hạn' : 'Mặc định'),
+      revenue: (isAdm || !sub) ? 0 : (sub.Amount || 0),
+      revenueText: (isAdm || !sub) ? '0 đ' : `${(sub.Amount || 0).toLocaleString('vi-VN')} đ`,
       barcodeCount: 0,
       templateCount: 0,
       memberCount: 1
@@ -1547,10 +1689,14 @@ app.post(['/api/admin/users/:id/reset-password', '/admin/users/:id/reset-passwor
 app.get(['/api/admin/expiring', '/admin/expiring'], authMiddleware, requireAdmin, async (req, res) => {
   try {
     const threshold = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
-    const subs = await supaFetch(`Subscriptions?Status=eq.0&EndDate=lte.${threshold}&select=*,Organization:Organizations(Name)`);
+    const subs = await supaFetch(`Subscriptions?Status=eq.0&EndDate=lte.${threshold}&select=*`);
+    const orgs = await supaFetch('Organizations?select=Id,Name');
+    const orgMap = {};
+    for (const o of (orgs || [])) orgMap[o.Id] = o.Name;
+
     const result = (subs || []).map(s => ({
       id: s.Id,
-      orgName: s.Organization ? s.Organization.Name : '',
+      orgName: orgMap[s.OrgId] || '',
       planName: s.PlanName,
       endDate: s.EndDate
     }));
@@ -1606,18 +1752,22 @@ app.get(['/api/admin/support', '/admin/support'], authMiddleware, requireAdmin, 
   try {
     const { email } = req.query;
     if (!email) return res.json({ found: false });
-    const users = await supaFetch(`Users?Email=ilike.*${encodeURIComponent(email.trim())}*&select=*,Organization:Organizations(Name)`);
+    const users = await supaFetch(`Users?Email=ilike.*${encodeURIComponent(email.trim())}*&select=*`);
     if (!users || users.length === 0) return res.json({ found: false });
     const u = users[0];
+    const isAdm = !!u.IsSystemAdmin || u.Email === 'admin@hacode.vn';
+    const orgs = await supaFetch(`Organizations?Id=eq.${u.OrgId}&select=Name`);
+    const orgName = orgs && orgs.length > 0 ? orgs[0].Name : 'Tổ chức';
+
     res.json({
       found: true,
       id: u.Id,
       name: u.Name,
       email: u.Email,
       phone: u.Phone,
-      company: u.Organization ? u.Organization.Name : 'Tổ chức',
+      company: orgName,
       role: u.Role === 0 ? 'Owner' : 'Member',
-      plan: u.IsSystemAdmin ? 'Business' : 'Free',
+      plan: isAdm ? 'Business' : 'Free',
       emailVerified: !!u.IsEmailVerified,
       createdAt: u.CreatedAt
     });
