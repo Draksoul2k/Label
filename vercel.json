@@ -2,7 +2,7 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:match*",
       "destination": "/api/index.js"
     },
     {
@@ -10,7 +10,7 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api/|assets/|.*\\..*).*)$",
+      "source": "/:match*",
       "destination": "/index.html"
     }
   ]

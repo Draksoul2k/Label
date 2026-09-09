@@ -18,6 +18,7 @@ Tài liệu này ghi chú toàn bộ các mốc phiên bản ổn định (check
   5. **Bổ sung các endpoint thao tác gói**: Hủy gia hạn (`POST /subscriptions/cancel`), bật lại gia hạn (`POST /subscriptions/reactivate`), hạ cấp gói (`POST /subscriptions/change`).
   6. **Bổ sung quản lý API Key**: `GET / POST / DELETE /api/api-keys`.
   7. **Bổ sung lịch sử in ấn & upload ảnh**: `GET /api/print-jobs`, `POST /api/label-templates/upload-image`.
+  8. **Sửa lỗi Vercel 404 NOT_FOUND khi F5 / mở trực tiếp trang con (/billing, /dashboard, /designer...)**: Cập nhật cú pháp rewrite chuẩn của Vercel (`/:match* -> /index.html`) và bổ sung `index.html` tại thư mục gốc, giúp mọi thao tác tải lại trang hoạt động 100%.
 
 ---
 
