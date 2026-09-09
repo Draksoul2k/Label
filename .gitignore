@@ -9,3 +9,4 @@ obj/
 vnlabel.db-shm
 vnlabel.db-wal
 scratch/
+node_modules/
