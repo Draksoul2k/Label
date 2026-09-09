@@ -2063,16 +2063,13 @@ app.post(['/api/label-templates/upload-image', '/label-templates/upload-image', 
     return res.json({ url: image });
   }
   res.json({ url: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect width="100" height="100" fill="%23eee"/%3E%3C/svg%3E' });
-// -------------------------------------------------------------
-// SPA Static Files & Fallback Routing
-// -------------------------------------------------------------
-const path = require('path');
-const publicDir = path.resolve(__dirname, '../public');
-const indexFile = path.resolve(publicDir, 'index.html');
+});
 
-app.use(express.static(publicDir));
-app.get('*', (req, res) => {
-  res.sendFile(indexFile);
+// -------------------------------------------------------------
+// Health Check
+// -------------------------------------------------------------
+app.get(['/api/health', '/health'], (req, res) => {
+  res.json({ status: 'healthy', version: '1.0.2', timestamp: new Date().toISOString() });
 });
 
 module.exports = app;

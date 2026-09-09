@@ -6,6 +6,20 @@ Tài liệu này ghi chú toàn bộ các mốc phiên bản ổn định (check
 
 ## 📦 Danh Sách Các Phiên Bản
 
+### [v1.0.3-spa-routes-and-syntax-fix] - 09/09/2026 (Khắc phục triệt để lỗi 404 NOT_FOUND & 500 FUNCTION_INVOCATION_FAILED trên Vercel)
+* **Trạng thái:** ✅ Đã kiểm thử và triển khai.
+* **Git Tag:** `v1.0.3-spa-routes-and-syntax-fix`
+* **Git Branch Backup:** `backup-v1.0.3-spa-routes-and-syntax-fix`
+* **Nội dung cải tiến & sửa lỗi:**
+  1. **Sửa lỗi cú pháp Node.js (SyntaxError: Unexpected end of input)**: Bổ sung dấu đóng hàm `});` bị thiếu tại endpoint `POST /api/label-templates/upload-image`, khôi phục hoạt động bình thường cho toàn bộ serverless API trên Vercel.
+  2. **Cấu hình chuẩn Vercel SPA Rewrites**: Đồng bộ cấu hình `vercel.json` định tuyến chuẩn:
+     - `/api/(.*)` -> `/api/index.js` (xử lý API backend)
+     - `/swagger/(.*)` -> `/api/index.js`
+     - `/((?!api/|swagger/).*)` -> `/index.html` (chuyển tiếp toàn bộ client routing SPA sang index.html)
+  3. **Hỗ trợ tải trực tiếp và F5 toàn bộ trang**: Người dùng F5 hoặc gõ trực tiếp URL `/billing`, `/dashboard`, `/designer`, `/admin` đều nhận HTTP 200 OK với giao diện Angular đầy đủ mà không còn bị 404 NOT_FOUND.
+
+---
+
 ### [v1.0.2-zalo-and-full-sync] - 09/09/2026 (Sửa lỗi Zalo OA & Đồng bộ toàn diện tính năng từ Render sang Vercel)
 * **Trạng thái:** ✅ Hoàn tất, đã kiểm thử thành công.
 * **Git Tag:** `v1.0.2-zalo-and-full-sync`

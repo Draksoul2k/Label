@@ -6,11 +6,11 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/api",
+      "source": "/swagger/(.*)",
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api/|assets/|.*\\..*).*)$",
+      "source": "/((?!api/|swagger/).*)",
       "destination": "/index.html"
     }
   ]
