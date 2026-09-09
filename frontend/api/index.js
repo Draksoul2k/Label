@@ -569,7 +569,7 @@ app.get(['/api/label-templates/:id', '/label-templates/:id', '/api/labeltemplate
   }
 });
 
-app.post(['/api/label-templates', '/label-templates', '/api/labeltemplates', '/labeltemplates'], authMiddleware, async (req, res) => {
+app.post(['/api/label-templates/designer', '/label-templates/designer', '/api/label-templates', '/label-templates', '/api/labeltemplates', '/labeltemplates'], authMiddleware, async (req, res) => {
   try {
     const t = req.body;
     const now = new Date().toISOString();
@@ -1056,8 +1056,17 @@ app.get(['/api/subscriptions/terms', '/subscriptions/terms'], (req, res) => {
   ]);
 });
 
+const SUPPORT_CONTACT = {
+  zaloOaName: 'HACODE',
+  zaloOaUrl: 'https://zalo.me/0942858285',
+  zaloOaId: '0942858285',
+  hotline: '0942858285',
+  email: 'info@hacode.vn',
+  workingHours: '8:00 – 17:00, Thứ 2 – Thứ 7'
+};
+
 app.get(['/api/subscriptions/contact', '/subscriptions/contact'], (req, res) => {
-  res.json({ hotline: '0942 85 82 85', email: 'support@hacode.vn', website: 'https://hacode.vn' });
+  res.json(SUPPORT_CONTACT);
 });
 
 app.get(['/api/subscriptions/current', '/subscriptions/current'], authMiddleware, async (req, res) => {
@@ -1116,11 +1125,21 @@ app.get(['/api/subscriptions/current', '/subscriptions/current'], authMiddleware
 app.post(['/api/subscriptions/requests', '/subscriptions/requests'], authMiddleware, async (req, res) => {
   try {
     const { plan, cycle, contactName, contactPhone, note } = req.body;
+    const planKey = (plan || 'pro').toLowerCase();
+    const cycleKey = (cycle || 'year').toLowerCase();
+    const planName = planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free');
+    const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 30 ngày' : '1 năm'));
+    const amount = planKey === 'pro'
+      ? (cycleKey === 'month' ? 59000 : (cycleKey === '2year' ? 1398000 : 699000))
+      : planKey === 'business'
+        ? (cycleKey === 'month' ? 166000 : (cycleKey === '2year' ? 3980000 : 1990000))
+        : 0;
+
     const record = {
       Id: crypto.randomUUID(),
       OrgId: req.user.orgId,
-      Plan: plan,
-      Cycle: cycle,
+      Plan: planKey,
+      Cycle: cycleKey,
       ContactName: contactName || req.user.name,
       ContactPhone: contactPhone || '',
       Note: note || '',
@@ -1132,7 +1151,30 @@ app.post(['/api/subscriptions/requests', '/subscriptions/requests'], authMiddlew
       headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify([record])
     });
-    res.json({ id: record.Id, plan: record.Plan, status: 'Pending' });
+
+    const orderCode = 'VN-' + record.Id.slice(0, 8).toUpperCase();
+    const requestData = {
+      id: record.Id,
+      orderCode: orderCode,
+      orgId: record.OrgId,
+      plan: planKey,
+      planName: planName,
+      cycle: cycleKey,
+      cycleName: cycleName,
+      amount: amount,
+      contactName: record.ContactName,
+      contactPhone: record.ContactPhone,
+      status: 'Pending',
+      note: record.Note,
+      createdAt: record.CreatedAt,
+      requestedByEmail: req.user.email
+    };
+
+    res.json({
+      request: requestData,
+      contact: SUPPORT_CONTACT,
+      ...requestData
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -1165,19 +1207,37 @@ app.post(['/api/subscriptions/trial-request', '/subscriptions/trial-request'], a
 app.get(['/api/subscriptions/requests', '/subscriptions/requests'], authMiddleware, async (req, res) => {
   try {
     const requests = await supaFetch(`SubscriptionRequests?OrgId=eq.${req.user.orgId}&order=CreatedAt.desc&select=*`);
-    res.json((requests || []).map(r => ({
-      id: r.Id,
-      orgId: r.OrgId,
-      plan: r.Plan,
-      cycle: r.Cycle,
-      contactName: r.ContactName,
-      contactPhone: r.ContactPhone,
-      status: r.Status === 0 ? 'Pending' : (r.Status === 1 ? 'Approved' : 'Rejected'),
-      note: r.Note,
-      adminNote: r.AdminNote,
-      createdAt: r.CreatedAt,
-      processedAt: r.ProcessedAt
-    })));
+    res.json((requests || []).map(r => {
+      const planKey = (r.Plan || 'pro').toLowerCase();
+      const planName = planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free');
+      const cycleKey = (r.Cycle || 'year').toLowerCase();
+      const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 30 ngày' : '1 năm'));
+      const amount = planKey === 'pro'
+        ? (cycleKey === 'month' ? 59000 : (cycleKey === '2year' ? 1398000 : 699000))
+        : planKey === 'business'
+          ? (cycleKey === 'month' ? 166000 : (cycleKey === '2year' ? 3980000 : 1990000))
+          : 0;
+
+      return {
+        id: r.Id,
+        orderCode: 'VN-' + (r.Id || '').slice(0, 8).toUpperCase(),
+        orgId: r.OrgId,
+        plan: planKey,
+        planName: planName,
+        cycle: cycleKey,
+        cycleName: cycleName,
+        amount: amount,
+        contactName: r.ContactName,
+        contactPhone: r.ContactPhone,
+        status: r.Status === 0 ? 'Pending' : (r.Status === 1 ? 'Approved' : (r.Status === 2 ? 'Rejected' : 'Cancelled')),
+        note: r.Note,
+        reviewNote: r.AdminNote || '',
+        adminNote: r.AdminNote || '',
+        createdAt: r.CreatedAt,
+        processedAt: r.ProcessedAt,
+        requestedByEmail: req.user.email
+      };
+    }));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -1187,6 +1247,79 @@ app.post(['/api/subscriptions/requests/:id/cancel', '/subscriptions/requests/:id
   try {
     await supaFetch(`SubscriptionRequests?Id=eq.${req.params.id}`, { method: 'DELETE' });
     res.json({ message: 'Đã hủy yêu cầu thành công' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post(['/api/subscriptions/cancel', '/subscriptions/cancel'], authMiddleware, async (req, res) => {
+  try {
+    const subs = await supaFetch(`Subscriptions?OrgId=eq.${req.user.orgId}&order=EndDate.desc&limit=1`);
+    if (subs && subs.length > 0) {
+      await supaFetch(`Subscriptions?Id=eq.${subs[0].Id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ AutoRenew: false })
+      });
+    }
+    const daysRemaining = subs && subs.length > 0 ? Math.max(0, Math.ceil((new Date(subs[0].EndDate) - new Date()) / (1000 * 3600 * 24))) : 0;
+    res.json({
+      id: subs ? subs[0].Id : '00000000-0000-0000-0000-000000000000',
+      plan: subs ? subs[0].Plan : 'free',
+      planName: subs ? (subs[0].PlanName || subs[0].Plan) : 'Free',
+      autoRenew: false,
+      daysRemaining: daysRemaining,
+      status: 'Active'
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post(['/api/subscriptions/reactivate', '/subscriptions/reactivate'], authMiddleware, async (req, res) => {
+  try {
+    const subs = await supaFetch(`Subscriptions?OrgId=eq.${req.user.orgId}&order=EndDate.desc&limit=1`);
+    if (subs && subs.length > 0) {
+      await supaFetch(`Subscriptions?Id=eq.${subs[0].Id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ AutoRenew: true })
+      });
+    }
+    const daysRemaining = subs && subs.length > 0 ? Math.max(0, Math.ceil((new Date(subs[0].EndDate) - new Date()) / (1000 * 3600 * 24))) : 0;
+    res.json({
+      id: subs ? subs[0].Id : '00000000-0000-0000-0000-000000000000',
+      plan: subs ? subs[0].Plan : 'free',
+      planName: subs ? (subs[0].PlanName || subs[0].Plan) : 'Free',
+      autoRenew: true,
+      daysRemaining: daysRemaining,
+      status: 'Active'
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post(['/api/subscriptions/change', '/subscriptions/change'], authMiddleware, async (req, res) => {
+  try {
+    const { plan } = req.body;
+    const planKey = (plan || 'free').toLowerCase();
+    const subs = await supaFetch(`Subscriptions?OrgId=eq.${req.user.orgId}&order=EndDate.desc&limit=1`);
+    if (subs && subs.length > 0) {
+      await supaFetch(`Subscriptions?Id=eq.${subs[0].Id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          Plan: planKey,
+          PlanName: planKey.charAt(0).toUpperCase() + planKey.slice(1),
+          Status: 0
+        })
+      });
+    }
+    res.json({
+      id: subs ? subs[0].Id : '00000000-0000-0000-0000-000000000000',
+      plan: planKey,
+      planName: planKey.charAt(0).toUpperCase() + planKey.slice(1),
+      status: 'Active',
+      daysRemaining: 3650
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -1435,23 +1568,49 @@ app.get(['/api/admin/subscription-requests', '/admin/subscription-requests'], au
   try {
     const requests = await supaFetch('SubscriptionRequests?order=CreatedAt.desc&select=*');
     const orgs = await supaFetch('Organizations?select=Id,Name');
+    const users = await supaFetch('Users?select=Id,OrgId,Email,Name');
     const orgMap = {};
     for (const o of (orgs || [])) orgMap[o.Id] = o.Name;
+    const userOrgMap = {};
+    for (const u of (users || [])) {
+      if (!userOrgMap[u.OrgId]) userOrgMap[u.OrgId] = u;
+    }
 
-    res.json((requests || []).map(r => ({
-      id: r.Id,
-      orgId: r.OrgId,
-      orgName: orgMap[r.OrgId] || 'Tổ chức',
-      plan: r.Plan,
-      cycle: r.Cycle,
-      contactName: r.ContactName,
-      contactPhone: r.ContactPhone,
-      status: r.Status === 0 ? 'Pending' : (r.Status === 1 ? 'Approved' : 'Rejected'),
-      note: r.Note,
-      adminNote: r.AdminNote,
-      createdAt: r.CreatedAt,
-      processedAt: r.ProcessedAt
-    })));
+    res.json((requests || []).map(r => {
+      const planKey = (r.Plan || 'pro').toLowerCase();
+      const planName = planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free');
+      const cycleKey = (r.Cycle || 'year').toLowerCase();
+      const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 30 ngày' : '1 năm'));
+      const amount = planKey === 'pro'
+        ? (cycleKey === 'month' ? 59000 : (cycleKey === '2year' ? 1398000 : 699000))
+        : planKey === 'business'
+          ? (cycleKey === 'month' ? 166000 : (cycleKey === '2year' ? 3980000 : 1990000))
+          : 0;
+      const orgUser = userOrgMap[r.OrgId] || {};
+
+      return {
+        id: r.Id,
+        orderCode: 'VN-' + (r.Id || '').slice(0, 8).toUpperCase(),
+        orgId: r.OrgId,
+        orgName: orgMap[r.OrgId] || 'Tổ chức',
+        company: orgMap[r.OrgId] || 'Tổ chức',
+        requestedByEmail: orgUser.Email || '',
+        contactName: r.ContactName || orgUser.Name || 'Khách hàng',
+        contactPhone: r.ContactPhone || '',
+        plan: planKey,
+        planName: planName,
+        cycle: cycleKey,
+        cycleName: cycleName,
+        amount: amount,
+        status: r.Status === 0 ? 'Pending' : (r.Status === 1 ? 'Approved' : (r.Status === 2 ? 'Rejected' : 'Cancelled')),
+        note: r.Note,
+        reviewNote: r.AdminNote || '',
+        adminNote: r.AdminNote || '',
+        isRenewal: cycleKey !== 'trial',
+        createdAt: r.CreatedAt,
+        processedAt: r.ProcessedAt
+      };
+    }));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -1810,6 +1969,100 @@ app.get(['/api/fonts', '/fonts', '/api/admin/fonts', '/admin/fonts'], async (req
 // -------------------------------------------------------------
 app.get(['/api/health', '/health'], (req, res) => {
   res.json({ status: 'ok', server: 'Vercel Serverless', time: new Date().toISOString() });
+});
+
+
+// -------------------------------------------------------------
+// Print Jobs & Printing Logs
+// -------------------------------------------------------------
+app.get(['/api/print-jobs', '/print-jobs'], authMiddleware, async (req, res) => {
+  try {
+    const logs = await supaFetch(`ActivityLogs?OrgId=eq.${req.user.orgId}&order=CreatedAt.desc&limit=20&select=*`);
+    res.json((logs || []).map(l => ({
+      id: l.Id,
+      templateName: l.Details || 'In tem nhãn',
+      labelCount: 1,
+      format: 'Web',
+      status: 'Completed',
+      createdAt: l.CreatedAt
+    })));
+  } catch (err) {
+    res.json([]);
+  }
+});
+
+// -------------------------------------------------------------
+// API Keys Management
+// -------------------------------------------------------------
+app.get(['/api/api-keys', '/api-keys'], authMiddleware, async (req, res) => {
+  try {
+    const keys = await supaFetch(`ApiKeys?OrgId=eq.${req.user.orgId}&order=CreatedAt.desc&select=*`);
+    res.json((keys || []).map(k => ({
+      id: k.Id,
+      name: k.Name,
+      keyPrefix: k.KeyPrefix,
+      isActive: !!k.IsActive,
+      createdAt: k.CreatedAt,
+      expiresAt: k.ExpiresAt,
+      lastUsedAt: k.LastUsedAt
+    })));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.post(['/api/api-keys', '/api-keys'], authMiddleware, async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name || !name.trim()) return res.status(400).json({ message: 'Tên API Key không được để trống' });
+    const fullKey = 'vnl_' + crypto.randomUUID().replace(/-/g, '') + crypto.randomBytes(8).toString('hex');
+    const prefix = fullKey.slice(0, 8);
+    const keyHash = await bcrypt.hash(fullKey, 10);
+    const newKey = {
+      Id: crypto.randomUUID(),
+      OrgId: req.user.orgId,
+      Name: name.trim(),
+      KeyPrefix: prefix,
+      KeyHash: keyHash,
+      IsActive: true,
+      CreatedAt: new Date().toISOString()
+    };
+    await supaFetch('ApiKeys', {
+      method: 'POST',
+      headers: { 'Prefer': 'return=representation' },
+      body: JSON.stringify([newKey])
+    });
+    res.json({
+      id: newKey.Id,
+      name: newKey.Name,
+      keyPrefix: prefix,
+      fullApiKey: fullKey,
+      plainKey: fullKey,
+      createdAt: newKey.CreatedAt
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.delete(['/api/api-keys/:id', '/api-keys/:id'], authMiddleware, async (req, res) => {
+  try {
+    await supaFetch(`ApiKeys?Id=eq.${req.params.id}&OrgId=eq.${req.user.orgId}`, { method: 'DELETE' });
+    res.json({ message: 'Xóa API Key thành công' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// Image Upload for Templates
+// -------------------------------------------------------------
+app.post(['/api/label-templates/upload-image', '/label-templates/upload-image', '/api/admin/templates/upload-image', '/admin/templates/upload-image'], authMiddleware, (req, res) => {
+  const image = req.body?.image || req.body?.file || req.body?.url;
+  if (image) {
+    return res.json({ url: image });
+  }
+  res.json({ url: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect width="100" height="100" fill="%23eee"/%3E%3C/svg%3E' });
 });
 
 module.exports = app;
