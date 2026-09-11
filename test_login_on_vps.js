@@ -9,11 +9,11 @@ async function diagnose() {
   console.log('1. Kiem tra ket noi Database Supabase tu VPS...');
   try {
     const t1 = Date.now();
-    const res = await fetch(${SUPABASE_URL}/rest/v1/Users?select=Email&limit=1, {
-      headers: { apikey: SUPABASE_KEY, Authorization: Bearer  }
+    const res = await fetch(SUPABASE_URL + '/rest/v1/Users?select=Email&limit=1', {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
     });
     const time = Date.now() - t1;
-    console.log(   [OK] Ket noi Supabase thanh cong trong ms! Status: );
+    console.log('   [OK] Ket noi Supabase thanh cong trong ' + time + 'ms! Status: ' + res.status);
   } catch (err) {
     console.error('   [LOI] Khong the ket noi toi Supabase tu VPS:', err.message);
   }
@@ -26,9 +26,9 @@ async function diagnose() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'admin@hacode.vn', password: 'Admin@123' })
     });
-    console.log(   [OK] Backend 5000 phan hoi Status: );
+    console.log('   [OK] Backend 5000 phan hoi Status: ' + res.status);
     const text = await res.text();
-    console.log(   Ket qua Backend tra ve: ...);
+    console.log('   Ket qua Backend tra ve: ' + text.substring(0, 150) + '...');
   } catch (err) {
     console.error('   [LOI] Khong the goi Backend 127.0.0.1:5000:', err.message);
   }
@@ -41,9 +41,9 @@ async function diagnose() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'admin@hacode.vn', password: 'Admin@123' })
     });
-    console.log(   [OK] Caddy phan hoi Status: );
+    console.log('   [OK] Caddy phan hoi Status: ' + res.status);
     const text = await res.text();
-    console.log(   Ket qua Caddy tra ve: ...);
+    console.log('   Ket qua Caddy tra ve: ' + text.substring(0, 150) + '...');
   } catch (err) {
     console.error('   [LOI] Khong the goi qua Caddy cong 80:', err.message);
   }
