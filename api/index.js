@@ -2169,8 +2169,8 @@ app.get(['/api/health', '/health'], (req, res) => {
 
 module.exports = app;
 
-if (process.env.NODE_ENV !== 'production' && require.main === module) {
-  const PORT = process.env.PORT || 3000;
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
