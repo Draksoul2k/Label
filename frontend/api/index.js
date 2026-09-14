@@ -3,6 +3,8 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -1953,6 +1955,38 @@ app.delete(['/api/admin/users/:id', '/admin/users/:id'], authMiddleware, require
   } catch (err) {
     console.error('Delete user error:', err);
     res.status(500).json({ message: 'Lỗi xóa tài khoản: ' + err.message });
+  }
+});
+
+// Quản lý Icon ẩn/xóa (Admin Icon Manager)
+let inMemoryHiddenIcons = [];
+const hiddenIconsPath = path.join(__dirname, '../data/hidden_icons.json');
+try {
+  if (fs.existsSync(hiddenIconsPath)) {
+    inMemoryHiddenIcons = JSON.parse(fs.readFileSync(hiddenIconsPath, 'utf8') || '[]');
+  }
+} catch (e) {}
+
+app.get(['/api/admin/icons/hidden', '/admin/icons/hidden'], (req, res) => {
+  try {
+    if (fs.existsSync(hiddenIconsPath)) {
+      inMemoryHiddenIcons = JSON.parse(fs.readFileSync(hiddenIconsPath, 'utf8') || '[]');
+    }
+  } catch(e) {}
+  res.json({ hidden: inMemoryHiddenIcons });
+});
+
+app.post(['/api/admin/icons/hidden', '/admin/icons/hidden'], authMiddleware, requireAdmin, (req, res) => {
+  try {
+    const list = Array.isArray(req.body.hidden) ? req.body.hidden : [];
+    inMemoryHiddenIcons = list;
+    const dataDir = path.dirname(hiddenIconsPath);
+    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(hiddenIconsPath, JSON.stringify(list, null, 2), 'utf8');
+    res.json({ success: true, message: 'Đã cập nhật danh sách biểu tượng thành công!', hidden: list });
+  } catch (err) {
+    console.error('Update hidden icons error:', err);
+    res.status(500).json({ message: err.message });
   }
 });
 
