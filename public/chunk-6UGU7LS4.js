@@ -20,6 +20,32 @@ renderRevSub(){
   } catch(e){}
 }
 
+deleteUser(u){
+  if(!u || !u.id) return;
+  if(u.isSystemAdmin || u.email === 'admin@hacode.vn'){
+    this.toast.error('Không thể xóa tài khoản Quản trị viên hệ thống!');
+    return;
+  }
+  const confirmMsg = 'Bạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản:\n"' + (u.name || u.email) + '" (' + u.email + ')?\n\nToàn bộ dữ liệu của khách hàng này (mẫu tem, mã vạch, gói cước) sẽ bị xóa và không thể khôi phục!';
+  if(!confirm(confirmMsg)) return;
+
+  this.working = true;
+  this.api.delete('/admin/users/' + u.id).subscribe({
+    next: (res) => {
+      this.toast.success(res?.message || 'Đã xóa tài khoản thành công!');
+      this.working = false;
+      let modal = document.getElementById('adm-user-modal-box');
+      if (modal) modal.remove();
+      this.loadUsers();
+      this.loadStats();
+    },
+    error: (err) => {
+      this.toast.error(err.error?.message || err.message || 'Xóa tài khoản thất bại');
+      this.working = false;
+    }
+  });
+}
+
 openUserProfile(u){
   if(!u) return;
   this.api.get("/admin/users/" + u.id + "/details").subscribe({
@@ -67,6 +93,20 @@ attachUserRowActions(){
           this.openUserProfile(u);
         };
         lastTd.insertBefore(btn, lastTd.firstChild);
+      }
+      if (lastTd && !lastTd.dataset.hasDeleteBtn && !u.isSystemAdmin && u.email !== 'admin@hacode.vn') {
+        lastTd.dataset.hasDeleteBtn = "1";
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "btn btn-outline btn-sm";
+        delBtn.innerHTML = "&#128465; Xóa";
+        delBtn.title = "Xóa vĩnh viễn tài khoản này";
+        delBtn.style.cssText = "margin-left:6px;color:#dc2626;border-color:#fca5a5;background:#fef2f2;font-weight:600;";
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          this.deleteUser(u);
+        };
+        lastTd.appendChild(delBtn);
       }
     });
   } catch(e) {}
@@ -190,6 +230,24 @@ showProfileModal(d){
 
     </div>
 
+    
+      <!-- Khu vuc nguy hiem / Xoa tai khoan -->
+      <div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:14px;padding:16px;">
+        <div style="font-size:14px;font-weight:750;color:#991b1b;display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+          &#128465; Xóa vĩnh viễn tài khoản
+        </div>
+        <div style="font-size:12.5px;color:#b91c1c;margin-bottom:12px;line-height:1.4;">
+          Xóa toàn bộ dữ liệu tài khoản này (mẫu tem, mã vạch, gói cước). Hành động này không thể khôi phục!
+        </div>
+        ${d.isSystemAdmin || d.email === 'admin@hacode.vn' ? '<span style="font-size:12px;color:#991b1b;font-weight:600;">(Tài khoản Quản trị viên không thể xóa)</span>' : `
+        <button id="adm-btn-delete-profile" type="button" style="background:#dc2626;color:#ffffff;border:none;border-radius:8px;font-weight:700;font-size:13px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s;">
+          &#128465; Xóa vĩnh viễn tài khoản này
+        </button>
+        `}
+      </div>
+
+    </div>
+
     <div style="padding:14px 24px;border-top:1px solid #f1f5f9;background:#f8fafc;display:flex;justify-content:flex-end;">
       <button id="adm-close-modal-btn" type="button" style="padding:8px 18px;border-radius:8px;background:#e2e8f0;color:#334155;border:none;font-weight:600;font-size:13px;cursor:pointer;">\u0110\xF3ng</button>
     </div>
@@ -201,6 +259,10 @@ showProfileModal(d){
   const closeModal = () => backdrop.remove();
   modal.querySelector("#adm-close-modal").onclick = closeModal;
   modal.querySelector("#adm-close-modal-btn").onclick = closeModal;
+  const delProfileBtn = modal.querySelector("#adm-btn-delete-profile");
+  if (delProfileBtn) {
+    delProfileBtn.onclick = () => this.deleteUser(d);
+  }
   backdrop.onclick = (e) => { if (e.target === backdrop) closeModal(); };
 
   const changePlanBtn = modal.querySelector("#adm-btn-change-plan");
@@ -264,7 +326,7 @@ showProfileModal(d){
   };
 }
 
-setTab(t){this.tab=t;try{setTimeout(()=>this.renderRevSub(),50);t==="users"&&setTimeout(()=>this.attachUserRowActions(),150)}catch(e){};t==="reports"&&!this.reports&&this.loadReports(),t==="reports"&&this.reports&&setTimeout(()=>this.renderCharts(),120),t==="requests"&&this.loadRequests(),t==="expiring"&&this.loadExpiring()}loadUsers(){this.api.get("/admin/users",{search:this.userSearch||void 0}).subscribe({next:t=>{this.users=t;try{setTimeout(()=>this.attachUserRowActions(),120)}catch(e){}}})}loadRequests(){this.api.get("/admin/subscription-requests",{status:this.requestFilter}).subscribe({next:t=>this.requests=t})}setRequestFilter(t){this.requestFilter=t,this.loadRequests()}loadExpiring(){this.api.get("/admin/expiring",{days:this.expiringDays}).subscribe({next:t=>this.expiring=t})}setExpiringDays(t){this.expiringDays=t,this.loadExpiring()}loadReports(){this.api.get("/admin/reports").subscribe({next:t=>{this.reports=t,setTimeout(()=>this.renderCharts(),120)}})}get pendingCount(){return this.stats?.pendingRequests??0}get expiringCount(){return this.stats?.expiringSoon??0}openApprove(t){this.grant={kind:"request",request:t,title:`K\xEDch ho\u1EA1t g\xF3i ${t.planName}`,who:t.company,plan:t.plan,cycle:t.cycle,startDate:this.toDateInput(t.suggestedStart),note:""}}openUserPlan(t){t.isSystemAdmin||(this.grant={kind:"user",user:t,title:`\u0110\u1ED5i g\xF3i \u2014 ${t.company}`,who:`${t.name} \xB7 ${t.email}`,plan:t.plan==="Free"?"Pro":t.plan,cycle:"year",startDate:this.toDateInput(t.planEndDate&&new Date(t.planEndDate)>new Date?t.planEndDate:new Date().toISOString()),note:""})}openRenew(t){this.grant={kind:"user",user:{id:t.ownerUserId??"",name:t.ownerName??"",email:t.ownerEmail??"",company:t.company,plan:t.plan,planStartDate:t.startDate,planEndDate:t.endDate,role:"Owner",isSystemAdmin:!1,emailVerified:!0,createdAt:t.startDate},title:`Gia h\u1EA1n \u2014 ${t.company}`,who:`${t.ownerName??""} \xB7 ${t.ownerEmail??""}`,plan:t.plan,cycle:t.cycle||"year",startDate:this.toDateInput(t.endDate),note:""}}closeGrant(){this.working||(this.grant=null)}confirmGrant(){let t=this.grant;if(!t)return;this.working=!0;let l=t.startDate?new Date(t.startDate).toISOString():null,r=O=>{this.toast.success(O),this.working=!1,this.grant=null,this.loadStats(),this.loadUsers(),this.loadRequests(),this.tab==="expiring"&&this.loadExpiring()},s=O=>{this.toast.error(O.error?.detail||"Thao t\xE1c th\u1EA5t b\u1EA1i"),this.working=!1};if(t.kind==="request"&&t.request){this.api.post(`/admin/subscription-requests/${t.request.id}/approve`,{cycle:t.cycle,startDate:l,note:t.note.trim()||null}).subscribe({next:()=>r(`\u0110\xE3 k\xEDch ho\u1EA1t g\xF3i cho ${t.who}`),error:s});return}if(t.user?.id){this.api.put(`/admin/users/${t.user.id}/plan`,{plan:t.plan,cycle:t.cycle,startDate:l}).subscribe({next:()=>r(t.plan==="Free"?`\u0110\xE3 chuy\u1EC3n ${t.who} v\u1EC1 g\xF3i Free`:`\u0110\xE3 c\u1EA5p g\xF3i ${t.plan} cho ${t.who}`),error:s});return}this.toast.error("Kh\xF4ng x\xE1c \u0111\u1ECBnh \u0111\u01B0\u1EE3c t\xE0i kho\u1EA3n \u0111\u1EC3 \u0111\u1ED5i g\xF3i"),this.working=!1}get grantEnd(){if(!this.grant?.startDate||this.grant.plan==="Free")return null;let t=this.terms.find(r=>r.key===this.grant.cycle)?.months??1,l=new Date(this.grant.startDate);return isNaN(l.getTime())?null:(l.setMonth(l.getMonth()+t),l)}openReject(t){this.rejecting=t,this.rejectNote=""}closeReject(){this.working||(this.rejecting=null)}confirmReject(){let t=this.rejecting;t&&(this.working=!0,this.api.post(`/admin/subscription-requests/${t.id}/reject`,{note:this.rejectNote.trim()||null}).subscribe({next:()=>{this.toast.success("\u0110\xE3 t\u1EEB ch\u1ED1i y\xEAu c\u1EA7u"),this.working=!1,this.rejecting=null,this.loadRequests(),this.loadStats()},error:l=>{this.toast.error(l.error?.detail||"Thao t\xE1c th\u1EA5t b\u1EA1i"),this.working=!1}}))}statusLabel(t){return t==="Pending"?"Ch\u1EDD x\xE1c nh\u1EADn":t==="Approved"?"\u0110\xE3 k\xEDch ho\u1EA1t":t==="Rejected"?"\u0110\xE3 t\u1EEB ch\u1ED1i":"Kh\xE1ch \u0111\xE3 h\u1EE7y"}ageText(t){let l=this.daysSince(t);return l<=0?"g\u1EEDi h\xF4m nay":`ch\u1EDD ${l} ng\xE0y`}ageClass(t){let l=this.daysSince(t);return l>=3?"late":l>=1?"warn":"fresh"}daysLeft(t){if(!t)return null;let l=new Date(t).getTime();return isNaN(l)?null:Math.max(0,Math.floor((l-Date.now())/864e5))}daysClass(t){return t===null?"":t<=3?"urgent":t<=7?"soon":""}planClass(t){return"plan-"+(t||"free").toLowerCase()}initial(t){return(t||"?").trim().charAt(0).toUpperCase()}daysSince(t){let l=new Date(t).getTime();return isNaN(l)?0:Math.max(0,Math.floor((Date.now()-l)/864e5))}toDateInput(t){if(!t)return"";let l=new Date(t);if(isNaN(l.getTime()))return"";let r=s=>String(s).padStart(2,"0");return`${l.getFullYear()}-${r(l.getMonth()+1)}-${r(l.getDate())}`}searchSupport(){this.supportEmail.trim()&&this.api.get("/admin/support",{email:this.supportEmail.trim()}).subscribe({next:t=>{this.support=t;try{setTimeout(()=>this.attachSupportResetPassword(),120)}catch(e){}}})}renderCharts(){
+setTab(t){this.tab=t;try{setTimeout(()=>this.renderRevSub(),50);t==="users"&&setTimeout(()=>this.attachUserRowActions(),150)}catch(e){};t==="reports"&&!this.reports&&this.loadReports(),t==="reports"&&this.reports&&setTimeout(()=>this.renderCharts(),120),t==="requests"&&this.loadRequests(),t==="expiring"&&this.loadExpiring()}loadUsers(){this.api.get("/admin/users",{search:this.userSearch||void 0}).subscribe({next:t=>{this.users=t;try{setTimeout(()=>this.attachUserRowActions(),120)}catch(e){}}})}loadRequests(){this.api.get("/admin/subscription-requests",{status:this.requestFilter}).subscribe({next:t=>this.requests=t})}setRequestFilter(t){this.requestFilter=t,this.loadRequests()}loadExpiring(){this.api.get("/admin/expiring",{days:this.expiringDays}).subscribe({next:t=>this.expiring=t})}setExpiringDays(t){this.expiringDays=t,this.loadExpiring()}loadReports(){this.api.get("/admin/reports").subscribe({next:t=>{this.reports=t,setTimeout(()=>this.renderCharts(),120)}})}get pendingCount(){return this.stats?.pendingRequests??0}get expiringCount(){return this.stats?.expiringSoon??0}openApprove(t){this.grant={kind:"request",request:t,title:`K\xEDch ho\u1EA1t g\xF3i ${t.planName}`,who:t.company,plan:t.plan,cycle:t.cycle,startDate:this.toDateInput(t.suggestedStart),note:""}}openUserPlan(t){t.isSystemAdmin||(this.grant={kind:"user",user:t,title:`\u0110\u1ED5i g\xF3i \u2014 ${t.company}`,who:`${t.name} \xB7 ${t.email}`,plan:t.plan==="Free"?"Pro":t.plan,cycle:"year",startDate:this.toDateInput(new Date().toISOString()),note:""})}openRenew(t){this.grant={kind:"user",user:{id:t.ownerUserId??"",name:t.ownerName??"",email:t.ownerEmail??"",company:t.company,plan:t.plan,planStartDate:t.startDate,planEndDate:t.endDate,role:"Owner",isSystemAdmin:!1,emailVerified:!0,createdAt:t.startDate},title:`Gia h\u1EA1n \u2014 ${t.company}`,who:`${t.ownerName??""} \xB7 ${t.ownerEmail??""}`,plan:t.plan,cycle:t.cycle||"year",startDate:this.toDateInput(t.endDate),note:""}}closeGrant(){this.working||(this.grant=null)}confirmGrant(){let t=this.grant;if(!t)return;this.working=!0;let l=t.startDate?new Date(t.startDate).toISOString():null,r=O=>{this.toast.success(O),this.working=!1,this.grant=null,this.loadStats(),this.loadUsers(),this.loadRequests(),this.tab==="expiring"&&this.loadExpiring()},s=O=>{this.toast.error(O.error?.detail||"Thao t\xE1c th\u1EA5t b\u1EA1i"),this.working=!1};if(t.kind==="request"&&t.request){this.api.post(`/admin/subscription-requests/${t.request.id}/approve`,{cycle:t.cycle,startDate:l,note:t.note.trim()||null}).subscribe({next:()=>r(`\u0110\xE3 k\xEDch ho\u1EA1t g\xF3i cho ${t.who}`),error:s});return}if(t.user?.id){this.api.put(`/admin/users/${t.user.id}/plan`,{plan:t.plan,cycle:t.cycle,startDate:l}).subscribe({next:()=>r(t.plan==="Free"?`\u0110\xE3 chuy\u1EC3n ${t.who} v\u1EC1 g\xF3i Free`:`\u0110\xE3 c\u1EA5p g\xF3i ${t.plan} cho ${t.who}`),error:s});return}this.toast.error("Kh\xF4ng x\xE1c \u0111\u1ECBnh \u0111\u01B0\u1EE3c t\xE0i kho\u1EA3n \u0111\u1EC3 \u0111\u1ED5i g\xF3i"),this.working=!1}get grantEnd(){if(!this.grant?.startDate||this.grant.plan==="Free")return null;let t=this.terms.find(r=>r.key===this.grant.cycle)?.months??1,l=new Date(this.grant.startDate);return isNaN(l.getTime())?null:(l.setMonth(l.getMonth()+t),l)}openReject(t){this.rejecting=t,this.rejectNote=""}closeReject(){this.working||(this.rejecting=null)}confirmReject(){let t=this.rejecting;t&&(this.working=!0,this.api.post(`/admin/subscription-requests/${t.id}/reject`,{note:this.rejectNote.trim()||null}).subscribe({next:()=>{this.toast.success("\u0110\xE3 t\u1EEB ch\u1ED1i y\xEAu c\u1EA7u"),this.working=!1,this.rejecting=null,this.loadRequests(),this.loadStats()},error:l=>{this.toast.error(l.error?.detail||"Thao t\xE1c th\u1EA5t b\u1EA1i"),this.working=!1}}))}statusLabel(t){return t==="Pending"?"Ch\u1EDD x\xE1c nh\u1EADn":t==="Approved"?"\u0110\xE3 k\xEDch ho\u1EA1t":t==="Rejected"?"\u0110\xE3 t\u1EEB ch\u1ED1i":"Kh\xE1ch \u0111\xE3 h\u1EE7y"}ageText(t){let l=this.daysSince(t);return l<=0?"g\u1EEDi h\xF4m nay":`ch\u1EDD ${l} ng\xE0y`}ageClass(t){let l=this.daysSince(t);return l>=3?"late":l>=1?"warn":"fresh"}daysLeft(t){if(!t)return null;let l=new Date(t).getTime();return isNaN(l)?null:Math.max(0,Math.floor((l-Date.now())/864e5))}daysClass(t){return t===null?"":t<=3?"urgent":t<=7?"soon":""}planClass(t){return"plan-"+(t||"free").toLowerCase()}initial(t){return(t||"?").trim().charAt(0).toUpperCase()}daysSince(t){let l=new Date(t).getTime();return isNaN(l)?0:Math.max(0,Math.floor((Date.now()-l)/864e5))}toDateInput(t){if(!t)return"";let l=new Date(t);if(isNaN(l.getTime()))return"";let r=s=>String(s).padStart(2,"0");return`${l.getFullYear()}-${r(l.getMonth()+1)}-${r(l.getDate())}`}searchSupport(){this.supportEmail.trim()&&this.api.get("/admin/support",{email:this.supportEmail.trim()}).subscribe({next:t=>{this.support=t;try{setTimeout(()=>this.attachSupportResetPassword(),120)}catch(e){}}})}renderCharts(){
   if(!this.reports)return;
   this.charts.forEach(r=>r.destroy()),this.charts=[];
   let t="#116cbf",l=["#94a3b8","#3b82f6","#116cbf","#22c55e"];

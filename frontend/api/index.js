@@ -1820,7 +1820,7 @@ app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, asyn
         company: orgName,
         plan: pKey,
         planName: pName,
-        planEndDate: isAdm ? null : sub?.EndDate,
+        planEndDate: (isAdm || pKey === 'Free') ? null : sub?.EndDate,
         isSystemAdmin: isAdm,
         createdAt: u.CreatedAt,
         revenue: rev,
@@ -1844,15 +1844,36 @@ const handleAdminChangeUserPlan = async (req, res) => {
     const planKey = (plan || 'pro').toLowerCase();
     const cycleKey = (cycle || 'year').toLowerCase();
     const isTrial = cycleKey === 'trial';
-    const months = cycleKey === 'year' ? 12 : (cycleKey === '2year' ? 24 : 1);
-    const start = startDate ? new Date(startDate) : new Date();
-    const startTime = isNaN(start.getTime()) ? Date.now() : start.getTime();
-    const startIso = new Date(startTime).toISOString();
-    const endDate = isTrial
-      ? new Date(startTime + 30 * 24 * 3600 * 1000).toISOString()
-      : (planKey === 'free'
-          ? new Date(startTime + 36500 * 24 * 3600 * 1000).toISOString()
-          : new Date(startTime + months * 30 * 24 * 3600 * 1000).toISOString());
+
+    // Start date: Nếu startDate không truyền hoặc vượt quá 30 ngày tới, dùng thời điểm hiện tại (now)
+    let start = new Date();
+    if (startDate) {
+      const parsed = new Date(startDate);
+      if (!isNaN(parsed.getTime()) && parsed.getTime() <= Date.now() + 30 * 24 * 3600 * 1000) {
+        start = parsed;
+      }
+    }
+    const startTime = start.getTime();
+    const startIso = start.toISOString();
+
+    let endDate = null;
+    if (isTrial) {
+      endDate = new Date(startTime + 30 * 24 * 3600 * 1000).toISOString();
+    } else if (planKey === 'free') {
+      endDate = null;
+    } else if (cycleKey === 'year') {
+      const endD = new Date(startTime);
+      endD.setFullYear(endD.getFullYear() + 1);
+      endDate = endD.toISOString();
+    } else if (cycleKey === '2year') {
+      const endD = new Date(startTime);
+      endD.setFullYear(endD.getFullYear() + 2);
+      endDate = endD.toISOString();
+    } else { // 1 month
+      const endD = new Date(startTime);
+      endD.setMonth(endD.getMonth() + 1);
+      endDate = endD.toISOString();
+    }
 
     const termName = isTrial ? '30 ngày dùng thử Pro' : (cycleKey === 'year' ? '1 năm' : (cycleKey === '2year' ? '2 năm' : '1 tháng'));
     const amount = planKey === 'pro'
@@ -1896,6 +1917,44 @@ const handleAdminChangeUserPlan = async (req, res) => {
 
 app.put(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, requireAdmin, handleAdminChangeUserPlan);
 app.post(['/api/admin/users/:id/plan', '/admin/users/:id/plan'], authMiddleware, requireAdmin, handleAdminChangeUserPlan);
+
+// Xóa người dùng (Dành cho Quản trị viên)
+app.delete(['/api/admin/users/:id', '/admin/users/:id'], authMiddleware, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const users = await supaFetch(`Users?Id=eq.${id}&select=*`);
+    if (!users || users.length === 0) return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    const user = users[0];
+
+    if (user.IsSystemAdmin || user.Email.toLowerCase() === 'admin@hacode.vn') {
+      return res.status(400).json({ message: 'Không thể xóa tài khoản Quản trị viên hệ thống!' });
+    }
+
+    const orgId = user.OrgId;
+    let otherUsers = [];
+    if (orgId) {
+      try {
+        otherUsers = await supaFetch(`Users?OrgId=eq.${orgId}&Id=neq.${id}&select=Id`);
+      } catch (e) {}
+    }
+
+    await supaFetch(`Users?Id=eq.${id}`, { method: 'DELETE' });
+
+    if (orgId && (!otherUsers || otherUsers.length === 0)) {
+      try { await supaFetch(`Subscriptions?OrgId=eq.${orgId}`, { method: 'DELETE' }); } catch(e){}
+      try { await supaFetch(`SubscriptionRequests?OrgId=eq.${orgId}`, { method: 'DELETE' }); } catch(e){}
+      try { await supaFetch(`BarcodeItems?OrgId=eq.${orgId}`, { method: 'DELETE' }); } catch(e){}
+      try { await supaFetch(`LabelTemplates?OrgId=eq.${orgId}&IsSystem=eq.0`, { method: 'DELETE' }); } catch(e){}
+      try { await supaFetch(`ApiKeys?OrgId=eq.${orgId}`, { method: 'DELETE' }); } catch(e){}
+      try { await supaFetch(`Organizations?Id=eq.${orgId}`, { method: 'DELETE' }); } catch(e){}
+    }
+
+    res.json({ success: true, message: `Đã xóa tài khoản ${user.Email} thành công!` });
+  } catch (err) {
+    console.error('Delete user error:', err);
+    res.status(500).json({ message: 'Lỗi xóa tài khoản: ' + err.message });
+  }
+});
 
 app.get(['/api/admin/users/:id/details', '/admin/users/:id/details'], authMiddleware, requireAdmin, async (req, res) => {
   try {
