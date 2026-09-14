@@ -129,37 +129,44 @@ attachAdminIconTabs(){
   try {
     const tabsWrap = document.querySelector('.adm-tabs .tabs') || document.querySelector('.adm-tabs') || document.querySelector('.tabs');
     if (!tabsWrap) return;
-    if (tabsWrap.querySelector('#adm-tab-icons-btn')) {
-      const btn = tabsWrap.querySelector('#adm-tab-icons-btn');
-      if (this.tab === 'icons') btn.classList.add('active');
-      else btn.classList.remove('active');
-      return;
+    let tabBtn = tabsWrap.querySelector('#adm-tab-icons-btn');
+    if (!tabBtn) {
+      tabBtn = document.createElement('div');
+      tabBtn.id = 'adm-tab-icons-btn';
+      tabBtn.className = 'tab';
+      tabBtn.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;gap:6px;user-select:none;';
+      tabBtn.innerHTML = '<span>&#127912;</span><span>Quản lý biểu tượng</span>';
+
+      tabBtn.onclick = () => {
+        tabsWrap.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+        tabBtn.classList.add('active');
+        this.tab = 'icons';
+        this.renderAdminIconsView();
+      };
+
+      tabsWrap.appendChild(tabBtn);
     }
 
-    const tabBtn = document.createElement('div');
-    tabBtn.id = 'adm-tab-icons-btn';
-    tabBtn.className = 'tab';
-    tabBtn.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;gap:6px;';
-    tabBtn.innerHTML = '<span>&#127912;</span><span>Quản lý biểu tượng</span>';
-    if (this.tab === 'icons') tabBtn.classList.add('active');
-
-    tabBtn.onclick = () => {
+    if (this.tab === 'icons') {
       tabsWrap.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
       tabBtn.classList.add('active');
-      this.setTab('icons');
-    };
-
-    tabsWrap.appendChild(tabBtn);
+    } else {
+      tabBtn.classList.remove('active');
+      const prev = document.getElementById('adm-icons-manager-view');
+      if (prev) prev.remove();
+    }
   } catch(e) {}
 }
 
 renderAdminIconsView(){
   try {
-    let mainWrap = document.querySelector('.adm-content') || document.querySelector('.adm-body') || document.querySelector('.table-wrapper')?.parentElement || document.querySelector('table')?.closest('div');
-    if (!mainWrap) return;
+    const tabsWrap = document.querySelector('.adm-tabs .tabs') || document.querySelector('.adm-tabs') || document.querySelector('.tabs') || document.getElementById('adm-tab-icons-btn')?.parentElement;
+    if (!tabsWrap || !tabsWrap.parentNode) return;
 
     const prevWrapper = document.getElementById('adm-icons-manager-view');
     if (prevWrapper) prevWrapper.remove();
+
+    if (this.tab !== 'icons') return;
 
     const container = document.createElement('div');
     container.id = 'adm-icons-manager-view';
@@ -192,7 +199,7 @@ renderAdminIconsView(){
               Tích chọn các icon bạn muốn xóa/bỏ khỏi màn hình thiết kế của khách hàng.
             </p>
           </div>
-          <div style="display:flex;gap:10px;align-items:center;">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
             <span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;">
               Đang hiển thị: ${activeCount}
             </span>
@@ -215,7 +222,7 @@ renderAdminIconsView(){
             <input id="adm-search-input" type="text" placeholder="Tìm kiếm icon theo tên..." value="${filterText}" style="padding:7px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;background:#ffffff;outline:none;width:220px;" />
           </div>
 
-          <div style="display:flex;gap:8px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <button id="adm-btn-select-all" type="button" style="font-size:12px;font-weight:600;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:6px 12px;cursor:pointer;">
               &#9745; Chọn tất cả
             </button>
@@ -367,18 +374,12 @@ renderAdminIconsView(){
 
     renderInner();
 
-    const tableWrap = mainWrap.querySelector('.table-wrapper') || mainWrap.querySelector('table');
-    if (tableWrap) {
-      tableWrap.style.display = 'none';
-      tableWrap.parentNode.insertBefore(container, tableWrap);
-    } else {
-      mainWrap.appendChild(container);
-    }
+    // Directly insert right after tabsWrap!
+    tabsWrap.parentNode.insertBefore(container, tabsWrap.nextSibling);
   } catch(e) {
     console.error('renderAdminIconsView error:', e);
   }
 }
-
 showProfileModal(d){
   let old = document.getElementById("adm-user-modal-box");
   if (old) old.remove();
