@@ -5,7 +5,7 @@ import{a as j,b as We}from"./chunk-S6JPOAHR.js";import{a as Xe}from"./chunk-D5WC
       let printKey = "hacode_print_count_" + curMonth;
       let printTimes = parseInt(localStorage.getItem(printKey) || "0", 10);
       if(printTimes >= 20){
-        this.toast.error("Bạn đã dùng hết 20 lượt in của gói Free trong tháng này. Vui lòng liên hệ HACODE (0942.858.285) để nhận 30 ngày dùng thử miễn phí gói Pro!");
+        this.toast.error("Bạn đã dùng hết 20 lượt in của gói Free trong tháng này. Vui lòng liên hệ HACODE (0942.858.285) để nhận 7 ngày dùng thử miễn phí gói Pro!");
         return;
       }
       localStorage.setItem(printKey, String(printTimes + 1));

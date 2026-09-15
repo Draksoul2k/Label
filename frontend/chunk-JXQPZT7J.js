@@ -3,7 +3,7 @@ import{a as rt,b as at}from"./chunk-Y7XKB47K.js";import{a as be,b as _e,d as it}
       let isFree = (this.plans?.plan||"").toLowerCase()==="free";
       let tplIndex = this.libItems ? this.libItems.findIndex(x => x.id === e.id) : 0;
       if(isFree && tplIndex >= 5){
-        this.toast.info("Gói Free chỉ được chọn 5 mẫu đầu tiên. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí toàn bộ kho mẫu Pro!");
+        this.toast.info("Gói Free chỉ được chọn 5 mẫu đầu tiên. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 7 ngày dùng thử miễn phí toàn bộ kho mẫu Pro!");
         return;
       }
     }
@@ -670,7 +670,7 @@ Vi\u1EC7c n\xE0y c\xF3 th\u1EC3 m\u1EA5t m\u1ED9t l\xFAc. Ti\u1EBFp t\u1EE5c?`))
       let printKey = "hacode_print_count_" + curMonth;
       let printTimes = parseInt(localStorage.getItem(printKey) || "0", 10);
       if(printTimes >= 20){
-        this.toast.error("Bạn đã dùng hết 20 lượt in của gói Free trong tháng này. Vui lòng liên hệ HACODE (0942.858.285) để nhận 30 ngày dùng thử miễn phí gói Pro!");
+        this.toast.error("Bạn đã dùng hết 20 lượt in của gói Free trong tháng này. Vui lòng liên hệ HACODE (0942.858.285) để nhận 7 ngày dùng thử miễn phí gói Pro!");
         return;
       }
       localStorage.setItem(printKey, String(printTimes + 1));

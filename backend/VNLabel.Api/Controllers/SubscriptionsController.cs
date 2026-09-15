@@ -261,7 +261,7 @@ public class SubscriptionsController : ControllerBase
 
         return Ok(new
         {
-            message = "Yêu cầu trải nghiệm 30 ngày dùng thử gói Pro đã được gửi thành công tới Quản trị viên HACODE!",
+            message = "Yêu cầu trải nghiệm 7 ngày dùng thử gói Pro đã được gửi thành công tới Quản trị viên HACODE!",
             id = request.Id,
             pending = true
         });

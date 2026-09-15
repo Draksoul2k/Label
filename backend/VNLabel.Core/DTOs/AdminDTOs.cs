@@ -18,6 +18,7 @@ public class ApproveRequestBody
     public string? Cycle { get; set; }
     public string? StartDate { get; set; }
     public string? Note { get; set; }
+    public int? Days { get; set; }
 }
 
 public class RejectRequestBody
@@ -91,6 +92,7 @@ public class AdminChangePlanRequest
     public string Plan { get; set; } = "pro";
     public string Cycle { get; set; } = "month";
     public string? StartDate { get; set; }
+    public int? Days { get; set; }
 }
 
 public class SaveSystemTemplateRequest

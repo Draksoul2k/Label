@@ -55,7 +55,7 @@ public class AdminController : ControllerBase
             .Distinct()
             .ToListAsync();
 
-        // Tính doanh thu theo số người đăng ký kích hoạt trong tháng, quý, năm (loại trừ gói thử nghiệm 30 ngày và Admin)
+        // Tính doanh thu theo số người đăng ký kích hoạt trong tháng, quý, năm (loại trừ gói thử nghiệm 7 ngày và Admin)
         var allActivePaidSubs = await _context.Subscriptions
             .IgnoreQueryFilters()
             .Where(s => s.Status == SubscriptionStatus.Active && s.Plan != "free")
@@ -72,7 +72,7 @@ public class AdminController : ControllerBase
             var planKey = (sub.Plan ?? "").ToLowerInvariant();
             if (planKey == "free") continue;
 
-            // Bỏ qua các gói dùng thử miễn phí 30 ngày do Admin cấp
+            // Bỏ qua các gói dùng thử miễn phí 7 ngày do Admin cấp
             bool isTrial = sub.Term == "trial" || 
                            (sub.TermName != null && sub.TermName.ToLower().Contains("thử")) ||
                            (sub.Amount == 0 && (sub.Term == "trial" || (planKey == "pro" && sub.StartDate.AddDays(35) >= sub.EndDate)));
@@ -166,8 +166,10 @@ public class AdminController : ControllerBase
 
         var cycle = body?.Cycle ?? req.Cycle;
         bool isTrial = cycle == "trial";
+        int customDays = body?.Days ?? 0;
         var months = cycle == "year" ? 12 : (cycle == "2year" ? 24 : 1);
-        var termName = isTrial ? "30 ngày dùng thử Pro" : (cycle == "year" ? "1 năm" : (cycle == "2year" ? "2 năm" : "1 tháng"));
+        var termName = customDays > 0 ? $"{customDays} ngày"
+            : (isTrial ? "7 ngày dùng thử Pro (1 tuần)" : (cycle == "year" ? "1 năm" : (cycle == "2year" ? "2 năm" : "1 tháng")));
 
         var plan = await _context.SubscriptionPlans
             .IgnoreQueryFilters()
@@ -185,7 +187,7 @@ public class AdminController : ControllerBase
             ? existingSub.EndDate
             : DateTime.UtcNow;
 
-        var targetEndDate = isTrial ? baseDate.AddDays(30) : DateTime.UtcNow.AddMonths(months);
+        var targetEndDate = customDays > 0 ? baseDate.AddDays(customDays) : (isTrial ? baseDate.AddDays(7) : DateTime.UtcNow.AddMonths(months));
 
         if (existingSub != null)
         {
@@ -363,8 +365,13 @@ public class AdminController : ControllerBase
         var plan = await _context.SubscriptionPlans.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Key.ToLower() == planKey);
 
         bool isTrial = body.Cycle == "trial";
+        int customDays = body.Days.GetValueOrDefault(0);
         var months = body.Cycle == "year" ? 12 : (body.Cycle == "2year" ? 24 : 1);
-        var termName = isTrial ? "30 ngày dùng thử Pro" : (body.Cycle == "year" ? "1 năm" : (body.Cycle == "2year" ? "2 năm" : "1 tháng"));
+        var termName = planKey == "free" ? "Gói Miễn phí (Free)"
+            : (customDays > 0 ? $"{customDays} ngày"
+            : (isTrial ? "7 ngày dùng thử Pro (1 tuần)"
+            : (body.Cycle == "year" ? "1 năm"
+            : (body.Cycle == "2year" ? "2 năm" : "1 tháng"))));
         var startDate = DateTime.TryParse(body.StartDate, out var parsedStart) ? parsedStart.ToUniversalTime() : DateTime.UtcNow;
 
         var baseDate = (sub != null && sub.EndDate > DateTime.UtcNow && sub.Plan?.ToLower() == "pro")
@@ -373,7 +380,8 @@ public class AdminController : ControllerBase
 
         var targetEndDate = planKey == "free" 
             ? DateTime.UtcNow.AddYears(100) 
-            : (isTrial ? baseDate.AddDays(30) : startDate.AddMonths(months));
+            : (customDays > 0 ? startDate.AddDays(customDays)
+            : (isTrial ? baseDate.AddDays(7) : startDate.AddMonths(months)));
 
         decimal amount = 0;
         if (!isTrial && planKey != "free")
@@ -643,7 +651,7 @@ public class AdminController : ControllerBase
             PlanName = user.IsSystemAdmin ? "Business" : (sub?.PlanName ?? planKey),
             PlanStartDate = sub?.StartDate ?? user.CreatedAt,
             PlanEndDate = user.IsSystemAdmin ? null : sub?.EndDate,
-            TermName = isTrial ? "30 ngày dùng thử Pro" : (sub?.TermName ?? (user.IsSystemAdmin ? "Vô thời hạn" : "Mặc định")),
+            TermName = isTrial ? "7 ngày dùng thử Pro (1 tuần)" : (sub?.TermName ?? (user.IsSystemAdmin ? "Vô thời hạn" : "Mặc định")),
             Revenue = userRev,
             RevenueText = revText,
             BarcodeCount = barcodeCount,

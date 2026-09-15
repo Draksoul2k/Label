@@ -1173,7 +1173,7 @@ app.post(['/api/subscriptions/requests', '/subscriptions/requests'], authMiddlew
     const planKey = (plan || 'pro').toLowerCase();
     const cycleKey = (cycle || 'year').toLowerCase();
     const planName = planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free');
-    const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 30 ngày' : '1 năm'));
+    const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 7 ngày (1 tuần)' : (cycleKey === 'custom' ? 'Tùy chỉnh ngày' : '1 năm')));
     const amount = planKey === 'pro'
       ? (cycleKey === 'month' ? 59000 : (cycleKey === '2year' ? 1398000 : 699000))
       : planKey === 'business'
@@ -1234,7 +1234,7 @@ app.post(['/api/subscriptions/trial-request', '/subscriptions/trial-request'], a
       Cycle: 'trial',
       ContactName: req.user.name,
       ContactPhone: '',
-      Note: req.body?.note || 'Khách hàng gửi yêu cầu kích hoạt dùng thử 30 ngày gói Pro',
+      Note: req.body?.note || 'Khách hàng gửi yêu cầu kích hoạt dùng thử 7 ngày gói Pro',
       Status: 0,
       CreatedAt: new Date().toISOString()
     };
@@ -1243,7 +1243,7 @@ app.post(['/api/subscriptions/trial-request', '/subscriptions/trial-request'], a
       headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify([record])
     });
-    res.json({ message: 'Yêu cầu trải nghiệm 30 ngày dùng thử gói Pro đã được gửi thành công!', id: record.Id, pending: true });
+    res.json({ message: 'Yêu cầu trải nghiệm 7 ngày dùng thử gói Pro đã được gửi thành công!', id: record.Id, pending: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -1256,7 +1256,7 @@ app.get(['/api/subscriptions/requests', '/subscriptions/requests'], authMiddlewa
       const planKey = (r.Plan || 'pro').toLowerCase();
       const planName = planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free');
       const cycleKey = (r.Cycle || 'year').toLowerCase();
-      const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 30 ngày' : '1 năm'));
+      const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 7 ngày (1 tuần)' : (cycleKey === 'custom' ? 'Tùy chỉnh ngày' : '1 năm')));
       const amount = planKey === 'pro'
         ? (cycleKey === 'month' ? 59000 : (cycleKey === '2year' ? 1398000 : 699000))
         : planKey === 'business'
@@ -1625,7 +1625,7 @@ app.get(['/api/admin/subscription-requests', '/admin/subscription-requests'], au
       const planKey = (r.Plan || 'pro').toLowerCase();
       const planName = planKey === 'business' ? 'Business' : (planKey === 'pro' ? 'Pro' : 'Free');
       const cycleKey = (r.Cycle || 'year').toLowerCase();
-      const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 30 ngày' : '1 năm'));
+      const cycleName = cycleKey === 'month' ? '1 tháng' : (cycleKey === '2year' ? '2 năm' : (cycleKey === 'trial' ? 'Dùng thử 7 ngày (1 tuần)' : (cycleKey === 'custom' ? 'Tùy chỉnh ngày' : '1 năm')));
       const amount = planKey === 'pro'
         ? (cycleKey === 'month' ? 59000 : (cycleKey === '2year' ? 1398000 : 699000))
         : planKey === 'business'
@@ -1669,14 +1669,18 @@ app.post(['/api/admin/subscription-requests/:id/approve', '/admin/subscription-r
 
     const cycleKey = (req.body?.cycle || r.Cycle || 'year').toLowerCase();
     const isTrial = cycleKey === 'trial';
+    let customDays = parseInt(req.body?.days, 10);
+    if (isNaN(customDays) || customDays <= 0) customDays = null;
     const months = cycleKey === 'year' ? 12 : (cycleKey === '2year' ? 24 : 1);
-    const termName = isTrial ? '30 ngày dùng thử Pro' : (cycleKey === 'year' ? '1 năm' : (cycleKey === '2year' ? '2 năm' : '1 tháng'));
+    const termName = customDays ? `${customDays} ngày` : (isTrial ? '7 ngày dùng thử Pro (1 tuần)' : (cycleKey === 'year' ? '1 năm' : (cycleKey === '2year' ? '2 năm' : '1 tháng')));
     const start = req.body?.startDate ? new Date(req.body.startDate) : new Date();
     const startTime = isNaN(start.getTime()) ? Date.now() : start.getTime();
     const startIso = new Date(startTime).toISOString();
-    const endDate = isTrial
-      ? new Date(startTime + 30 * 24 * 3600 * 1000).toISOString()
-      : new Date(startTime + months * 30 * 24 * 3600 * 1000).toISOString();
+    const endDate = customDays
+      ? new Date(startTime + customDays * 24 * 3600 * 1000).toISOString()
+      : (isTrial
+        ? new Date(startTime + 7 * 24 * 3600 * 1000).toISOString()
+        : new Date(startTime + months * 30 * 24 * 3600 * 1000).toISOString());
 
     const planKey = (r.Plan || 'pro').toLowerCase();
     const amount = planKey === 'pro'
@@ -1838,7 +1842,7 @@ app.get(['/api/admin/users', '/admin/users'], authMiddleware, requireAdmin, asyn
 
 const handleAdminChangeUserPlan = async (req, res) => {
   try {
-    const { plan, cycle, startDate } = req.body;
+    const { plan, cycle, startDate, days } = req.body;
     const users = await supaFetch(`Users?Id=eq.${req.params.id}&select=OrgId`);
     if (!users || users.length === 0) return res.status(404).json({ message: 'User not found' });
     const orgId = users[0].OrgId;
@@ -1846,6 +1850,8 @@ const handleAdminChangeUserPlan = async (req, res) => {
     const planKey = (plan || 'pro').toLowerCase();
     const cycleKey = (cycle || 'year').toLowerCase();
     const isTrial = cycleKey === 'trial';
+    let customDayCount = parseInt(days, 10);
+    if (isNaN(customDayCount) || customDayCount <= 0) customDayCount = null;
 
     // Start date: Nếu startDate không truyền hoặc vượt quá 30 ngày tới, dùng thời điểm hiện tại (now)
     let start = new Date();
@@ -1859,10 +1865,13 @@ const handleAdminChangeUserPlan = async (req, res) => {
     const startIso = start.toISOString();
 
     let endDate = null;
-    if (isTrial) {
-      endDate = new Date(startTime + 30 * 24 * 3600 * 1000).toISOString();
-    } else if (planKey === 'free') {
+    if (planKey === 'free') {
       endDate = null;
+    } else if (customDayCount || cycleKey === 'custom') {
+      const d = customDayCount || 7;
+      endDate = new Date(startTime + d * 24 * 3600 * 1000).toISOString();
+    } else if (isTrial) {
+      endDate = new Date(startTime + 7 * 24 * 3600 * 1000).toISOString();
     } else if (cycleKey === 'year') {
       const endD = new Date(startTime);
       endD.setFullYear(endD.getFullYear() + 1);
@@ -1877,7 +1886,11 @@ const handleAdminChangeUserPlan = async (req, res) => {
       endDate = endD.toISOString();
     }
 
-    const termName = isTrial ? '30 ngày dùng thử Pro' : (cycleKey === 'year' ? '1 năm' : (cycleKey === '2year' ? '2 năm' : '1 tháng'));
+    const termName = planKey === 'free' ? 'Gói Free (Vĩnh viễn)'
+      : (customDayCount ? `${customDayCount} ngày`
+      : (isTrial ? '7 ngày dùng thử Pro (1 tuần)'
+      : (cycleKey === 'year' ? '1 năm'
+      : (cycleKey === '2year' ? '2 năm' : '1 tháng'))));
     const amount = planKey === 'pro'
       ? (cycleKey === 'year' ? 699000 : (cycleKey === '2year' ? 1398000 : 59000))
       : (planKey === 'business'

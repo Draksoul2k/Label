@@ -78,7 +78,7 @@ public class PrintController : ControllerBase
         {
             return BadRequest(new { 
                 message = "Bạn đã dùng hết 20 lượt in của gói Free trong tháng này.", 
-                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!" 
+                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 7 ngày dùng thử miễn phí gói Pro!" 
             });
         }
 
@@ -110,7 +110,7 @@ public class PrintController : ControllerBase
         {
             return BadRequest(new { 
                 message = "Bạn đã dùng hết 20 lượt in của gói Free trong tháng này.", 
-                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!" 
+                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 7 ngày dùng thử miễn phí gói Pro!" 
             });
         }
 
@@ -140,7 +140,7 @@ public class PrintController : ControllerBase
         {
             return BadRequest(new { 
                 message = "Bạn đã dùng hết 20 lượt in của gói Free trong tháng này.", 
-                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 30 ngày dùng thử miễn phí gói Pro!" 
+                detail = "Gói Free chỉ được in tối đa 20 lần mỗi tháng. Vui lòng liên hệ HACODE (0942.858.285) để trải nghiệm 7 ngày dùng thử miễn phí gói Pro!" 
             });
         }
 
