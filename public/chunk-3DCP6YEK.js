@@ -28,14 +28,6 @@ initAppShellEnhancer(){
         bd.onclick = () => appShell.classList.remove('mobile-nav-open');
         appShell.appendChild(bd);
       }
-
-      document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-          if (window.innerWidth <= 768) {
-            appShell.classList.remove('mobile-nav-open');
-          }
-        });
-      });
     } catch(e) {
       console.warn("setupMobileToggle error:", e);
     }
@@ -43,9 +35,15 @@ initAppShellEnhancer(){
 
   const setupDashboardQuickActions = () => {
     try {
-      if (!window.location.pathname.includes('/dashboard')) return;
+      const isDash = window.location.pathname.endsWith('/dashboard') || window.location.pathname.includes('/dashboard');
+      const existing = document.getElementById('dashboard-quick-actions');
+      if (!isDash) {
+        if (existing) existing.remove();
+        return;
+      }
+      if (existing) return;
       const contentArea = document.querySelector('.content-area');
-      if (!contentArea || document.getElementById('dashboard-quick-actions')) return;
+      if (!contentArea) return;
 
       const widget = document.createElement('div');
       widget.id = 'dashboard-quick-actions';
@@ -100,11 +98,11 @@ initAppShellEnhancer(){
 
             <a href="/barcodes" class="hacode-qa-item">
               <div class="hacode-qa-icon icon-amber">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="5" x2="4" y2="19"/><line x1="8" y1="5" x2="8" y2="19"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="17" y1="5" x2="17" y2="19"/><line x1="20" y1="5" x2="20" y2="19"/></svg>
               </div>
               <div class="hacode-qa-meta">
-                <div class="hacode-qa-name">Sản phẩm & Mã vạch</div>
-                <div class="hacode-qa-desc">Quản lý kho SKU, giá bán, hoặc nhập hàng ngàn mã từ Excel</div>
+                <div class="hacode-qa-name">Tạo mã vạch nhanh</div>
+                <div class="hacode-qa-desc">Tạo mã EAN-13, Code 128, QR Code, Code 39 hàng loạt & in ngay</div>
               </div>
               <div class="hacode-qa-arrow">→</div>
             </a>
@@ -112,33 +110,33 @@ initAppShellEnhancer(){
         </div>
       `;
 
-      if (contentArea.firstChild) {
-        contentArea.insertBefore(widget, contentArea.firstChild);
-      } else {
-        contentArea.appendChild(widget);
-      }
+      contentArea.insertBefore(widget, contentArea.firstChild);
     } catch(e) {
       console.warn("setupDashboardQuickActions error:", e);
     }
   };
 
-  setTimeout(() => {
-    setupMobileToggle();
-    setupDashboardQuickActions();
-  }, 100);
+  document.addEventListener('click', (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a) {
+      const appShell = document.querySelector('.app-shell');
+      if (window.innerWidth <= 768 && appShell && a.closest('.sidebar')) {
+        appShell.classList.remove('mobile-nav-open');
+      }
+      setTimeout(setupDashboardQuickActions, 50);
+      setTimeout(setupDashboardQuickActions, 200);
+    }
+  }, true);
 
   window.addEventListener('popstate', () => {
     setTimeout(() => {
       setupMobileToggle();
       setupDashboardQuickActions();
-    }, 150);
+    }, 50);
   });
   
-  let cnt = 0;
-  const timer = setInterval(() => {
+  setInterval(() => {
     setupMobileToggle();
     setupDashboardQuickActions();
-    cnt++;
-    if (cnt > 8) clearInterval(timer);
-  }, 500);
+  }, 350);
 }static \u0275fac=function(i){return new(i||t)};static \u0275cmp=y({type:t,selectors:[["app-shell"]],decls:6,vars:2,consts:[[1,"app-shell"],[1,"main-content"],[1,"content-area"]],template:function(i,a){i&1&&(r(0,"div",0),d(1,"app-sidebar"),r(2,"div",1),d(3,"app-topbar"),r(4,"div",2),d(5,"router-outlet"),l()()()),i&2&&v("sidebar-collapsed",a.layout.collapsed())},dependencies:[z,K,U],encapsulation:2})}return t})();export{De as AppShellComponent};
