@@ -116,6 +116,17 @@ initAppShellEnhancer(){
     }
   };
 
+  const handleNav = () => {
+    setTimeout(() => {
+      setupMobileToggle();
+      setupDashboardQuickActions();
+    }, 40);
+    setTimeout(() => {
+      setupMobileToggle();
+      setupDashboardQuickActions();
+    }, 200);
+  };
+
   document.addEventListener('click', (e) => {
     const a = e.target && e.target.closest ? e.target.closest('a') : null;
     if (a) {
@@ -123,20 +134,13 @@ initAppShellEnhancer(){
       if (window.innerWidth <= 768 && appShell && a.closest('.sidebar')) {
         appShell.classList.remove('mobile-nav-open');
       }
-      setTimeout(setupDashboardQuickActions, 50);
-      setTimeout(setupDashboardQuickActions, 200);
+      handleNav();
     }
-  }, true);
-
-  window.addEventListener('popstate', () => {
-    setTimeout(() => {
-      setupMobileToggle();
-      setupDashboardQuickActions();
-    }, 50);
   });
-  
-  setInterval(() => {
-    setupMobileToggle();
-    setupDashboardQuickActions();
-  }, 350);
+
+  window.addEventListener('popstate', handleNav);
+
+  setTimeout(handleNav, 100);
+  setTimeout(handleNav, 500);
+  setTimeout(handleNav, 1500);
 }static \u0275fac=function(i){return new(i||t)};static \u0275cmp=y({type:t,selectors:[["app-shell"]],decls:6,vars:2,consts:[[1,"app-shell"],[1,"main-content"],[1,"content-area"]],template:function(i,a){i&1&&(r(0,"div",0),d(1,"app-sidebar"),r(2,"div",1),d(3,"app-topbar"),r(4,"div",2),d(5,"router-outlet"),l()()()),i&2&&v("sidebar-collapsed",a.layout.collapsed())},dependencies:[z,K,U],encapsulation:2})}return t})();export{De as AppShellComponent};
