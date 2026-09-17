@@ -2036,3 +2036,128 @@ app-profile .grid > .card:nth-child(2) .badge-success {
   font-weight: 500 !important;
   color: #334155 !important;
 }
+
+/* ==========================================================================
+   BARTENDER SUITE COMPLETE BARCODE LIBRARY STYLES
+   ========================================================================== */
+.dsgn-bt-pop.dsgn-bt-pop-full {
+  min-width: 560px !important;
+  max-width: 640px !important;
+  max-height: 520px !important;
+  display: none;
+  flex-direction: column !important;
+  padding: 10px 12px 12px 12px !important;
+}
+
+.dsgn-bt-pop.dsgn-bt-pop-full.open {
+  display: flex !important;
+}
+
+.dsgn-bt-pop-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  margin-bottom: 8px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.dsgn-bt-pop-header .dsgn-bt-pop-title {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+  white-space: nowrap !important;
+}
+
+.dsgn-bt-bc-searchbox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  flex: 1 1 auto !important;
+  max-width: 330px !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-bt-bc-searchbox:focus-within {
+  border-color: #0284c7 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
+}
+
+.dsgn-bt-bc-searchbox svg {
+  color: #64748b !important;
+  flex-shrink: 0 !important;
+}
+
+.dsgn-bt-bc-search-input {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  font-size: 11px !important;
+  color: #1e293b !important;
+  width: 100% !important;
+}
+
+.dsgn-bt-bc-tabs {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  margin-bottom: 8px !important;
+}
+
+.dsgn-bt-bc-tab {
+  border: 1px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  color: #475569 !important;
+  padding: 3px 8px !important;
+  border-radius: 5px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-bt-bc-tab:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.dsgn-bt-bc-tab.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+}
+
+.dsgn-bt-pop-scrollable {
+  max-height: 350px !important;
+  overflow-y: auto !important;
+  padding-right: 4px !important;
+}
+
+.dsgn-bt-pop-scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dsgn-bt-pop-scrollable::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dsgn-bt-pop-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Color badges for BarTender categories */
+.dsgn-bt-pop-badge.linear { background: #e0f2fe !important; color: #0284c7 !important; }
+.dsgn-bt-pop-badge.retail { background: #dcfce7 !important; color: #16a34a !important; }
+.dsgn-bt-pop-badge.gs1 { background: #fef3c7 !important; color: #d97706 !important; }
+.dsgn-bt-pop-badge.2d { background: #ede9fe !important; color: #7c3aed !important; }
+.dsgn-bt-pop-badge.postal { background: #f1f5f9 !important; color: #475569 !important; }
+.dsgn-bt-pop-badge.composite { background: #ffe4e6 !important; color: #e11d48 !important; }
+
+.dsgn-bt-pop-item.dsgn-hidden { display: none !important; }
