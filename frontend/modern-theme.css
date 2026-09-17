@@ -867,16 +867,197 @@ body {
 
 
 /* ==========================================================
-   BARTENDER FORMATTING RIBBON & TEXT PANEL CLEANUP
+   BARTENDER FORMATTING RIBBON & DESIGNER ENHANCEMENTS
    ========================================================== */
 
-/* Hide 'Nội dung' and 'Kiểu chữ' filter tabs in left text panel */
+/* 1. Hide 'Nội dung' and 'Kiểu chữ' filter tabs in left text panel */
 .dsgn-text-tabs button:nth-child(2),
 .dsgn-text-tabs button:nth-child(3) {
   display: none !important;
 }
 
-/* BarTender docked formatting toolbar ribbon above ruler */
+/* 2. Clear, prominent clickable action cards for text insertion */
+.dsgn-text-quicks {
+  padding: 16px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+}
+
+.dsgn-text-quicks::before {
+  content: "BẤM VÀO ĐỂ THÊM VĂN BẢN VÀO TEM:";
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0369a1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.dsgn-text-quick {
+  cursor: pointer !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+}
+
+.dsgn-text-quick:hover {
+  background: #eff6ff !important;
+  border-color: #2563eb !important;
+  color: #1d4ed8 !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12) !important;
+}
+
+.dsgn-text-quick:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Add "+ Thêm vào tem" button badge to the right of each card */
+.dsgn-text-quick::after {
+  content: "+ Thêm";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.dsgn-text-quick:hover::after {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* 3. Top toolbar buttons - make them clear with explicit text labels */
+button[title="Đổi kích thước"].dsgn-size-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 0 12px !important;
+  height: 34px !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+button[title="Đổi kích thước"].dsgn-size-pill:hover {
+  background: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+}
+
+button[title="Đổi kích thước"].dsgn-size-pill::before {
+  content: "Kích thước: ";
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #64748b !important;
+}
+
+/* Base style for top toolbar action pills */
+.dsgn-size-pill.dsgn-rotate-btn,
+.dsgn-color-btn {
+  width: auto !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-size-pill.dsgn-rotate-btn:hover,
+.dsgn-color-btn:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.dsgn-size-pill.dsgn-rotate-btn svg,
+.dsgn-color-btn svg {
+  width: 15px !important;
+  height: 15px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Recenter / Fit Screen button */
+button[title*="giữa màn hình"].dsgn-rotate-btn::after {
+  content: "Vừa màn hình";
+  white-space: nowrap;
+}
+
+/* Snap to ruler button */
+.dsgn-snap-btn::after {
+  content: "Hít thước";
+  white-space: nowrap;
+}
+.dsgn-snap-btn.active {
+  background: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  color: #1d4ed8 !important;
+}
+
+/* Grid toggle button */
+.dsgn-grid-btn::after {
+  content: "Lưới";
+  white-space: nowrap;
+}
+.dsgn-grid-btn.active {
+  background: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  color: #1d4ed8 !important;
+}
+
+/* Rotate template button (swap W/H) */
+button[title="Xoay khổ tem 90°"].dsgn-rotate-btn::after {
+  content: "Xoay tem";
+  white-space: nowrap;
+}
+
+/* Hide confusing second rotate icon to simplify toolbar */
+button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
+  display: none !important;
+}
+
+/* Background color button */
+.dsgn-color-btn::after {
+  content: "Màu nền";
+  white-space: nowrap;
+}
+
+/* 4. BarTender docked formatting toolbar ribbon above ruler */
 .dsgn-ctxbar {
   display: none !important;
   position: relative !important;
@@ -898,15 +1079,15 @@ body {
   gap: 3px !important;
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE 10+ */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
   align-items: center !important;
   justify-content: flex-start !important;
   z-index: 20 !important;
 }
 
 .dsgn-ctxbar::-webkit-scrollbar {
-  display: none !important; /* Chrome / Safari */
+  display: none !important;
 }
 
 .dsgn-ctxbar.show {
