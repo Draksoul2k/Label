@@ -443,7 +443,7 @@ setupShapeParamsUI(){
           <span>📋</span> Mẫu tem kích thước có sẵn
         </div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${exp ? '#0284c7' : '#0369a1'};">
-          <span>${exp ? '▲ Thu gọn danh sách' : '▼ Bấm để chọn mẫu sẵn (50+)'}</span>
+          <span>${exp ? '▲' : '▼'}</span>
         </div>
       `;
     };
