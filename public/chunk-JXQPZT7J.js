@@ -395,8 +395,77 @@ setupShapeParamsUI(){
   const list = document.querySelector('.dsgn-shape-list');
   if (!list) return;
   const modalBody = list.closest('.dsgn-modal-body');
-  
-  // 1. SHAPE PARAMS (Bo góc / Đường kính tem tròn)
+
+  // 1. COLLAPSIBLE PRESETS DROPDOWN WITH SEARCH - ĐẨY LÊN ĐẦU TRANG TRƯỚC Ô ĐIỀN NGANG/DỌC (KHÔNG CẦN TÍCH Ô, BẤM VÀO LÀ THẢ XUỐNG)
+  const searchEl = modalBody?.querySelector('.dsgn-size-search');
+  const listEl = modalBody?.querySelector('.dsgn-size-list');
+  const sizeFields = modalBody?.querySelector('.dsgn-size-fields');
+
+  if (searchEl && listEl && modalBody) {
+    let toggleEl = document.getElementById('dsgn-presets-toggle');
+    if (!toggleEl) {
+      toggleEl = document.createElement('div');
+      toggleEl.id = 'dsgn-presets-toggle';
+    }
+
+    let customDivider = document.getElementById('dsgn-custom-size-divider');
+    if (!customDivider) {
+      customDivider = document.createElement('div');
+      customDivider.id = 'dsgn-custom-size-divider';
+      customDivider.style.cssText = 'display:flex;align-items:center;gap:8px;margin:14px 0 10px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;';
+      customDivider.innerHTML = `
+        <div style="flex:1;height:1px;background:#cbd5e1;"></div>
+        <span>Hoặc tự điền kích thước</span>
+        <div style="flex:1;height:1px;background:#cbd5e1;"></div>
+      `;
+    }
+
+    // Move to TOP of modalBody before .dsgn-size-fields
+    if (sizeFields && toggleEl.nextElementSibling !== searchEl) {
+      modalBody.insertBefore(toggleEl, sizeFields);
+      modalBody.insertBefore(searchEl, sizeFields);
+      modalBody.insertBefore(listEl, sizeFields);
+      modalBody.insertBefore(customDivider, sizeFields);
+    }
+
+    if (window._dsgnPresetsExpanded === undefined) {
+      window._dsgnPresetsExpanded = false;
+    }
+
+    const applyPresetsState = () => {
+      const exp = window._dsgnPresetsExpanded;
+      searchEl.style.display = exp ? 'flex' : 'none';
+      listEl.style.display = exp ? 'flex' : 'none';
+      toggleEl.className = exp ? 'active' : '';
+      toggleEl.style.cssText = `display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f0f9ff;border:1.5px solid ${exp ? '#0284c7' : '#7dd3fc'};border-radius:8px;cursor:pointer;user-select:none;transition:all 0.15s ease;margin-bottom:8px;`;
+      toggleEl.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#0369a1;">
+          <span>📋</span> Mẫu tem kích thước có sẵn
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${exp ? '#0284c7' : '#0369a1'};">
+          <span>${exp ? '▲ Thu gọn danh sách' : '▼ Bấm để chọn mẫu sẵn (50+)'}</span>
+        </div>
+      `;
+    };
+
+    toggleEl.onclick = () => {
+      window._dsgnPresetsExpanded = !window._dsgnPresetsExpanded;
+      applyPresetsState();
+      if (window._dsgnPresetsExpanded) {
+        const inp = searchEl.querySelector('input');
+        if (inp) inp.focus();
+      }
+    };
+
+    applyPresetsState();
+
+    const sInput = searchEl.querySelector('input');
+    if (sInput) {
+      sInput.placeholder = '🔍 Tìm mẫu theo kích thước (30x20, 35x22, 40x30, trà sữa, giá...)...';
+    }
+  }
+
+  // 2. SHAPE PARAMS (Bo góc / Đường kính tem tròn)
   let wrap = document.getElementById('dsgn-shape-params');
   if (!wrap) {
     wrap = document.createElement('div');
@@ -468,7 +537,7 @@ setupShapeParamsUI(){
     wrap.innerHTML = '';
   }
 
-  // 2. LEFT PRINT SETTINGS & ROLL SIMULATION (Loại tem, Số tem trên hàng, Khe hở gap) - Đồng bộ màu Cyan / Teal #06b6d4 - #0891b2
+  // 3. LEFT PRINT SETTINGS & ROLL SIMULATION (Loại tem, Số tem trên hàng, Khe hở gap)
   if (modalBody) {
     let printLayout = document.getElementById('dsgn-left-print-layout');
     if (!printLayout) {
@@ -580,72 +649,6 @@ setupShapeParamsUI(){
     }
 
     this.updateLeftPrintSim();
-  }
-
-  // 3. COLLAPSIBLE PRESETS DROPDOWN WITH SEARCH (Đồng bộ màu sắc)
-  const searchEl = modalBody?.querySelector('.dsgn-size-search');
-  const listEl = modalBody?.querySelector('.dsgn-size-list');
-  if (searchEl && listEl) {
-    let toggleEl = document.getElementById('dsgn-presets-toggle');
-    if (!toggleEl) {
-      toggleEl = document.createElement('div');
-      toggleEl.id = 'dsgn-presets-toggle';
-      searchEl.parentNode.insertBefore(toggleEl, searchEl);
-    }
-
-    if (window._dsgnPresetsExpanded === undefined) {
-      window._dsgnPresetsExpanded = false;
-    }
-
-    const applyPresetsState = () => {
-      const exp = window._dsgnPresetsExpanded;
-      searchEl.style.display = exp ? 'flex' : 'none';
-      listEl.style.display = exp ? 'flex' : 'none';
-      toggleEl.className = exp ? 'active' : '';
-      toggleEl.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;">
-          <input type="checkbox" id="dsgn-presets-check" ${exp ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer;accent-color:#0891b2;">
-          <label for="dsgn-presets-check" style="font-size:13px;font-weight:700;color:${exp ? '#0369a1' : '#1e293b'};cursor:pointer;display:flex;align-items:center;gap:6px;">
-            <span>📋</span> Mẫu tem kích thước có sẵn
-          </label>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:${exp ? '#0284c7' : '#64748b'};">
-          <span>${exp ? '▲ Thu gọn' : '▼ Bấm để chọn mẫu (50+)'}</span>
-        </div>
-      `;
-
-      const chk = toggleEl.querySelector('#dsgn-presets-check');
-      if (chk) {
-        chk.onclick = (e) => {
-          e.stopPropagation();
-          window._dsgnPresetsExpanded = chk.checked;
-          applyPresetsState();
-          if (window._dsgnPresetsExpanded) {
-            setTimeout(() => toggleEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-            const inp = searchEl.querySelector('input');
-            if (inp) inp.focus();
-          }
-        };
-      }
-    };
-
-    toggleEl.onclick = (e) => {
-      if (e.target.id === 'dsgn-presets-check') return;
-      window._dsgnPresetsExpanded = !window._dsgnPresetsExpanded;
-      applyPresetsState();
-      if (window._dsgnPresetsExpanded) {
-        setTimeout(() => toggleEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-        const inp = searchEl.querySelector('input');
-        if (inp) inp.focus();
-      }
-    };
-
-    applyPresetsState();
-
-    const sInput = searchEl.querySelector('input');
-    if (sInput) {
-      sInput.placeholder = '🔍 Tìm mẫu theo kích thước (30x20, 35x22, 40x30, trà sữa, giá...)...';
-    }
   }
 }
 
