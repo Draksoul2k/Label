@@ -579,10 +579,10 @@ setupShapeParamsUI(){
           <div style="flex:1;">
             <label style="font-size:11px;font-weight:600;color:#334155;display:block;margin-bottom:3px;">Số tem / hàng:</label>
             <select id="dsgn-left-cols" style="width:100%;height:32px;font-size:12.5px;font-weight:700;border:1.5px solid #7dd3fc;border-radius:6px;background:#fff;padding:0 6px;outline:none;color:#0f172a;">
-              <option value="1" ${curCols === 1 ? 'selected' : ''}>1 tem (Cuộn đơn)</option>
-              <option value="2" ${curCols === 2 ? 'selected' : ''}>2 tem / hàng (Tem đôi)</option>
-              <option value="3" ${curCols === 3 ? 'selected' : ''}>3 tem / hàng (Tem 3)</option>
-              <option value="4" ${curCols === 4 ? 'selected' : ''}>4 tem / hàng (Tem 4)</option>
+              <option value="1" ${curCols === 1 ? 'selected' : ''}>1 tem / hàng</option>
+              <option value="2" ${curCols === 2 ? 'selected' : ''}>2 tem / hàng</option>
+              <option value="3" ${curCols === 3 ? 'selected' : ''}>3 tem / hàng</option>
+              <option value="4" ${curCols === 4 ? 'selected' : ''}>4 tem / hàng</option>
               <option value="5" ${curCols === 5 ? 'selected' : ''}>5 tem / hàng</option>
               <option value="6" ${curCols === 6 ? 'selected' : ''}>6 tem / hàng</option>
               <option value="7" ${curCols === 7 ? 'selected' : ''}>7 tem / hàng</option>
@@ -664,7 +664,7 @@ updateLeftPrintSim(){
   const totalW = Number((cols * w + (cols - 1) * gap).toFixed(1));
 
   if (badge) {
-    badge.innerText = cols === 1 ? '1 tem / hàng' : `${cols} tem / hàng (${totalW}mm)`;
+    badge.innerText = `${cols} tem / hàng`;
   }
 
   let rollRec = totalW <= 58 ? 'Khổ giấy cuộn 58mm' : (totalW <= 80 ? 'Khổ giấy cuộn 75 - 80mm' : (totalW <= 108 ? 'Khổ giấy cuộn 104 - 108mm' : `Khổ giấy cuộn: ~${Math.ceil(totalW + 4)}mm`));
