@@ -8,5 +8,8 @@ obj/
 *.tmp
 vnlabel.db-shm
 vnlabel.db-wal
+preview/
+preview_server.js
+CHAY_BAN_THU_NGHIEM.bat
 scratch/
 node_modules/

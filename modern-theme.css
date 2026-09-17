@@ -1,0 +1,866 @@
+/* ==========================================================================
+   HACODE WEB LABEL - MODERN SAAS THEME (STUDIO PRO REDESIGN)
+   Tái thiết kế giao diện hiện đại, chuyên nghiệp theo chuẩn SaaS quốc tế
+   ========================================================================== */
+
+:root {
+  /* Bảng màu chủ đạo Thương hiệu HACODE (Đồng bộ chuẩn Màu Logo: Deep Blue & Cyan) */
+  --primary: #116cbf !important;
+  --primary-dark: #005893 !important;
+  --primary-light: #1790bf !important;
+  --primary-glow: rgba(17, 108, 191, 0.28) !important;
+  --primary-subtle: #f0f7ff !important;
+  
+  --accent: #0f172a !important;
+  --accent-light: #1e293b !important;
+  --accent-muted: #334155 !important;
+
+  --success: #10b981 !important;
+  --success-light: #d1fae5 !important;
+  --warning: #f59e0b !important;
+  --warning-light: #fef3c7 !important;
+  --danger: #ef4444 !important;
+  --danger-light: #fee2e2 !important;
+  --info: #0ea5e9 !important;
+  --info-light: #e0f2fe !important;
+
+  /* Nền và bề mặt (Sleek Surfaces) */
+  --bg: #f8fafc !important;
+  --surface: #ffffff !important;
+  --border: #e2e8f0 !important;
+  --border-focus: #38bdf8 !important;
+
+  /* Kiểu chữ & Màu chữ sắc nét */
+  --text: #0f172a !important;
+  --text-muted: #64748b !important;
+  --text-light: #94a3b8 !important;
+
+  /* Bo góc hiện đại */
+  --radius-sm: 6px !important;
+  --radius: 10px !important;
+  --radius-lg: 16px !important;
+  --radius-xl: 20px !important;
+
+  /* Đổ bóng đa lớp cao cấp (Multi-layer Soft Shadows) */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+  --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04) !important;
+  --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04) !important;
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.09), 0 8px 10px -6px rgba(15, 23, 42, 0.04) !important;
+  --shadow-hover: 0 14px 28px -4px rgba(17, 108, 191, 0.12), 0 6px 12px -4px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Base resets & Smooth typography */
+body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   1. THANH ĐIỀU HƯỚNG BÊN TRÁI (MODERN DARK SLATE SIDEBAR)
+   ========================================================================== */
+.sidebar {
+  background: linear-gradient(180deg, #0f172a 0%, #172033 60%, #0f172a 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Khắc phục lỗi Logo HACODE - Hiển thị logo thương hiệu chính xác */
+.sidebar-logo {
+  height: var(--topbar-height) !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.sidebar-logo .logo-box {
+  width: 160px !important;
+  height: 42px !important;
+  background-image: url('/assets/logo.png') !important;
+  background-position: left center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  cursor: pointer !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.sidebar-logo .logo-box:hover {
+  opacity: 0.88 !important;
+}
+
+.sidebar-logo .logo-text {
+  display: none !important;
+}
+
+.sidebar-logo .sidebar-collapse-btn {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  color: #64748b !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  margin-left: auto !important;
+  transition: all 0.15s ease !important;
+}
+
+.sidebar-logo .sidebar-collapse-btn:hover {
+  background: #f0f7ff !important;
+  border-color: #bae6fd !important;
+  color: #116cbf !important;
+}
+
+.app-shell.sidebar-collapsed .sidebar-logo .logo-box {
+  width: 38px !important;
+  height: 38px !important;
+  background-image: url('/assets/icon.png') !important;
+  background-position: center !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  margin: 0 auto !important;
+}
+
+/* Nút bấm Tạo thiết kế mới (Hero Action CTA - Tách biệt độc lập) */
+.sidebar-hero-cta {
+  padding: 14px 12px 6px 12px !important;
+}
+
+.sidebar-hero-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  height: 44px !important;
+  background: linear-gradient(135deg, #116cbf 0%, #1790bf 100%) !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  letter-spacing: 0.01em !important;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.sidebar-hero-btn::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+  transform: translateX(-100%) !important;
+  transition: transform 0.6s ease !important;
+}
+
+.sidebar-hero-btn:hover::before {
+  transform: translateX(100%) !important;
+}
+
+.sidebar-hero-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(17, 108, 191, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.25) inset !important;
+  filter: brightness(1.08) !important;
+  color: #ffffff !important;
+}
+
+.sidebar-hero-btn:active {
+  transform: translateY(0) !important;
+}
+
+.sidebar-hero-btn.active {
+  background: linear-gradient(135deg, #005893 0%, #116cbf 100%) !important;
+  box-shadow: 0 0 0 2px #38bdf8, 0 6px 18px rgba(17, 108, 191, 0.5) !important;
+}
+
+.sidebar-hero-btn .hero-btn-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-radius: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.sidebar-hero-btn .hero-btn-sparkle {
+  font-size: 13px !important;
+  filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.8)) !important;
+}
+
+/* Khi sidebar thu gọn */
+.app-shell.sidebar-collapsed .sidebar-hero-cta {
+  padding: 10px 8px !important;
+}
+
+.app-shell.sidebar-collapsed .sidebar-hero-btn {
+  width: 44px !important;
+  height: 44px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+}
+
+.app-shell.sidebar-collapsed .sidebar-hero-btn .hero-btn-text,
+.app-shell.sidebar-collapsed .sidebar-hero-btn .hero-btn-sparkle {
+  display: none !important;
+}
+
+/* Tiêu đề phân nhóm Sidebar (Section Dividers) */
+.sidebar-nav .nav-section-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 16px 14px 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.sidebar-nav .nav-section-label::after {
+  content: "" !important;
+  flex: 1 !important;
+  height: 1px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Tab điều hướng (Modern Nav Items) */
+.nav-item {
+  border-radius: 12px !important;
+  color: #94a3b8 !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  padding: 10px 14px !important;
+  margin: 3px 8px !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.nav-item .nav-icon {
+  width: 32px !important;
+  height: 32px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 9px !important;
+  color: #94a3b8 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  transform: translateX(3px) !important;
+}
+
+.nav-item:hover .nav-icon {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(17, 108, 191, 0.24) 0%, rgba(23, 144, 191, 0.08) 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-color: rgba(23, 144, 191, 0.35) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.nav-item.active .nav-icon {
+  background: linear-gradient(135deg, #116cbf, #1790bf) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(17, 108, 191, 0.45) !important;
+}
+
+.nav-item.active:before {
+  background: #1790bf !important;
+  box-shadow: 0 0 10px rgba(23, 144, 191, 0.8) !important;
+  width: 4px !important;
+  height: 20px !important;
+  border-radius: 0 4px 4px 0 !important;
+  left: -8px !important;
+}
+
+.sidebar-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+  padding: 14px 16px !important;
+}
+
+.sidebar-footer .sidebar-upgrade {
+  background: linear-gradient(135deg, rgba(17, 108, 191, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%) !important;
+  border: 1px solid rgba(23, 144, 191, 0.35) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.sidebar-footer .sidebar-upgrade:hover {
+  filter: brightness(1.12) !important;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.3) !important;
+}
+
+.sidebar-footer .user-info {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.sidebar-footer .user-info:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.sidebar-footer .user-info .avatar {
+  background: linear-gradient(135deg, #116cbf 0%, #06b6d4 100%) !important;
+  box-shadow: 0 3px 10px rgba(17, 108, 191, 0.4) !important;
+}
+
+.sidebar-footer .user-info .user-details .plan {
+  background: rgba(17, 108, 191, 0.25) !important;
+  color: #7dd3fc !important;
+  border: 1px solid rgba(23, 144, 191, 0.3) !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   2. THANH TIÊU ĐỀ (FROSTED GLASS TOPBAR)
+   ========================================================================== */
+.topbar {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  height: 64px !important;
+}
+
+.topbar-title {
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.3px !important;
+}
+
+.acct-trigger {
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  padding: 5px 12px 5px 6px !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 0.2s ease !important;
+}
+
+.acct-trigger:hover, .acct-trigger.open {
+  border-color: #cbd5e1 !important;
+  box-shadow: var(--shadow) !important;
+  transform: translateY(-1px);
+}
+
+.acct-avatar {
+  background: linear-gradient(135deg, #116cbf 0%, #06b6d4 100%) !important;
+  box-shadow: 0 3px 8px rgba(17, 108, 191, 0.35) !important;
+  border-radius: 9px !important;
+}
+
+.acct-name {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+}
+
+.acct-menu {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 18px 38px -6px rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Nút bấm Tạo tem nhãn trên Topbar */
+.topbar-create-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 11px !important;
+  background: linear-gradient(135deg, #116cbf 0%, #1790bf 100%) !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  box-shadow: 0 3px 10px rgba(17, 108, 191, 0.35) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  margin-right: 12px !important;
+}
+
+.topbar-create-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(17, 108, 191, 0.45) !important;
+  filter: brightness(1.08) !important;
+  color: #ffffff !important;
+}
+
+.topbar-create-btn:active {
+  transform: scale(0.97) !important;
+}
+
+/* ==========================================================================
+   3. NÚT BẤM VÀ Ô NHẬP LIỆU (PREMIUM BUTTONS & INPUTS)
+   ========================================================================== */
+.btn {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  padding: 8px 18px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn:active {
+  transform: scale(0.97) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #116cbf 0%, #005893 100%) !important;
+  border: 1px solid #005893 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(17, 108, 191, 0.35) !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #005893 0%, #004573 100%) !important;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-secondary, .btn-outline {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.btn-secondary:hover:not(:disabled), .btn-outline:hover:not(:disabled) {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.form-control, .form-select, input[type="text"], input[type="number"], select {
+  border-radius: 9px !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.18s ease !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+}
+
+.form-control:focus, input:focus, select:focus {
+  border-color: #1790bf !important;
+  box-shadow: 0 0 0 3px rgba(23, 144, 191, 0.16) !important;
+  outline: none !important;
+}
+
+/* ==========================================================================
+   4. THẺ THỐNG KÊ DASHBOARD (VIBRANT STAT CARDS)
+   ========================================================================== */
+.stat-card {
+  border-radius: 16px !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  background: #ffffff !important;
+  box-shadow: var(--shadow) !important;
+  padding: 22px !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: #bae6fd !important;
+}
+
+.stat-card .stat-icon {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.stat-card:nth-child(1) .stat-icon {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e0e7ff 100%) !important;
+  color: #116cbf !important;
+}
+
+.stat-card:nth-child(2) .stat-icon {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  color: #10b981 !important;
+}
+
+.stat-card:nth-child(3) .stat-icon {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  color: #f59e0b !important;
+}
+
+.stat-card:nth-child(4) .stat-icon {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+  color: #0284c7 !important;
+}
+
+.stat-card .stat-value {
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.5px !important;
+}
+
+.stat-card .stat-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ==========================================================================
+   5. KHU VỰC THIẾT KẾ TEM NHÃN (CANVAS STUDIO PRO)
+   ========================================================================== */
+.dsgn-body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  background: #f8fafc !important;
+}
+
+/* Thanh công cụ trên cùng (Top Toolbar) */
+.dsgn-toolbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+  min-height: 56px !important;
+  padding: 8px 18px !important;
+  gap: 8px !important;
+}
+
+/* Nút quay lại kho mẫu tem */
+.dsgn-back {
+  border-radius: 10px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 0 14px 0 12px !important;
+  height: 38px !important;
+  transition: all 0.18s ease !important;
+}
+
+.dsgn-back svg {
+  color: #116cbf !important;
+  transition: transform 0.18s ease !important;
+}
+
+.dsgn-back:hover {
+  background: #f0f7ff !important;
+  border-color: #bae6fd !important;
+  color: #116cbf !important;
+  box-shadow: 0 2px 8px rgba(17, 108, 191, 0.18) !important;
+}
+
+.dsgn-back:hover svg {
+  transform: translateX(-3px) !important;
+}
+
+/* Nút bấm hành động trên thanh công cụ */
+.dsgn-btn {
+  border-radius: 9px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: all 0.18s ease !important;
+}
+
+.dsgn-btn.primary {
+  background: linear-gradient(135deg, #116cbf 0%, #005893 100%) !important;
+  border: 1px solid #005893 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(17, 108, 191, 0.35) !important;
+}
+
+.dsgn-btn.primary:hover {
+  background: linear-gradient(135deg, #005893 0%, #004573 100%) !important;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Nút biểu tượng (Undo, Redo, Thước, Lưới...) */
+.dsgn-icon-btn, .dsgn-tool {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-icon-btn:hover, .dsgn-tool:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.dsgn-icon-btn.active, .dsgn-tool.active {
+  background: #f0f7ff !important;
+  border-color: #38bdf8 !important;
+  color: #116cbf !important;
+}
+
+/* Thanh ray công cụ bên trái (Left Tool Rail) */
+.dsgn-rail {
+  background: linear-gradient(180deg, #0f172a 0%, #172033 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  width: 68px !important;
+}
+
+.dsgn-rail-btn {
+  color: #94a3b8 !important;
+  border-radius: 12px !important;
+  margin: 6px 6px !important;
+  padding: 8px 4px !important;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dsgn-rail-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.dsgn-rail-btn.active {
+  background: linear-gradient(135deg, #116cbf 0%, #1790bf 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.4) !important;
+}
+
+/* Bảng ngăn kéo bên trái (Side Drawer Panel) */
+.dsgn-side-panel {
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 4px 0 20px rgba(15, 23, 42, 0.04) !important;
+  background: #ffffff !important;
+}
+
+.dsgn-panel-title {
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+/* Không gian làm việc & Giấy tem thiết kế (Studio Canvas & Paper) */
+.dsgn-stage {
+  background-color: #f1f5f9 !important;
+}
+
+.dsgn-canvas-wrap {
+  background-color: #f1f5f9 !important;
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px) !important;
+  background-size: 20px 20px !important;
+}
+
+/* Giấy tem nhãn - Luôn luôn trắng sáng, sắc nét, nổi khối rõ rệt */
+.dsgn-label-canvas {
+  background-color: #ffffff !important;
+  border-radius: 4px !important;
+  box-shadow: 0 14px 34px -4px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.08) !important;
+  transition: box-shadow 0.2s ease !important;
+}
+
+/* Bảng thuộc tính bên phải (Right Inspector Panel) */
+.dsgn-right {
+  border-left: 1px solid #e2e8f0 !important;
+  box-shadow: -4px 0 20px rgba(15, 23, 42, 0.04) !important;
+  background: #ffffff !important;
+}
+
+/* Thanh zoom & điều hướng dưới đáy (Bottom Zoom Bar) */
+.dsgn-bottombar {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  box-shadow: 0 -1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Hướng dẫn từng bước (Tour Modal - khi mở thủ công qua nút Trợ giúp) */
+.dsgn-tour-mask {
+  background: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.dsgn-tour-pop {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 45px -8px rgba(15, 23, 42, 0.25) !important;
+  background: #ffffff !important;
+}
+
+.dsgn-tour-count {
+  background: #f0f7ff !important;
+  color: #116cbf !important;
+  font-weight: 700 !important;
+}
+
+.dsgn-tour-btn.primary {
+  background: #116cbf !important;
+  border-color: #116cbf !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(17, 108, 191, 0.3) !important;
+}
+
+/* ==========================================================================
+   6. THƯ VIỆN MẪU TEM (TEMPLATES GALLERY CARDS)
+   ========================================================================== */
+.lib-cat {
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.lib-cat:hover {
+  border-color: #bae6fd !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.lib-cat.active {
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%) !important;
+  border-color: #1790bf !important;
+  box-shadow: 0 0 0 3px rgba(23, 144, 191, 0.18) !important;
+}
+
+.lib-cat.active b {
+  color: #116cbf !important;
+}
+
+.lib-cat.active .ic {
+  background: #116cbf !important;
+  color: #ffffff !important;
+}
+
+.lib-card, .lbl-tpl-card {
+  border-radius: 14px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: #ffffff !important;
+}
+
+.lib-card:hover, .lbl-tpl-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: #bae6fd !important;
+}
+
+.lbl-tpl-card.selected {
+  border-color: #1790bf !important;
+  box-shadow: 0 0 0 3px rgba(23, 144, 191, 0.25) !important;
+}
+
+.lbl-tpl-card .tpl-thumb, .lib-thumb {
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.lib-use, .lbl-tpl-card .tpl-action {
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  border: 1px solid #116cbf !important;
+  color: #116cbf !important;
+  background: #ffffff !important;
+  transition: all 0.18s ease !important;
+}
+
+.lib-use:hover:not(:disabled), .lbl-tpl-card .tpl-action:hover:not(:disabled) {
+  background: #116cbf !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(17, 108, 191, 0.3) !important;
+}
+
+.lbl-tpl-card .tpl-action.primary {
+  background: #116cbf !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   7. HUY HIỆU VÀ MODAL (BADGES & MODALS)
+   ========================================================================== */
+.badge {
+  border-radius: 99px !important;
+  font-weight: 700 !important;
+  padding: 3px 9px !important;
+}
+
+.badge-primary {
+  background: #f0f7ff !important;
+  color: #005893 !important;
+}
+
+.modal {
+  border-radius: 20px !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  overflow: hidden !important;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+}
+
+/* ==========================================================================
+   8. THẺ WATERMARK BẢN THỬ NGHIỆM LOCALHOST
+   ========================================================================== */
+.preview-watermark-badge { display: none !important;
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 99999;
+  background: linear-gradient(135deg, #116cbf, #06b6d4);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  letter-spacing: 0.3px;
+}
+
+.preview-watermark-badge::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+}
