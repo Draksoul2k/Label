@@ -2041,12 +2041,12 @@ app-profile .grid > .card:nth-child(2) .badge-success {
    BARTENDER SUITE COMPLETE BARCODE LIBRARY STYLES
    ========================================================================== */
 .dsgn-bt-pop.dsgn-bt-pop-full {
-  min-width: 560px !important;
-  max-width: 640px !important;
-  max-height: 520px !important;
+  min-width: 620px !important;
+  max-width: 700px !important;
+  max-height: 540px !important;
   display: none;
   flex-direction: column !important;
-  padding: 10px 12px 12px 12px !important;
+  padding: 10px 14px 14px 14px !important;
 }
 
 .dsgn-bt-pop.dsgn-bt-pop-full.open {
@@ -2159,5 +2159,33 @@ app-profile .grid > .card:nth-child(2) .badge-success {
 .dsgn-bt-pop-badge.2d { background: #ede9fe !important; color: #7c3aed !important; }
 .dsgn-bt-pop-badge.postal { background: #f1f5f9 !important; color: #475569 !important; }
 .dsgn-bt-pop-badge.composite { background: #ffe4e6 !important; color: #e11d48 !important; }
-
 .dsgn-bt-pop-item.dsgn-hidden { display: none !important; }
+
+/* BarTender mini barcode thumbnail preview */
+.dsgn-bt-pop-thumb {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 26px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 4px !important;
+  flex-shrink: 0 !important;
+  padding: 1px 2px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  overflow: hidden !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-bt-pop-item:hover .dsgn-bt-pop-thumb {
+  border-color: #93c5fd !important;
+  background: #f8fafc !important;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.15) !important;
+}
+
+.dsgn-bt-pop-thumb svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
