@@ -669,34 +669,68 @@ updateLeftPrintSim(){
 
   let rollRec = totalW <= 58 ? 'Khổ giấy cuộn 58mm' : (totalW <= 80 ? 'Khổ giấy cuộn 75 - 80mm' : (totalW <= 108 ? 'Khổ giấy cuộn 104 - 108mm' : `Khổ giấy cuộn: ~${Math.ceil(totalW + 4)}mm`));
 
+  // TỈ LỆ CHUẨN (True Aspect Ratio) & NHỎ GỌN ("nhỏ nhỏ ở đó")
   const boxW = 280;
-  const boxH = 50;
-  const padding = 10;
-  const availW = boxW - padding * 2;
-  const scale = availW / (totalW || 1);
-  const labelW = Math.max(8, w * scale);
-  const labelH = Math.min(38, Math.max(22, h * scale));
-  const gapPx = Math.max(2, gap * scale);
-  const startY = (boxH - labelH) / 2;
+  const boxH = 76;
+  const maxAvailW = 200; // Giới hạn bề rộng vẽ để giữ khung nhỏ gọn, không bị giãn bè
+  const maxAvailH = 54;  // Giới hạn chiều cao vẽ
+
+  // Tỉ lệ scale đồng nhất (Scale factor áp dụng đồng đều cho cả chiều ngang và dọc)
+  const scale = Math.min(maxAvailW / (totalW || 1), maxAvailH / (h || 1));
+  const labelW = w * scale;
+  const labelH = h * scale;
+  const gapPx = gap * scale;
+  const drawTotalW = cols * labelW + (cols - 1) * gapPx;
+  const drawTotalH = labelH;
+
+  const startX = (boxW - drawTotalW) / 2;
+  const startY = (boxH - drawTotalH) / 2;
+
+  // Lớp giấy nền cuộn (Backing paper) bao quanh các con tem
+  const paperPadX = Math.max(6, 6 * scale);
+  const paperPadY = Math.max(4, 3 * scale);
+  const paperW = Math.min(boxW - 16, drawTotalW + paperPadX * 2);
+  const paperH = drawTotalH + paperPadY * 2;
+  const paperX = (boxW - paperW) / 2;
+  const paperY = (boxH - paperH) / 2;
+
+  const fontSize = Math.min(10.5, Math.max(7.5, labelH * 0.28));
 
   let labelsSvg = '';
-  let curX = padding;
+  let curX = startX;
   for (let i = 0; i < cols; i++) {
-    const rx = this.labelShape === 'ellipse' ? labelW / 2 : (this.labelShape === 'rounded' ? 4 : 2);
-    const ry = this.labelShape === 'ellipse' ? labelH / 2 : (this.labelShape === 'rounded' ? 4 : 2);
-    labelsSvg += `
-      <g>
-        <rect x="${curX.toFixed(1)}" y="${startY.toFixed(1)}" width="${labelW.toFixed(1)}" height="${labelH.toFixed(1)}"
-              rx="${rx}" ry="${ry}" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
-        <text x="${(curX + labelW / 2).toFixed(1)}" y="${(startY + labelH / 2 + 3.5).toFixed(1)}"
-              font-size="9.5" font-weight="700" fill="#0369a1" text-anchor="middle">${w}×${h}</text>
-      </g>
-    `;
+    const isRound = this.labelShape === 'rounded';
+    const isEllipse = this.labelShape === 'ellipse';
+    const rMm = Number(this.template?.cornerRadius || 3);
+    const rx = isEllipse ? labelW / 2 : (isRound ? Math.min(labelW / 2, labelH / 2, Math.max(2, rMm * scale)) : 2);
+    const ry = isEllipse ? labelH / 2 : (isRound ? Math.min(labelW / 2, labelH / 2, Math.max(2, rMm * scale)) : 2);
+
+    if (isEllipse) {
+      labelsSvg += `
+        <g>
+          <ellipse cx="${(curX + labelW / 2).toFixed(1)}" cy="${(startY + labelH / 2).toFixed(1)}"
+                   rx="${(labelW / 2).toFixed(1)}" ry="${(labelH / 2).toFixed(1)}"
+                   fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+          <text x="${(curX + labelW / 2).toFixed(1)}" y="${(startY + labelH / 2 + fontSize * 0.35).toFixed(1)}"
+                font-size="${fontSize.toFixed(1)}" font-weight="700" fill="#0369a1" text-anchor="middle">${w}×${h}</text>
+        </g>
+      `;
+    } else {
+      labelsSvg += `
+        <g>
+          <rect x="${curX.toFixed(1)}" y="${startY.toFixed(1)}" width="${labelW.toFixed(1)}" height="${labelH.toFixed(1)}"
+                rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+          <text x="${(curX + labelW / 2).toFixed(1)}" y="${(startY + labelH / 2 + fontSize * 0.35).toFixed(1)}"
+                font-size="${fontSize.toFixed(1)}" font-weight="700" fill="#0369a1" text-anchor="middle">${w}×${h}</text>
+        </g>
+      `;
+    }
+
     if (i < cols - 1) {
       const lineX = curX + labelW + gapPx / 2;
       labelsSvg += `
-        <line x1="${lineX.toFixed(1)}" y1="${startY}" x2="${lineX.toFixed(1)}" y2="${startY + labelH}" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2,2" />
-        <text x="${lineX.toFixed(1)}" y="${startY - 2}" font-size="8" font-weight="600" fill="#d97706" text-anchor="middle">${gap}mm</text>
+        <line x1="${lineX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${lineX.toFixed(1)}" y2="${(startY + labelH).toFixed(1)}" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2,2" />
+        <text x="${lineX.toFixed(1)}" y="${(startY - 2).toFixed(1)}" font-size="7.5" font-weight="600" fill="#d97706" text-anchor="middle">${gap}mm</text>
       `;
       curX += labelW + gapPx;
     } else {
@@ -705,17 +739,19 @@ updateLeftPrintSim(){
   }
 
   sim.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11.5px;color:#1e293b;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:11.5px;color:#1e293b;">
       <div>Khổ in ngang tổng: <b style="color:#0f172a;font-size:12.5px;">${totalW} mm</b></div>
-      <div style="font-weight:700;color:#0284c7;background:#e0f2fe;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;">${rollRec}</div>
+      <div style="font-weight:700;color:#0284c7;background:#e0f2fe;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;font-size:11px;">${rollRec}</div>
     </div>
-    <div style="display:flex;justify-content:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:4px 0;overflow:hidden;">
+    <div style="display:flex;justify-content:center;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:6px 0;overflow:hidden;min-height:${boxH}px;">
       <svg width="${boxW}" height="${boxH}" viewBox="0 0 ${boxW} ${boxH}" style="display:block;">
-        <rect x="2" y="2" width="${boxW - 4}" height="${boxH - 4}" rx="4" fill="#fafafa" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3" />
+        <!-- Dải giấy cuộn (Roll paper strip) -->
+        <rect x="${paperX.toFixed(1)}" y="${paperY.toFixed(1)}" width="${paperW.toFixed(1)}" height="${paperH.toFixed(1)}"
+              rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
         ${labelsSvg}
       </svg>
     </div>
-    <div style="margin-top:4px;font-size:10.5px;color:#64748b;display:flex;justify-content:space-between;">
+    <div style="margin-top:5px;font-size:10.5px;color:#64748b;display:flex;justify-content:space-between;">
       <span>Tem: ${w}×${h}mm</span>
       <span>Số tem/hàng: ${cols}</span>
       <span>Khe hở: ${gap}mm</span>
