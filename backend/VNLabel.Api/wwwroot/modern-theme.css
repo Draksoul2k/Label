@@ -1245,10 +1245,10 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
   left: auto !important;
   bottom: auto !important;
   right: auto !important;
-  width: 360px !important;
-  min-width: 360px !important;
-  max-width: 360px !important;
-  flex: 0 0 360px !important;
+  width: 340px !important;
+  min-width: 340px !important;
+  max-width: 340px !important;
+  flex: 0 0 340px !important;
   height: 100% !important;
   background: #ffffff !important;
   border-right: 1px solid #e2e8f0 !important;
@@ -1281,12 +1281,12 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
 .dsgn-body > .dsgn-modal-backdrop .dsgn-modal-header,
 .dsgn-modal-backdrop:has(.dsgn-size-fields) .dsgn-modal-header {
   flex-shrink: 0 !important;
-  padding: 14px 18px !important;
+  padding: 16px 18px 14px !important;
   background: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
 }
 
 .dsgn-body > .dsgn-modal-backdrop .dsgn-modal-header h3,
@@ -1298,6 +1298,12 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
   align-items: center !important;
   gap: 8px !important;
   margin: 0 !important;
+}
+
+/* Ẩn nút đóng X theo yêu cầu - chuyển tab hoặc bấm nút Kích thước để đóng */
+.dsgn-body > .dsgn-modal-backdrop .dsgn-modal-close,
+.dsgn-modal-backdrop:has(.dsgn-size-fields) .dsgn-modal-close {
+  display: none !important;
 }
 
 .dsgn-body > .dsgn-modal-backdrop .dsgn-modal-body,
