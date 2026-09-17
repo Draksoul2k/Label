@@ -864,3 +864,190 @@ body {
   background: #4ade80;
   box-shadow: 0 0 8px #4ade80;
 }
+
+
+/* ==========================================================
+   BARTENDER FORMATTING RIBBON & TEXT PANEL CLEANUP
+   ========================================================== */
+
+/* Hide 'Nội dung' and 'Kiểu chữ' filter tabs in left text panel */
+.dsgn-text-tabs button:nth-child(2),
+.dsgn-text-tabs button:nth-child(3) {
+  display: none !important;
+}
+
+/* BarTender docked formatting toolbar ribbon above ruler */
+.dsgn-ctxbar {
+  display: none !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  background: #f8fafc !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  border-radius: 0 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  padding: 0 10px !important;
+  gap: 3px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ */
+  align-items: center !important;
+  justify-content: flex-start !important;
+  z-index: 20 !important;
+}
+
+.dsgn-ctxbar::-webkit-scrollbar {
+  display: none !important; /* Chrome / Safari */
+}
+
+.dsgn-ctxbar.show {
+  display: flex !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-btn {
+  width: 29px !important;
+  height: 29px !important;
+  min-width: 29px !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: #334155 !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-btn.active {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+  border-color: #93c5fd !important;
+  font-weight: 700 !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-color {
+  width: 29px !important;
+  height: 29px !important;
+  min-width: 29px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  background: #fff !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  color: #1e293b !important;
+  cursor: pointer !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+  padding: 2px 0 0 0 !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-color::after {
+  content: "" !important;
+  display: block !important;
+  width: 18px !important;
+  height: 3.5px !important;
+  background: var(--c, #000) !important;
+  border-radius: 1px !important;
+  margin-top: 2px !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-color:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+
+.dsgn-ctxbar .dsgn-tb-color input[type="color"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  opacity: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer !important;
+}
+
+.dsgn-ctxbar .dsgn-fbar-sep {
+  width: 1px !important;
+  height: 18px !important;
+  background: #cbd5e1 !important;
+  margin: 0 3px !important;
+  flex-shrink: 0 !important;
+}
+
+.dsgn-ctxbar .dsgn-stepper {
+  display: inline-flex !important;
+  align-items: center !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  background: #fff !important;
+  height: 29px !important;
+  flex-shrink: 0 !important;
+}
+
+.dsgn-ctxbar .dsgn-stepper button {
+  width: 22px !important;
+  height: 100% !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #475569 !important;
+  padding: 0 !important;
+}
+
+.dsgn-ctxbar .dsgn-stepper button:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.dsgn-ctxbar .dsgn-stepper input {
+  width: 36px !important;
+  height: 100% !important;
+  border: none !important;
+  border-left: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.dsgn-ctxbar select.dsgn-tb-font {
+  height: 29px !important;
+  font-size: 12.5px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  padding: 0 4px !important;
+  background: #fff !important;
+  color: #1e293b !important;
+  flex-shrink: 0 !important;
+}
