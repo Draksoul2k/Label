@@ -1232,3 +1232,116 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
   color: #1e293b !important;
   flex-shrink: 0 !important;
 }
+
+/* ==========================================================================
+   BẢNG ĐỔI KÍCH THƯỚC HIỆN BÊN TRÁI (LEFT PANEL / TAB) & THƯỚC KẺ ĐƠN VỊ
+   ========================================================================== */
+
+/* Cố định toàn bộ khung Thay đổi kích thước sang BÊN TRÁI cạnh thanh công cụ */
+.dsgn-modal-backdrop {
+  position: absolute !important;
+  top: 52px !important;
+  left: 74px !important;
+  bottom: 0 !important;
+  right: auto !important;
+  width: 380px !important;
+  max-width: calc(100vw - 80px) !important;
+  height: calc(100vh - 52px) !important;
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  z-index: 1050 !important;
+  pointer-events: none !important;
+}
+
+.dsgn-modal {
+  pointer-events: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  background: #ffffff !important;
+  border-radius: 0 16px 16px 0 !important;
+  border-right: 1.5px solid #cbd5e1 !important;
+  border-top: 1px solid #e2e8f0 !important;
+  box-shadow: 12px 0 35px -5px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  animation: dsgnSlideInLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes dsgnSlideInLeft {
+  from {
+    transform: translateX(-35px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.dsgn-modal-header {
+  padding: 16px 20px !important;
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.dsgn-modal-header h3 {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Góc thước kẻ (Ruler Corner - Hiển thị đơn vị mm/cm) */
+.dsgn-ruler-corner {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-right: 1px solid #cbd5e1 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  background: #f1f5f9 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 6 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-ruler-corner:hover {
+  background: #dbeafe !important;
+}
+
+.dsgn-ruler-corner span {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #0284c7 !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1 !important;
+}
+
+/* Thanh thước kẻ trên & trái khi hover */
+.dsgn-ruler-top, .dsgn-ruler-left {
+  cursor: crosshair !important;
+}
+
+@media (max-width: 1100px) {
+  .dsgn-modal-backdrop {
+    left: 66px !important;
+    width: 340px !important;
+  }
+}
+@media (max-width: 768px) {
+  .dsgn-modal-backdrop {
+    left: 58px !important;
+    width: 320px !important;
+  }
+}
