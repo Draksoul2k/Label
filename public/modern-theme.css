@@ -1476,3 +1476,197 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(8, 145, 178, 0.35);
 }
+
+/* ==========================================================================
+   THƯ VIỆN TEM MẪU (/system-templates)
+   Ẩn hoàn toàn thanh danh mục mẫu chuẩn theo yêu cầu
+   ========================================================================== */
+.lib-cats {
+  display: none !important;
+}
+
+.lib-bar {
+  margin-top: 0 !important;
+  padding-top: 4px !important;
+}
+
+/* ==========================================================================
+   HỒ SƠ CÁ NHÂN (/profile)
+   Sắp xếp lại và hiện đại hóa giao diện, giữ nguyên màu sắc chủ đạo
+   ========================================================================== */
+app-profile {
+  display: block;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 4px 0 32px;
+}
+
+app-profile .page-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 24px !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+app-profile .page-header::before {
+  content: "Cài đặt hồ sơ & Tài khoản";
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+app-profile .page-header .btn {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 9px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: #e11d48 !important;
+  border: 1px solid #fecdd3 !important;
+  background: #fff1f2 !important;
+  transition: all 0.18s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+}
+
+app-profile .page-header .btn:hover {
+  background: #ffe4e6 !important;
+  border-color: #fda4af !important;
+  color: #be123c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.14) !important;
+}
+
+app-profile .card {
+  border-radius: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  transition: box-shadow 0.2s ease !important;
+}
+
+app-profile .card:hover {
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04) !important;
+}
+
+app-profile .card-header {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%) !important;
+}
+
+app-profile .card-header h3 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 4px !important;
+}
+
+app-profile .card-header p {
+  font-size: 12.5px !important;
+  color: #64748b !important;
+  margin: 0 !important;
+}
+
+app-profile .card-body {
+  padding: 24px !important;
+}
+
+app-profile .form-group {
+  margin-bottom: 18px !important;
+}
+
+app-profile .form-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 6px !important;
+}
+
+app-profile .form-control {
+  height: 42px !important;
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  font-size: 13.5px !important;
+  padding: 0 14px !important;
+  background: #ffffff !important;
+  transition: all 0.18s ease !important;
+}
+
+app-profile .form-control:focus {
+  border-color: #116cbf !important;
+  box-shadow: 0 0 0 3px rgba(17, 108, 191, 0.16) !important;
+}
+
+app-profile .form-control:disabled {
+  background: #f8fafc !important;
+  color: #64748b !important;
+  cursor: not-allowed !important;
+  border-color: #e2e8f0 !important;
+}
+
+@media (min-width: 640px) {
+  app-profile .grid > .card:nth-child(1) form {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0 18px !important;
+  }
+
+  app-profile .grid > .card:nth-child(1) form .form-group:nth-child(5),
+  app-profile .grid > .card:nth-child(1) form button[type="submit"] {
+    grid-column: span 2 !important;
+  }
+}
+
+app-profile .btn-primary {
+  height: 42px !important;
+  padding: 0 24px !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  background: #116cbf !important;
+  border: 1px solid #116cbf !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(17, 108, 191, 0.25) !important;
+  transition: all 0.18s ease !important;
+  cursor: pointer !important;
+}
+
+app-profile .btn-primary:hover:not(:disabled) {
+  background: #0d5294 !important;
+  border-color: #0d5294 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(17, 108, 191, 0.35) !important;
+}
+
+app-profile .grid > .card:nth-child(2) .card-body > .mt-6:first-of-type {
+  margin-top: 24px !important;
+  padding: 14px 16px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+}
+
+app-profile .grid > .card:nth-child(2) .card-body > .mt-6:last-of-type {
+  margin-top: 10px !important;
+  padding: 14px 16px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+}
+
+app-profile .grid > .card:nth-child(2) .badge-success {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  padding: 4px 10px !important;
+  border-radius: 99px !important;
+}
