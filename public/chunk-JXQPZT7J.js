@@ -836,7 +836,259 @@ ensureRailSizeTab(){
       btn.classList.remove('active');
     }
   }
+  this.ensureBarTenderToolbar();
 }
+ensureBarTenderToolbar(){
+  const toolbar = document.querySelector('.dsgn-toolbar');
+  if (!toolbar) return;
+  if (toolbar.querySelector('#dsgn-bartender-tools')) return;
+
+  const container = document.createElement('div');
+  container.id = 'dsgn-bartender-tools';
+  container.className = 'dsgn-bt-toolbar';
+
+  const bcs = this.barcodeTypes || [
+    { kind: 'qr', format: 'QR', name: 'QR Code', code: '2D', desc: 'Mã QR quét bằng điện thoại, link web', value: 'https://hacode.vn' },
+    { kind: '1d', format: 'CODE128', name: 'Code 128', code: '128', desc: 'Chuẩn kho & logistics phổ biến nhất', value: '1234567890' },
+    { kind: '1d', format: 'EAN13', name: 'EAN-13', code: 'EAN', desc: 'Hàng bán lẻ siêu thị VN (13 số)', value: '8938505974011' },
+    { kind: '1d', format: 'EAN8', name: 'EAN-8', code: 'EAN', desc: 'Bao bì nhỏ gọn (8 số)', value: '89385059' },
+    { kind: '1d', format: 'UPC', name: 'UPC-A', code: 'UPC', desc: 'Bán lẻ Bắc Mỹ / Quốc tế (12 số)', value: '012345678905' },
+    { kind: '1d', format: 'UPCE', name: 'UPC-E', code: 'UPC', desc: 'UPC rút gọn bao bì nhỏ', value: '0123456' },
+    { kind: '1d', format: 'CODE39', name: 'Code 39', code: 'C39', desc: 'Mã ký tự chữ & số công nghiệp', value: 'CODE39' },
+    { kind: '1d', format: 'ITF', name: 'ITF-14', code: 'ITF', desc: 'Thùng carton đóng gói (14 số)', value: '1234567890' },
+    { kind: '1d', format: 'codabar', name: 'Codabar', code: 'NW7', desc: 'Ngân hàng máu, y tế, bưu kiện', value: 'A12345678B' },
+    { kind: '1d', format: 'MSI', name: 'MSI Plessey', code: 'MSI', desc: 'Quản lý kệ hàng, lưu kho', value: '1234567' }
+  ];
+
+  const bcItemsHtml = bcs.map((b, idx) => `
+    <div class="dsgn-bt-pop-item" data-act="add-bc" data-bcidx="${idx}">
+      <span class="dsgn-bt-pop-badge ${b.kind === 'qr' ? 'qr' : (b.code||'').toLowerCase()}">${b.kind === 'qr' ? '2D' : (b.code || '1D')}</span>
+      <div class="dsgn-bt-pop-text">
+        <b>${b.name}</b>
+        <small>${b.desc || b.code || ''}</small>
+      </div>
+    </div>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="dsgn-bt-group">
+      <!-- Văn bản -->
+      <div class="dsgn-bt-item" data-menu="text">
+        <button type="button" class="dsgn-bt-btn" title="Chèn văn bản (BarTender Text Tool)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 7 4 4 20 4 20 7"/>
+            <line x1="9" y1="20" x2="15" y2="20"/>
+            <line x1="12" y1="4" x2="12" y2="20"/>
+          </svg>
+          <span>Văn bản</span>
+          <svg class="dsgn-bt-arr" viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dsgn-bt-pop" id="dsgn-pop-text">
+          <div class="dsgn-bt-pop-title">CHÈN VĂN BẢN</div>
+          <div class="dsgn-bt-pop-item" data-act="text-heading">
+            <span class="dsgn-bt-pop-ico" style="font-weight:800;font-size:15px;color:#116cbf;">T1</span>
+            <div class="dsgn-bt-pop-text"><b>Tiêu đề lớn</b><small>Chữ đậm 12pt nổi bật</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="text-sub">
+            <span class="dsgn-bt-pop-ico" style="font-weight:700;font-size:13px;color:#0284c7;">T2</span>
+            <div class="dsgn-bt-pop-text"><b>Tiêu đề phụ</b><small>Chữ vừa 10pt</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="text-body">
+            <span class="dsgn-bt-pop-ico" style="font-weight:500;font-size:12px;color:#475569;">T3</span>
+            <div class="dsgn-bt-pop-text"><b>Nội dung văn bản</b><small>Chữ nhỏ 8pt ghi chú, thông số</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mã vạch -->
+      <div class="dsgn-bt-item" data-menu="barcode">
+        <button type="button" class="dsgn-bt-btn" title="Chèn mã vạch & QR (BarTender Barcode Tool)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 5v14M7 5v14M11 5v14M15 5v14M17 5v14M21 5v14"/>
+          </svg>
+          <span>Mã vạch</span>
+          <svg class="dsgn-bt-arr" viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dsgn-bt-pop dsgn-bt-pop-wide" id="dsgn-pop-barcode">
+          <div class="dsgn-bt-pop-title">CHỌN LOẠI MÃ VẠCH (BARTENDER)</div>
+          <div class="dsgn-bt-pop-grid">
+            ${bcItemsHtml}
+          </div>
+        </div>
+      </div>
+
+      <!-- Đường kẻ -->
+      <div class="dsgn-bt-item" data-menu="line">
+        <button type="button" class="dsgn-bt-btn" title="Chèn đường kẻ (BarTender Line Tool)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="20" x2="20" y2="4"/>
+          </svg>
+          <span>Đường kẻ</span>
+          <svg class="dsgn-bt-arr" viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dsgn-bt-pop" id="dsgn-pop-line">
+          <div class="dsgn-bt-pop-title">KIỂU ĐƯỜNG KẺ</div>
+          <div class="dsgn-bt-pop-item" data-act="line-0">
+            <span class="dsgn-bt-line-sample solid"></span>
+            <div class="dsgn-bt-pop-text"><b>Nét liền</b><small>Đường kẻ ngang cơ bản</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="line-1">
+            <span class="dsgn-bt-line-sample thick"></span>
+            <div class="dsgn-bt-pop-text"><b>Nét đậm</b><small>Đường kẻ dày 3px</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="line-2">
+            <span class="dsgn-bt-line-sample dashed"></span>
+            <div class="dsgn-bt-pop-text"><b>Nét đứt</b><small>Đường gạch ngắt quãng</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="line-3">
+            <span class="dsgn-bt-line-sample dotted"></span>
+            <div class="dsgn-bt-pop-text"><b>Nét chấm</b><small>Đường chấm tròn</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="line-4">
+            <span class="dsgn-bt-line-sample arrow">→</span>
+            <div class="dsgn-bt-pop-text"><b>Mũi tên chỉ hướng</b><small>Mũi tên 1 đầu</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="line-5">
+            <span class="dsgn-bt-line-sample darrow">↔</span>
+            <div class="dsgn-bt-pop-text"><b>Mũi tên 2 đầu</b><small>Chỉ kích thước, hai chiều</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="line-vert">
+            <span class="dsgn-bt-line-sample vert">│</span>
+            <div class="dsgn-bt-pop-text"><b>Đường kẻ dọc</b><small>Phân chia cột dọc</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hình khối -->
+      <div class="dsgn-bt-item" data-menu="shape">
+        <button type="button" class="dsgn-bt-btn" title="Chèn hình khối (BarTender Shape Tool)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+          </svg>
+          <span>Hình khối</span>
+          <svg class="dsgn-bt-arr" viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dsgn-bt-pop" id="dsgn-pop-shape">
+          <div class="dsgn-bt-pop-title">HÌNH DẠNG KHỐI</div>
+          <div class="dsgn-bt-pop-item" data-act="shape-square">
+            <span class="dsgn-bt-shape-sample rect"></span>
+            <div class="dsgn-bt-pop-text"><b>Hình chữ nhật / Vuông</b><small>Khung viền tem</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="shape-circle">
+            <span class="dsgn-bt-shape-sample circle"></span>
+            <div class="dsgn-bt-pop-text"><b>Hình tròn</b><small>Khung tròn bo đều</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="shape-ellipse">
+            <span class="dsgn-bt-shape-sample ellipse"></span>
+            <div class="dsgn-bt-pop-text"><b>Hình Elip / Bầu dục</b><small>Tem elip</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="shape-triangle">
+            <span class="dsgn-bt-shape-sample tri">▲</span>
+            <div class="dsgn-bt-pop-text"><b>Hình tam giác</b><small>Biểu tượng cảnh báo</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="shape-diamond">
+            <span class="dsgn-bt-shape-sample diamond">◆</span>
+            <div class="dsgn-bt-pop-text"><b>Hình thoi</b><small>Ký hiệu phân loại</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="shape-filled">
+            <span class="dsgn-bt-shape-sample filled"></span>
+            <div class="dsgn-bt-pop-text"><b>Hộp đặc nền màu</b><small>Khối nền màu nổi bật</small></div>
+          </div>
+          <div class="dsgn-bt-pop-item" data-act="shape-colorbar">
+            <span class="dsgn-bt-shape-sample colorbar"></span>
+            <div class="dsgn-bt-pop-text"><b>Dải màu phân cách</b><small>Thanh màu ngăn cách</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hình ảnh -->
+      <div class="dsgn-bt-item">
+        <button type="button" class="dsgn-bt-btn" data-act="img-upload" title="Tải ảnh lên tem (Logo, chứng nhận...)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span>Hình ảnh</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const backEl = toolbar.querySelector('.dsgn-back');
+  const rightEl = toolbar.querySelector('.dsgn-toolbar-right');
+  const sep = document.createElement('div');
+  sep.className = 'dsgn-toolbar-sep dsgn-bt-sep';
+
+  if (backEl && backEl.nextSibling) {
+    backEl.after(sep);
+    sep.after(container);
+  } else if (rightEl) {
+    toolbar.insertBefore(container, rightEl);
+  } else {
+    toolbar.appendChild(container);
+  }
+
+  container.querySelectorAll('.dsgn-bt-item').forEach(it => {
+    const btn = it.querySelector('.dsgn-bt-btn');
+    const pop = it.querySelector('.dsgn-bt-pop');
+    if (btn && pop) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = pop.classList.contains('open');
+        document.querySelectorAll('.dsgn-bt-pop.open').forEach(p => p.classList.remove('open'));
+        if (!isOpen) pop.classList.add('open');
+      });
+    }
+  });
+
+  container.addEventListener('click', (e) => {
+    const actItem = e.target.closest('[data-act]');
+    if (!actItem) return;
+    e.stopPropagation();
+    const act = actItem.dataset.act;
+    document.querySelectorAll('.dsgn-bt-pop.open').forEach(p => p.classList.remove('open'));
+
+    if (act === 'text-heading') this.addHeadingText();
+    else if (act === 'text-sub') this.addSubheadingText();
+    else if (act === 'text-body') this.addBodyText();
+    else if (act === 'add-bc') {
+      const idx = parseInt(actItem.dataset.bcidx, 10);
+      const targetBc = bcs[idx];
+      if (targetBc) this.addBarcodeType(targetBc);
+    }
+    else if (act.startsWith('line-')) {
+      const ltype = act.replace('line-', '');
+      if (ltype === 'vert') {
+        this.addVerticalLine();
+      } else {
+        const lidx = parseInt(ltype, 10);
+        if (this.linePresets && this.linePresets[lidx]) {
+          this.addLinePreset(this.linePresets[lidx]);
+        }
+      }
+    }
+    else if (act === 'shape-square') this.addSquareElement();
+    else if (act === 'shape-circle') this.addCircleElement();
+    else if (act === 'shape-ellipse') this.addEllipseElement();
+    else if (act === 'shape-triangle') this.addTriangleElement();
+    else if (act === 'shape-diamond') this.addDiamondElement();
+    else if (act === 'shape-filled') this.addFilledBox();
+    else if (act === 'shape-colorbar') this.addColorBar();
+    else if (act === 'img-upload') {
+      const fileIn = document.querySelector('.dsgn-upload-btn input[type=file]') || document.querySelector('input[accept*="image"]');
+      if (fileIn) fileIn.click();
+      else this.setPanel('graphics');
+    }
+  });
+
+  document.addEventListener('click', (ev) => {
+    if (!ev.target.closest('#dsgn-bartender-tools')) {
+      document.querySelectorAll('.dsgn-bt-pop.open').forEach(p => p.classList.remove('open'));
+    }
+  });
+}
+
 showRulerContextMenu(clientX, clientY){
   let m = this.contextMenuEl;
   if (!m) {

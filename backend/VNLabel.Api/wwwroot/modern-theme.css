@@ -1670,3 +1670,369 @@ app-profile .grid > .card:nth-child(2) .badge-success {
   padding: 4px 10px !important;
   border-radius: 99px !important;
 }
+
+/* ==========================================================================
+   6. BARTENDER MODERN TOP TOOLBAR & COMPACT BARCODE STYLING
+   ========================================================================== */
+
+/* BarTender Toolbar container */
+.dsgn-bt-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.dsgn-bt-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: #f1f5f9 !important;
+  padding: 3px !important;
+  border-radius: 9px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.dsgn-bt-item {
+  position: relative !important;
+}
+
+.dsgn-bt-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 32px !important;
+  padding: 0 10px !important;
+  border-radius: 7px !important;
+  border: 1px solid transparent !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.dsgn-bt-btn:hover {
+  background: #ffffff !important;
+  color: #116cbf !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 2px 6px rgba(17, 108, 191, 0.15) !important;
+}
+
+.dsgn-bt-btn svg {
+  color: #116cbf !important;
+  flex-shrink: 0 !important;
+}
+
+.dsgn-bt-arr {
+  color: #94a3b8 !important;
+  margin-left: -1px !important;
+  transition: transform 0.15s ease !important;
+}
+
+.dsgn-bt-item:hover .dsgn-bt-arr,
+.dsgn-bt-pop.open ~ .dsgn-bt-btn .dsgn-bt-arr {
+  color: #116cbf !important;
+}
+
+/* Popups for BarTender Quick Tools */
+.dsgn-bt-pop {
+  display: none;
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.18), 0 8px 10px -6px rgba(15, 23, 42, 0.1) !important;
+  z-index: 9999 !important;
+  padding: 8px !important;
+  min-width: 240px !important;
+}
+
+.dsgn-bt-pop.open {
+  display: block !important;
+  animation: dsgnFadeSlideDown 0.16s ease-out !important;
+}
+
+@keyframes dsgnFadeSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dsgn-bt-pop-wide {
+  min-width: 360px !important;
+}
+
+.dsgn-bt-pop-title {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #64748b !important;
+  letter-spacing: 0.06em !important;
+  padding: 4px 8px 8px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  margin-bottom: 6px !important;
+}
+
+.dsgn-bt-pop-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 4px !important;
+  max-height: 380px !important;
+  overflow-y: auto !important;
+}
+
+.dsgn-bt-pop-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  padding: 7px 10px !important;
+  border-radius: 7px !important;
+  cursor: pointer !important;
+  transition: all 0.12s ease !important;
+  border: 1px solid transparent !important;
+}
+
+.dsgn-bt-pop-item:hover {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+}
+
+.dsgn-bt-pop-text {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.dsgn-bt-pop-text b {
+  font-size: 12px !important;
+  color: #1e293b !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dsgn-bt-pop-text small {
+  font-size: 10.5px !important;
+  color: #64748b !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Badges for Barcode in Popup */
+.dsgn-bt-pop-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 22px !important;
+  border-radius: 5px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  flex-shrink: 0 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+}
+
+.dsgn-bt-pop-badge.qr { background: #ede9fe !important; color: #6d28d9 !important; border: 1px solid #ddd6fe !important; }
+.dsgn-bt-pop-badge.code { background: #dbeafe !important; color: #1d4ed8 !important; border: 1px solid #bfdbfe !important; }
+.dsgn-bt-pop-badge.retail { background: #dcfce7 !important; color: #15803d !important; border: 1px solid #bbf7d0 !important; }
+.dsgn-bt-pop-badge.upc { background: #ccfbf1 !important; color: #0f766e !important; border: 1px solid #99f6e4 !important; }
+.dsgn-bt-pop-badge.ind { background: #fef3c7 !important; color: #b45309 !important; border: 1px solid #fde68a !important; }
+.dsgn-bt-pop-badge.med { background: #ffe4e6 !important; color: #be123c !important; border: 1px solid #fecdd3 !important; }
+.dsgn-bt-pop-badge.wh { background: #f3e8ff !important; color: #7e22ce !important; border: 1px solid #e9d5ff !important; }
+
+/* Line samples in popup */
+.dsgn-bt-line-sample {
+  width: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+}
+.dsgn-bt-line-sample.solid { height: 2px !important; background: #334155 !important; border-radius: 1px !important; }
+.dsgn-bt-line-sample.thick { height: 4px !important; background: #334155 !important; border-radius: 2px !important; }
+.dsgn-bt-line-sample.dashed { height: 2px !important; border-top: 2px dashed #334155 !important; }
+.dsgn-bt-line-sample.dotted { height: 2px !important; border-top: 2px dotted #334155 !important; }
+.dsgn-bt-line-sample.vert { font-weight: 800 !important; color: #334155 !important; }
+
+/* Shape samples in popup */
+.dsgn-bt-shape-sample {
+  width: 22px !important;
+  height: 22px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  font-size: 12px !important;
+}
+.dsgn-bt-shape-sample.rect { border: 2px solid #334155 !important; border-radius: 3px !important; }
+.dsgn-bt-shape-sample.circle { border: 2px solid #334155 !important; border-radius: 50% !important; }
+.dsgn-bt-shape-sample.ellipse { border: 2px solid #334155 !important; border-radius: 50% !important; width: 26px !important; height: 18px !important; }
+.dsgn-bt-shape-sample.tri { color: #334155 !important; }
+.dsgn-bt-shape-sample.diamond { color: #334155 !important; }
+.dsgn-bt-shape-sample.filled { background: #116cbf !important; border-radius: 3px !important; }
+.dsgn-bt-shape-sample.colorbar { height: 8px !important; background: #116cbf !important; border-radius: 2px !important; }
+
+/* ==========================================================================
+   MINIATURIZE BARCODE CARDS IN LEFT DRAWER (BARTENDER STYLE)
+   ========================================================================== */
+.dsgn-bc-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+  padding: 4px 0 !important;
+}
+
+.dsgn-bc-card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  padding: 6px 10px !important;
+  gap: 10px !important;
+  border-radius: 7px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  transition: all 0.15s ease !important;
+  min-height: 40px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+.dsgn-bc-card:hover {
+  border-color: #3b82f6 !important;
+  background: #eff6ff !important;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12) !important;
+  transform: translateY(-1px) !important;
+}
+
+.dsgn-bc-sample {
+  width: 42px !important;
+  height: 26px !important;
+  min-width: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 5px !important;
+  padding: 2px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.dsgn-bc-sample svg,
+.dsgn-bc-sample img,
+.dsgn-bc-qr,
+.dsgn-bc-1d svg {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  height: 22px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.dsgn-bc-info {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex: 1 !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+.dsgn-bc-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dsgn-bc-code {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+}
+
+/* Compact Shapes & Lines in Left Drawer */
+.dsgn-graphics-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+}
+
+.dsgn-graphic-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 4px !important;
+  min-height: 52px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  gap: 5px !important;
+  border-radius: 7px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+.dsgn-graphic-btn:hover {
+  border-color: #3b82f6 !important;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
+.dsgn-graphic-btn .g-icon {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.dsgn-line-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 6px !important;
+}
+
+.dsgn-line-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 6px 4px !important;
+  min-height: 42px !important;
+  border-radius: 7px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  gap: 3px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.dsgn-line-card:hover {
+  border-color: #3b82f6 !important;
+  background: #eff6ff !important;
+}
+
+.dsgn-line-name {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+}
