@@ -407,18 +407,18 @@ setupShapeParamsUI(){
   if (shape === 'rounded') {
     const curR = this.template.cornerRadius !== undefined ? Number(this.template.cornerRadius) : 3;
     wrap.innerHTML = `
-      <div style="margin-top:10px;padding:10px 14px;background:#f0f7ff;border:1.5px solid #93c5fd;border-radius:8px;">
+      <div style="margin-top:10px;padding:10px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:8px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <label style="font-size:13px;font-weight:700;color:#1e3a8a;display:flex;align-items:center;gap:6px;">
+          <label style="font-size:13px;font-weight:700;color:#0369a1;display:flex;align-items:center;gap:6px;">
             <span>📐</span> Bo góc (bán kính góc):
           </label>
           <div style="display:flex;align-items:center;gap:5px;">
             <input type="number" id="dsgn-input-radius" min="0.5" max="50" step="0.5" value="${curR}"
-                   style="width:70px;height:32px;padding:0 8px;font-size:13px;font-weight:700;text-align:center;border:1.5px solid #3b82f6;border-radius:6px;background:#fff;color:#0f172a;outline:none;">
+                   style="width:70px;height:32px;padding:0 8px;font-size:13px;font-weight:700;text-align:center;border:1.5px solid #0284c7;border-radius:6px;background:#fff;color:#0f172a;outline:none;">
             <span style="font-size:12.5px;font-weight:700;color:#334155;">mm</span>
           </div>
         </div>
-        <div style="font-size:11px;color:#2563eb;margin-top:4px;">Nhập độ bo tròn của 4 góc con tem (ví dụ: 2mm, 3mm, 5mm)</div>
+        <div style="font-size:11px;color:#0284c7;margin-top:4px;">Nhập độ bo tròn của 4 góc con tem (ví dụ: 2mm, 3mm, 5mm)</div>
       </div>
     `;
     const rInput = wrap.querySelector('#dsgn-input-radius');
@@ -432,18 +432,18 @@ setupShapeParamsUI(){
   } else if (shape === 'ellipse') {
     const curD = this.template.width || 50;
     wrap.innerHTML = `
-      <div style="margin-top:10px;padding:10px 14px;background:#f0f7ff;border:1.5px solid #93c5fd;border-radius:8px;">
+      <div style="margin-top:10px;padding:10px 14px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:8px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <label style="font-size:13px;font-weight:700;color:#1e3a8a;display:flex;align-items:center;gap:6px;">
+          <label style="font-size:13px;font-weight:700;color:#0369a1;display:flex;align-items:center;gap:6px;">
             <span>⭕</span> Đường kính tem tròn:
           </label>
           <div style="display:flex;align-items:center;gap:5px;">
             <input type="number" id="dsgn-input-diameter" min="5" max="300" step="1" value="${curD}"
-                   style="width:70px;height:32px;padding:0 8px;font-size:13px;font-weight:700;text-align:center;border:1.5px solid #3b82f6;border-radius:6px;background:#fff;color:#0f172a;outline:none;">
+                   style="width:70px;height:32px;padding:0 8px;font-size:13px;font-weight:700;text-align:center;border:1.5px solid #0284c7;border-radius:6px;background:#fff;color:#0f172a;outline:none;">
             <span style="font-size:12.5px;font-weight:700;color:#334155;">mm</span>
           </div>
         </div>
-        <div style="font-size:11px;color:#2563eb;margin-top:4px;">Nhập đường kính tem tròn (tự động đặt Ngang = Dọc = đường kính)</div>
+        <div style="font-size:11px;color:#0284c7;margin-top:4px;">Nhập đường kính tem tròn (tự động đặt Ngang = Dọc = đường kính)</div>
       </div>
     `;
     const dInput = wrap.querySelector('#dsgn-input-diameter');
@@ -468,7 +468,7 @@ setupShapeParamsUI(){
     wrap.innerHTML = '';
   }
 
-  // 2. LEFT PRINT SETTINGS & ROLL SIMULATION (Loại tem, Số tem trên hàng, Khe hở gap)
+  // 2. LEFT PRINT SETTINGS & ROLL SIMULATION (Loại tem, Số tem trên hàng, Khe hở gap) - Đồng bộ màu Cyan / Teal #06b6d4 - #0891b2
   if (modalBody) {
     let printLayout = document.getElementById('dsgn-left-print-layout');
     if (!printLayout) {
@@ -486,12 +486,12 @@ setupShapeParamsUI(){
     const curGap = Math.max(0, Number(this.printerSettings?.gap ?? (curCols > 1 ? 2 : 0)));
 
     printLayout.innerHTML = `
-      <div style="margin-top:12px;padding:12px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;">
+      <div style="margin-top:12px;padding:12px;background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:10px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <label style="font-size:13px;font-weight:700;color:#166534;display:flex;align-items:center;gap:6px;">
+          <label style="font-size:13px;font-weight:700;color:#0369a1;display:flex;align-items:center;gap:6px;">
             <span>🖨️</span> Cài đặt in & Khổ cuộn tem:
           </label>
-          <span id="dsgn-left-cols-badge" style="font-size:11px;font-weight:700;color:#15803d;background:#dcfce7;padding:2px 8px;border-radius:10px;border:1px solid #bbf7d0;">
+          <span id="dsgn-left-cols-badge" style="font-size:11px;font-weight:700;color:#0284c7;background:#e0f2fe;padding:2px 8px;border-radius:10px;border:1px solid #bae6fd;">
             ${curCols} tem / hàng
           </span>
         </div>
@@ -509,7 +509,7 @@ setupShapeParamsUI(){
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
           <div style="flex:1;">
             <label style="font-size:11px;font-weight:600;color:#334155;display:block;margin-bottom:3px;">Số tem / hàng:</label>
-            <select id="dsgn-left-cols" style="width:100%;height:32px;font-size:12.5px;font-weight:700;border:1.5px solid #86efac;border-radius:6px;background:#fff;padding:0 6px;outline:none;color:#0f172a;">
+            <select id="dsgn-left-cols" style="width:100%;height:32px;font-size:12.5px;font-weight:700;border:1.5px solid #7dd3fc;border-radius:6px;background:#fff;padding:0 6px;outline:none;color:#0f172a;">
               <option value="1" ${curCols === 1 ? 'selected' : ''}>1 tem (Cuộn đơn)</option>
               <option value="2" ${curCols === 2 ? 'selected' : ''}>2 tem / hàng (Tem đôi)</option>
               <option value="3" ${curCols === 3 ? 'selected' : ''}>3 tem / hàng (Tem 3)</option>
@@ -524,13 +524,13 @@ setupShapeParamsUI(){
             <label style="font-size:11px;font-weight:600;color:#334155;display:block;margin-bottom:3px;">Khe hở tem (Gap):</label>
             <div style="display:flex;align-items:center;gap:4px;">
               <input type="number" id="dsgn-left-gap" min="0" max="25" step="0.5" value="${curGap}"
-                     style="width:100%;height:32px;font-size:12.5px;font-weight:700;text-align:center;border:1.5px solid #86efac;border-radius:6px;background:#fff;outline:none;color:#0f172a;">
+                     style="width:100%;height:32px;font-size:12.5px;font-weight:700;text-align:center;border:1.5px solid #7dd3fc;border-radius:6px;background:#fff;outline:none;color:#0f172a;">
               <span style="font-size:12px;font-weight:700;color:#334155;">mm</span>
             </div>
           </div>
         </div>
 
-        <div id="dsgn-left-roll-sim" style="background:#ffffff;border:1px dashed #22c55e;border-radius:8px;padding:8px 10px;font-size:11.5px;">
+        <div id="dsgn-left-roll-sim" style="background:#ffffff;border:1px dashed #0284c7;border-radius:8px;padding:8px 10px;font-size:11.5px;">
         </div>
       </div>
     `;
@@ -582,7 +582,7 @@ setupShapeParamsUI(){
     this.updateLeftPrintSim();
   }
 
-  // 3. COLLAPSIBLE PRESETS DROPDOWN WITH SEARCH (Ấn tích thả xuống những tem đã có + tìm kiếm)
+  // 3. COLLAPSIBLE PRESETS DROPDOWN WITH SEARCH (Đồng bộ màu sắc)
   const searchEl = modalBody?.querySelector('.dsgn-size-search');
   const listEl = modalBody?.querySelector('.dsgn-size-list');
   if (searchEl && listEl) {
@@ -594,7 +594,7 @@ setupShapeParamsUI(){
     }
 
     if (window._dsgnPresetsExpanded === undefined) {
-      window._dsgnPresetsExpanded = false; // Collapsed by default as requested
+      window._dsgnPresetsExpanded = false;
     }
 
     const applyPresetsState = () => {
@@ -604,7 +604,7 @@ setupShapeParamsUI(){
       toggleEl.className = exp ? 'active' : '';
       toggleEl.innerHTML = `
         <div style="display:flex;align-items:center;gap:8px;">
-          <input type="checkbox" id="dsgn-presets-check" ${exp ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer;accent-color:#0284c7;">
+          <input type="checkbox" id="dsgn-presets-check" ${exp ? 'checked' : ''} style="width:16px;height:16px;cursor:pointer;accent-color:#0891b2;">
           <label for="dsgn-presets-check" style="font-size:13px;font-weight:700;color:${exp ? '#0369a1' : '#1e293b'};cursor:pointer;display:flex;align-items:center;gap:6px;">
             <span>📋</span> Mẫu tem kích thước có sẵn
           </label>
@@ -621,6 +621,7 @@ setupShapeParamsUI(){
           window._dsgnPresetsExpanded = chk.checked;
           applyPresetsState();
           if (window._dsgnPresetsExpanded) {
+            setTimeout(() => toggleEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
             const inp = searchEl.querySelector('input');
             if (inp) inp.focus();
           }
@@ -703,7 +704,7 @@ updateLeftPrintSim(){
   sim.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;font-size:11.5px;color:#1e293b;">
       <div>Khổ in ngang tổng: <b style="color:#0f172a;font-size:12.5px;">${totalW} mm</b></div>
-      <div style="font-weight:700;color:#16a34a;background:#dcfce7;padding:1px 6px;border-radius:4px;">${rollRec}</div>
+      <div style="font-weight:700;color:#0284c7;background:#e0f2fe;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;">${rollRec}</div>
     </div>
     <div style="display:flex;justify-content:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:4px 0;overflow:hidden;">
       <svg width="${boxW}" height="${boxH}" viewBox="0 0 ${boxW} ${boxH}" style="display:block;">
