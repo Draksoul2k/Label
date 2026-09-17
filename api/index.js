@@ -2245,7 +2245,7 @@ app.get(['/api/fonts', '/fonts', '/api/admin/fonts', '/admin/fonts'], async (req
 // 11. HEALTH CHECK
 // -------------------------------------------------------------
 app.get(['/api/health', '/health'], (req, res) => {
-  res.json({ status: 'ok', server: 'Vercel Serverless', time: new Date().toISOString() });
+  res.json({ status: 'ok', server: 'Vercel Serverless', version: '1.0.2-sec', time: new Date().toISOString() });
 });
 
 
