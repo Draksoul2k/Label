@@ -1237,64 +1237,76 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
    BẢNG ĐỔI KÍCH THƯỚC HIỆN BÊN TRÁI (LEFT PANEL / TAB) & THƯỚC KẺ ĐƠN VỊ
    ========================================================================== */
 
-/* Cố định toàn bộ khung Thay đổi kích thước sang BÊN TRÁI cạnh thanh công cụ */
-.dsgn-modal-backdrop {
-  position: absolute !important;
-  top: 52px !important;
-  left: 74px !important;
-  bottom: 0 !important;
+/* Cố định toàn bộ khung Thay đổi kích thước thành INLINE SIDE PANEL cạnh dsgn-rail */
+.dsgn-body > .dsgn-modal-backdrop,
+.dsgn-modal-backdrop:has(.dsgn-size-fields) {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  bottom: auto !important;
   right: auto !important;
-  width: 380px !important;
-  max-width: calc(100vw - 80px) !important;
-  height: calc(100vh - 52px) !important;
-  background: transparent !important;
+  width: 360px !important;
+  min-width: 360px !important;
+  max-width: 360px !important;
+  flex: 0 0 360px !important;
+  height: 100% !important;
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 4px 0 20px rgba(15, 23, 42, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
   padding: 0 !important;
-  z-index: 1050 !important;
-  pointer-events: none !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  overflow: hidden !important;
 }
 
-.dsgn-modal {
-  pointer-events: auto !important;
+.dsgn-body > .dsgn-modal-backdrop .dsgn-modal,
+.dsgn-modal-backdrop:has(.dsgn-size-fields) .dsgn-modal {
+  position: static !important;
   width: 100% !important;
   height: 100% !important;
   max-height: 100% !important;
   background: #ffffff !important;
-  border-radius: 0 16px 16px 0 !important;
-  border-right: 1.5px solid #cbd5e1 !important;
-  border-top: 1px solid #e2e8f0 !important;
-  box-shadow: 12px 0 35px -5px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
-  animation: dsgnSlideInLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  animation: none !important;
+  pointer-events: auto !important;
 }
 
-@keyframes dsgnSlideInLeft {
-  from {
-    transform: translateX(-35px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.dsgn-modal-header {
-  padding: 16px 20px !important;
-  background: #f8fafc !important;
+.dsgn-body > .dsgn-modal-backdrop .dsgn-modal-header,
+.dsgn-modal-backdrop:has(.dsgn-size-fields) .dsgn-modal-header {
+  flex-shrink: 0 !important;
+  padding: 14px 18px !important;
+  background: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
-.dsgn-modal-header h3 {
-  font-size: 16px !important;
-  font-weight: 800 !important;
+.dsgn-body > .dsgn-modal-backdrop .dsgn-modal-header h3,
+.dsgn-modal-backdrop:has(.dsgn-size-fields) .dsgn-modal-header h3 {
+  font-size: 15px !important;
+  font-weight: 700 !important;
   color: #0f172a !important;
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
+  margin: 0 !important;
+}
+
+.dsgn-body > .dsgn-modal-backdrop .dsgn-modal-body,
+.dsgn-modal-backdrop:has(.dsgn-size-fields) .dsgn-modal-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  max-height: none !important;
+  padding: 16px 18px 24px !important;
 }
 
 /* Góc thước kẻ (Ruler Corner - Hiển thị đơn vị mm/cm) */
@@ -1334,15 +1346,21 @@ button[title*="giữ nguyên nội dung"].dsgn-rotate-btn {
 }
 
 @media (max-width: 1100px) {
-  .dsgn-modal-backdrop {
-    left: 66px !important;
-    width: 340px !important;
+  .dsgn-body > .dsgn-modal-backdrop,
+  .dsgn-modal-backdrop:has(.dsgn-size-fields) {
+    width: 330px !important;
+    min-width: 330px !important;
+    max-width: 330px !important;
+    flex: 0 0 330px !important;
   }
 }
 @media (max-width: 768px) {
-  .dsgn-modal-backdrop {
-    left: 58px !important;
-    width: 320px !important;
+  .dsgn-body > .dsgn-modal-backdrop,
+  .dsgn-modal-backdrop:has(.dsgn-size-fields) {
+    width: 310px !important;
+    min-width: 310px !important;
+    max-width: 310px !important;
+    flex: 0 0 310px !important;
   }
 }
 
