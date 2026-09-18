@@ -2236,3 +2236,86 @@ app-profile .grid > .card:nth-child(2) .badge-success {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+/* ==========================================================================
+   TOOLBAR 2-ROW REDESIGN & CANVAS PROPS PANEL
+   ========================================================================== */
+
+/* Hide Xoay tem, Hút thước, Màu nền, Vừa màn hình from top horizontal toolbar */
+.dsgn-toolbar .dsgn-rotate-btn,
+.dsgn-toolbar .dsgn-snap-btn,
+.dsgn-toolbar .dsgn-color-pop {
+  display: none !important;
+}
+
+/* Toolbar container formatting */
+.dsgn-toolbar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 54px !important;
+  padding: 8px 18px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* Row 1 items: Back on left, file/doc actions on right */
+.dsgn-back {
+  order: 1 !important;
+  margin-right: auto !important;
+}
+
+.dsgn-toolbar-right {
+  order: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-left: 0 !important;
+  flex-wrap: wrap !important;
+}
+
+/* In Row 2, BarTender tools sit directly after Kích thước */
+#dsgn-bartender-tools {
+  order: 4 !important;
+}
+
+.dsgn-size-pill:not(.dsgn-rotate-btn) {
+  order: 3 !important;
+}
+
+.dsgn-grid-btn {
+  order: 5 !important;
+}
+
+.dsgn-doc {
+  order: 10 !important;
+  margin-left: auto !important;
+}
+
+.dsgn-act-preview {
+  order: 11 !important;
+}
+
+.dsgn-act-print {
+  order: 12 !important;
+}
+
+.dsgn-help-btn {
+  order: 13 !important;
+}
+
+/* Canvas Properties Panel Styling */
+.dsgn-canvas-props-panel {
+  background: #ffffff;
+}
+
+.dsgn-bg-preset-btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dsgn-bg-preset-btn:hover {
+  transform: scale(1.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
