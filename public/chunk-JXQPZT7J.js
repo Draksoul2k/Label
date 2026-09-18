@@ -1017,7 +1017,7 @@ wireCanvasPropsEvents(panelEl){
   });
 }
 
-updatePanelButtonsState(){const t=document.getElementById('dsgn-btn-open-tpl'),e=document.getElementById('dsgn-btn-open-excel');t&&t.classList.toggle('active',this.activePanel==='templates');e&&e.classList.toggle('active',this.activePanel==='data');}
+updatePanelButtonsState(){const e=document.getElementById('dsgn-btn-open-excel');e&&e.classList.toggle('active',this.activePanel==='data');}
 ensureBarTenderToolbar(){
   const toolbar = document.querySelector('.dsgn-toolbar');
   if (!toolbar) return;
@@ -1070,13 +1070,6 @@ ensureBarTenderToolbar(){
 
   container.innerHTML = `
     <div class="dsgn-bt-group">
-      <!-- Kho mẫu tem -->
-      <button type="button" class="dsgn-bt-btn" data-act="open-tpl" id="dsgn-btn-open-tpl" title="Mở danh sách mẫu tem đã lưu & mẫu hệ thống">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-        </svg>
-        <span>Mẫu tem</span>
-      </button>
 
       <!-- Dữ liệu Excel -->
       <button type="button" class="dsgn-bt-btn" data-act="open-data" id="dsgn-btn-open-excel" title="Nạp file Excel hoặc Google Sheets để in dữ liệu hàng loạt">
@@ -1324,13 +1317,6 @@ ensureBarTenderToolbar(){
     e.stopPropagation();
     const act = actItem.dataset.act;
     document.querySelectorAll('.dsgn-bt-pop.open').forEach(p => p.classList.remove('open'));
-
-    if (act === 'open-tpl') {
-      this.setPanel('templates');
-      this.cdr.detectChanges();
-      this.updatePanelButtonsState?.();
-      return;
-    }
     if (act === 'open-data') {
       this.setPanel('data');
       this.cdr.detectChanges();
