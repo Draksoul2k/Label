@@ -2447,4 +2447,12 @@ app-profile .grid > .card:nth-child(2) .badge-success {
   box-shadow: inset 0 0 0 1px #3b82f6 !important;
 }
 
+/* Tắt viền nét đứt đỏ cảnh báo tràn khổ tem */
+.dsgn-el.dsgn-el-outside,
+.dsgn-el-outside,
+.dsgn-el.dsgn-el-clipped,
+.dsgn-el-clipped {
+  outline: none !important;
+}
+
 
