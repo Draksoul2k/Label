@@ -1738,6 +1738,7 @@ resolveText(e,t,n){
         <span class="dsgn-fbar-sep"></span>
         <label class="dsgn-tb-color" style="--c:${e.color||"#000000"}" title="Màu chữ">A<input type="color" value="${e.color||"#000000"}" data-act="color"></label><input type="text" class="dsgn-fbar-hex" value="${e.color||"#000000"}" data-act="colorHex" data-prop="color" maxlength="7" spellcheck="false" title="Nhập mã HEX">
         <button type="button" class="dsgn-tb-btn ${e.invert?"active":""}" data-act="invertToggle" title="Chữ trắng nền đen"><span style="background:#111;color:#fff;padding:0 3px;border-radius:2px;font-weight:700;font-size:11px">A</span></button>
+        <button type="button" class="dsgn-tb-btn dsgn-tb-serial ${e.serialEnabled?'active':''}" data-act="serialToggle" title="Số nhảy tự động (Serialization) - Bấm để bật/tắt & mở cài đặt" style="${e.serialEnabled?'background:#e0f2fe;color:#0284c7;font-weight:700;border-color:#7dd3fc;':''}"><span style="font-size:11px;font-weight:700;font-family:monospace;">123→</span>${e.serialEnabled?`<span style="font-size:9.5px;margin-left:3px;font-weight:800;color:#0284c7;">${e.serialDirection==='dec'?'-':'+'}${e.serialStep||1}</span>`:''}</button>
         <span class="dsgn-fbar-sep"></span>
         <button type="button" class="dsgn-tb-btn ${(e.textAlign==='left'||!e.textAlign)?'active':''}" data-act="align" data-val="left" title="Căn trái">${s}</button>
         <button type="button" class="dsgn-tb-btn ${e.textAlign==='center'?'active':''}" data-act="align" data-val="center" title="Căn giữa">${o}</button>
@@ -1750,8 +1751,7 @@ resolveText(e,t,n){
         <span class="dsgn-fbar-sep"></span>
         <button type="button" class="dsgn-tb-btn" data-act="centerH" title="Canh giữa ngang nhãn">${T}</button>
         <button type="button" class="dsgn-tb-btn" data-act="centerV" title="Canh giữa dọc nhãn">${z}</button>
-        <span class="dsgn-fbar-sep"></span>
-        <button type="button" class="dsgn-tb-btn dsgn-tb-serial ${e.serialEnabled?'active':''}" data-act="serialToggle" title="Số nhảy tự động (Serialization) - Bấm để bật/tắt & mở cài đặt" style="${e.serialEnabled?'background:#e0f2fe;color:#0284c7;font-weight:700;border-color:#7dd3fc;':''}"><span style="font-size:11px;font-weight:700;font-family:monospace;">123→</span>${e.serialEnabled?`<span style="font-size:9.5px;margin-left:3px;font-weight:800;color:#0284c7;">${e.serialDirection==='dec'?'-':'+'}${e.serialStep||1}</span>`:''}</button>
+        
         <button type="button" class="dsgn-tb-btn" data-act="fitBox" title="Thu gọn khung vừa nội dung">${i('<path d="M4 9V4h5"/><path d="M20 15v5h-5"/><path d="M15 4h5v5"/><path d="M9 20H4v-5"/>')}</button>
         <span class="dsgn-fbar-sep"></span>
         <button type="button" class="dsgn-tb-btn" data-act="elRotate90" title="Xoay chữ 90°">
