@@ -1786,7 +1786,6 @@ resolveText(e,t,n){
           <input type="number" value="${e.fontSize||this.defaultFontSize(e)}" min="4" max="80" data-act="fontSize" title="C\u1EE1 ch\u1EEF gi\xE1 tr\u1ECB (kh\xF4ng \u0111\u1ED5i k\xEDch th\u01B0\u1EDBc m\xE3)">
           <button type="button" data-act="fontSizeInc">+</button>
         </div>
-        <button type="button" 
         <div class="dsgn-bt-pos-group" title="Vị trí chữ: Dưới, Trên, Trái, Phải" style="display:inline-flex;border:1px solid #cbd5e1;border-radius:6px;overflow:hidden;margin-right:4px;">
           <button type="button" class="dsgn-tb-btn ${(!e.textPosition||e.textPosition==='bottom')?'active':''}" data-act="barcodeTextPos" data-val="bottom" title="Chữ ở Dưới">⬇ Dưới</button>
           <button type="button" class="dsgn-tb-btn ${e.textPosition==='top'?'active':''}" data-act="barcodeTextPos" data-val="top" title="Chữ ở Trên">⬆ Trên</button>
