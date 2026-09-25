@@ -1742,7 +1742,6 @@ resolveText(e,t,n){
         <span class="dsgn-fbar-sep"></span>
         <label class="dsgn-tb-color" style="--c:${e.color||"#000000"}" title="Màu chữ">A<input type="color" value="${e.color||"#000000"}" data-act="color"></label><input type="text" class="dsgn-fbar-hex" value="${e.color||"#000000"}" data-act="colorHex" data-prop="color" maxlength="7" spellcheck="false" title="Nhập mã HEX">
         <button type="button" class="dsgn-tb-btn ${e.invert?"active":""}" data-act="invertToggle" title="Chữ trắng nền đen"><span style="background:#111;color:#fff;padding:0 3px;border-radius:2px;font-weight:700;font-size:11px">A</span></button>
-        <button type="button" class="dsgn-tb-btn dsgn-tb-serial ${e.serialEnabled?'active':''}" data-act="serialToggle" title="Số nhảy tự động (Serialization) - Bấm để bật/tắt & mở cài đặt" style="${e.serialEnabled?'background:#e0f2fe;color:#0284c7;font-weight:700;border-color:#7dd3fc;':''}"><span style="font-size:11px;font-weight:700;font-family:monospace;">123→</span>${e.serialEnabled?`<span style="font-size:9.5px;margin-left:3px;font-weight:800;color:#0284c7;">${e.serialDirection==='dec'?'-':'+'}${e.serialStep||1}</span>`:''}</button>
         <span class="dsgn-fbar-sep"></span>
         <button type="button" class="dsgn-tb-btn ${(e.textAlign==='left'||!e.textAlign)?'active':''}" data-act="align" data-val="left" title="Căn trái">${s}</button>
         <button type="button" class="dsgn-tb-btn ${e.textAlign==='center'?'active':''}" data-act="align" data-val="center" title="Căn giữa">${o}</button>
@@ -1787,7 +1786,7 @@ resolveText(e,t,n){
           <input type="number" value="${e.fontSize||this.defaultFontSize(e)}" min="4" max="80" data-act="fontSize" title="C\u1EE1 ch\u1EEF gi\xE1 tr\u1ECB (kh\xF4ng \u0111\u1ED5i k\xEDch th\u01B0\u1EDBc m\xE3)">
           <button type="button" data-act="fontSizeInc">+</button>
         </div>
-        <button type="button" class="dsgn-tb-btn dsgn-tb-serial ${e.serialEnabled?'active':''}" data-act="serialToggle" title="Mã vạch số nhảy tự động (Serialization) - Bấm để bật/tắt & mở cài đặt" style="${e.serialEnabled?'background:#e0f2fe;color:#0284c7;font-weight:700;border-color:#7dd3fc;margin-right:4px;':''}"><span style="font-size:11px;font-weight:700;font-family:monospace;">123→</span>${e.serialEnabled?`<span style="font-size:9.5px;margin-left:3px;font-weight:800;color:#0284c7;">${e.serialDirection==='dec'?'-':'+'}${e.serialStep||1}</span>`:''}</button>
+        <button type="button" 
         <div class="dsgn-bt-pos-group" title="Vị trí chữ: Dưới, Trên, Trái, Phải" style="display:inline-flex;border:1px solid #cbd5e1;border-radius:6px;overflow:hidden;margin-right:4px;">
           <button type="button" class="dsgn-tb-btn ${(!e.textPosition||e.textPosition==='bottom')?'active':''}" data-act="barcodeTextPos" data-val="bottom" title="Chữ ở Dưới">⬇ Dưới</button>
           <button type="button" class="dsgn-tb-btn ${e.textPosition==='top'?'active':''}" data-act="barcodeTextPos" data-val="top" title="Chữ ở Trên">⬆ Trên</button>
@@ -2111,8 +2110,8 @@ ingestSheet(e,t,n){let i=e?it.sheet_to_json(e,{header:1,blankrows:!1,defval:""})
               <span style="color:#94a3b8;font-weight:400;margin:0 3px;">➔</span>
               <span>${this.escapeHtml(p3)}...</span>
             </div>
-            <div style="font-size:10px;color:#64748b;margin-top:5px;line-height:1.35;">
-              Hệ thống tự động phát hiện số cuối trong chuỗi để tăng/giảm theo từng tem khi in hàng loạt mà không cần Excel.
+            <div style="font-size:10.5px;color:#0369a1;margin-top:6px;line-height:1.35;background:#f0f9ff;border-radius:6px;padding:6px 8px;border:1px solid #bae6fd;">
+              ✨ <b>Tự động theo số lượng in:</b> Khi bấm <b>«In»</b> hoặc <b>«In ngay»</b> và nhập số lượng tem (ví dụ: 20, 50, 100 tem), từng tem in ra sẽ tự động nhảy số liên tục theo đúng số lượng tem bạn đặt.
             </div>
           </div>
         </div>
