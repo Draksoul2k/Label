@@ -2753,39 +2753,47 @@ wireElPropsEvents(e,t){let n=["x","y","width","height","fontSize","strokeWidth",
       return;
     }
     if(l==="group"){o.addEventListener("click",()=>this.groupSelected());return}if(l==="ungroup"){o.addEventListener("click",()=>this.ungroupSelected());return}if(l==="alignLeft"){o.addEventListener("click",()=>this.alignSelected("left"));return}if(l==="alignCenterH"){o.addEventListener("click",()=>this.alignSelected("centerH"));return}if(l==="alignRight"){o.addEventListener("click",()=>this.alignSelected("right"));return}if(l==="alignTop"){o.addEventListener("click",()=>this.alignSelected("top"));return}if(l==="alignCenterV"){o.addEventListener("click",()=>this.alignSelected("centerV"));return}if(l==="alignBottom"){o.addEventListener("click",()=>this.alignSelected("bottom"));return}if(l==="distributeH"){o.addEventListener("click",()=>this.distributeSelected("h"));return}if(l==="distributeV"){o.addEventListener("click",()=>this.distributeSelected("v"));return}if(l==="delete"){o.addEventListener("click",()=>this.deleteSelected());return}if(l==="align"){o.addEventListener("click",()=>this.updateElProp("textAlign",o.dataset.val));return}if(l==="alignCycle"){o.addEventListener("click",()=>{let g=this.sharedTextStyle().align||this.getEl(t)?.textAlign||"left",b=g==="left"?"center":g==="center"?"right":"left";this.updateElProp("textAlign",this.sharedTextStyle().align?b:"left")});return}if(l==="barcodeTextPos"){o.addEventListener("click",()=>this.updateElPropAndRender("textPosition",o.dataset.val));return}if(l==="fontSizeDec"||l==="fontSizeInc"){o.addEventListener("mousedown",g=>g.preventDefault()),o.addEventListener("click",()=>{let g=l==="fontSizeInc"?1:-1,b=this.selectedRunSizePt();b&&this.applyRunStyle("size",b+g)||this.stepFontSize(g)});return}if(l==="decDec"||l==="decInc"){o.addEventListener("click",()=>{let g=this.getEl(t);if(!g)return;let b=Math.max(0,Math.min(6,(g.decimals??2)+(l==="decInc"?1:-1)));this.updateElProp("decimals",b)});return}if(l==="setFormat"){o.addEventListener("click",()=>this.updateElProp("dataFormat",o.dataset.val));return}if(l==="tableRowDec"||l==="tableRowInc"){
-  let el=this.getEl(this.selectedId);
-  if(el&&el.type==="table"){
-    let cur=el.rows||3;
-    let nVal=l==="tableRowDec"?Math.max(1,cur-1):Math.min(20,cur+1);
-    this.updateElPropAndRender("rows",nVal);
-  }
+  o.addEventListener("click",()=>{
+    let el=this.getEl(this.selectedId);
+    if(el&&el.type==="table"){
+      let cur=el.rows||3;
+      let nVal=l==="tableRowDec"?Math.max(1,cur-1):Math.min(20,cur+1);
+      this.updateElPropAndRender("rows",nVal);
+    }
+  });
   return;
 }
 if(l==="tableColDec"||l==="tableColInc"){
-  let el=this.getEl(this.selectedId);
-  if(el&&el.type==="table"){
-    let cur=el.cols||2;
-    let nVal=l==="tableColDec"?Math.max(1,cur-1):Math.min(10,cur+1);
-    this.updateElPropAndRender("cols",nVal);
-  }
+  o.addEventListener("click",()=>{
+    let el=this.getEl(this.selectedId);
+    if(el&&el.type==="table"){
+      let cur=el.cols||2;
+      let nVal=l==="tableColDec"?Math.max(1,cur-1):Math.min(10,cur+1);
+      this.updateElPropAndRender("cols",nVal);
+    }
+  });
   return;
 }
 if(l==="editTableCells"){
-  let el=this.getEl(this.selectedId);
-  if(el&&el.type==="table"){
-    this.startTableInlineEdit(el.id, null);
-  }
+  o.addEventListener("click",()=>{
+    let el=this.getEl(this.selectedId);
+    if(el&&el.type==="table"){
+      this.startTableInlineEdit(el.id, null);
+    }
+  });
   return;
 }
 if(l==="serialToggle"){
-  let el=this.getEl(this.selectedId);
-  if(el){
-    this.saveUndo();
-    el.serialEnabled = !el.serialEnabled;
-    if(!el.serialStep) el.serialStep = 1;
-    this.renderCanvas();
-    this.renderFloatingToolbar();
-  }
+  o.addEventListener("click",()=>{
+    let el=this.getEl(this.selectedId);
+    if(el){
+      this.saveUndo();
+      el.serialEnabled = !el.serialEnabled;
+      if(!el.serialStep) el.serialStep = 1;
+      this.renderCanvas();
+      this.renderFloatingToolbar();
+    }
+  });
   return;
 }
 if(l==="serialStep"){
