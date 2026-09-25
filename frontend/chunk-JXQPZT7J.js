@@ -1719,7 +1719,7 @@ resolveText(e,t,n){
         <button type="button" data-act="fontSizeInc">+</button>
       </div>
       <span class="dsgn-fbar-sep"></span>
-      <label class="dsgn-tb-color" style="--c:${t.color||"#000000"}" title="M\xE0u ch\u1EEF \u2014 \xE1p d\u1EE5ng cho ${n} \u0111\u1ED1i t\u01B0\u1EE3ng">A<input type="color" value="${t.color||"#000000"}" data-act="color"></label><input type="text" class="dsgn-fbar-hex" value="${t.color||"#000000"}" data-act="colorHex" data-prop="color" maxlength="7" spellcheck="false" title="Nhập mã HEX">
+      <label class="dsgn-tb-color" style="--c:${t.color||"#000000"}" title="M\xE0u ch\u1EEF \u2014 \xE1p d\u1EE5ng cho ${n} \u0111\u1ED1i t\u01B0\u1EE3ng (Bấm để chọn màu & nhập mã HEX)">A<input type="color" value="${t.color||"#000000"}" data-act="color"></label>
       <button type="button" class="dsgn-tb-btn ${t.bold?"active":""}" data-act="boldToggle" title="\u0110\u1EADm \u2014 \xE1p d\u1EE5ng cho ${n} \u0111\u1ED1i t\u01B0\u1EE3ng"><b>B</b></button>
       <button type="button" class="dsgn-tb-btn ${t.italic?"active":""}" data-act="italicToggle" title="Nghi\xEAng \u2014 \xE1p d\u1EE5ng cho ${n} \u0111\u1ED1i t\u01B0\u1EE3ng"><i>I</i></button>
       <button type="button" class="dsgn-tb-btn ${t.underline?"active":""}" data-act="underlineToggle" title="G\u1EA1ch ch\xE2n \u2014 \xE1p d\u1EE5ng cho ${n} \u0111\u1ED1i t\u01B0\u1EE3ng"><u>U</u></button>
@@ -1740,7 +1740,7 @@ resolveText(e,t,n){
         <button type="button" class="dsgn-tb-btn ${e.underline?"active":""}" data-act="underlineToggle" title="Gạch chân (U)"><u>U</u></button>
         <button type="button" class="dsgn-tb-btn ${e.strikethrough?"active":""}" data-act="strikeToggle" title="Gạch ngang (S)"><s>S</s></button>
         <span class="dsgn-fbar-sep"></span>
-        <label class="dsgn-tb-color" style="--c:${e.color||"#000000"}" title="Màu chữ">A<input type="color" value="${e.color||"#000000"}" data-act="color"></label><input type="text" class="dsgn-fbar-hex" value="${e.color||"#000000"}" data-act="colorHex" data-prop="color" maxlength="7" spellcheck="false" title="Nhập mã HEX">
+        <label class="dsgn-tb-color" style="--c:${e.color||"#000000"}" title="Màu chữ (Bấm để chọn màu & nhập mã HEX)">A<input type="color" value="${e.color||"#000000"}" data-act="color"></label>
         <button type="button" class="dsgn-tb-btn ${e.invert?"active":""}" data-act="invertToggle" title="Chữ trắng nền đen"><span style="background:#111;color:#fff;padding:0 3px;border-radius:2px;font-weight:700;font-size:11px">A</span></button>
         <span class="dsgn-fbar-sep"></span>
         <button type="button" class="dsgn-tb-btn ${(e.textAlign==='left'||!e.textAlign)?'active':''}" data-act="align" data-val="left" title="Căn trái">${s}</button>
@@ -2600,6 +2600,7 @@ showElProps(e){let t=this.getEl(e),n=this.elPropsPanelRef?.nativeElement;if(!n)r
   pop.__onColorChange=(hexVal,commit)=>{
     anchorEl.value=hexVal==='transparent'?'#ffffff':hexVal;
     const parent=anchorEl.closest('label')||anchorEl.parentElement;
+    if(parent)parent.style.setProperty('--c',hexVal);
     const hexInput=parent?parent.querySelector('.dsgn-fbar-hex'):null;
     if(hexInput)hexInput.value=hexVal.toUpperCase();
     if(commit)this.saveUndo();
@@ -2612,6 +2613,10 @@ showElProps(e){let t=this.getEl(e),n=this.elPropsPanelRef?.nativeElement;if(!n)r
   };
 
   pop.__setColor(initialHex||'#000000',false);
+  setTimeout(()=>{
+    const inp=pop.querySelector('#dsgn-cp-hex-input');
+    if(inp){inp.focus();inp.select();}
+  },50);
 }
 syncDataPanelUI(){
   if(!this.hasLoadedData) return;
